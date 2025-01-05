@@ -1,0 +1,21 @@
+/* eslint-disable ts/no-redeclare */
+import type { AppOpenAPI } from "@/api/lib/types";
+
+import { BASE_PATH } from "@/api/lib/constants";
+import createRouter from "@/api/lib/create-router";
+import auth from "@/api/routes/auth/auth.index";
+import index from "@/api/routes/index.route";
+import me from "@/api/routes/me/me.index";
+
+export function registerRoutes(app: AppOpenAPI) {
+  return app
+    .route("/", index)
+    .route("/", auth)
+    .route("/", me);
+}
+
+// stand alone router type used for api client
+export const router = registerRoutes(
+  createRouter().basePath(BASE_PATH),
+);
+export type router = typeof router;

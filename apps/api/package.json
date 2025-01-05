@@ -1,0 +1,59 @@
+{
+  "name": "@aicv-app/api",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    "./routes": "./src/routes/index.ts",
+    "./schema": "./src/db/schema/index.ts"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint --fix",
+    "test": "cross-env NODE_ENV=test vitest",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate:local": "wrangler d1 migrations apply aicv-app --local",
+    "db:migrate:remote": "wrangler d1 migrations apply aicv-app --remote"
+  },
+  "dependencies": {
+    "@aicv-app/eslint-config": "workspace:^",
+    "@auth/core": "^0.37.4",
+    "@auth/drizzle-adapter": "^1.7.4",
+    "@hono/auth-js": "^1.0.15",
+    "@hono/node-server": "^1.13.7",
+    "@hono/zod-openapi": "^0.18.3",
+    "@libsql/client": "^0.14.0",
+    "@logtape/logtape": "^0.8.0",
+    "@scalar/hono-api-reference": "^0.5.164",
+    "bcryptjs": "^2.4.3",
+    "drizzle-orm": "^0.38.3",
+    "drizzle-zod": "^0.6.0",
+    "hono": "^4.6.13",
+    "nodemailer": "^6.9.16",
+    "stoker": "^1.4.2",
+    "uuid": "^11.0.3",
+    "worker-mailer": "^1.0.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.5.36",
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.2",
+    "cross-env": "^7.0.3",
+    "drizzle-kit": "^0.30.1",
+    "eslint": "^9.17.0",
+    "eslint-plugin-drizzle": "^0.2.3",
+    "eslint-plugin-format": "^0.1.3",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2",
+    "turso": "^0.1.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "wrangler": "^3.95.0"
+  }
+}

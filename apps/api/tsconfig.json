@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "baseUrl": "./",
+    "paths": {
+      "@/api/*": ["./src/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./node_modules/@cloudflare"],
+    "types": [
+      "workers-types/2023-07-01",
+      "vitest-pool-workers"
+    ]
+  }
+}

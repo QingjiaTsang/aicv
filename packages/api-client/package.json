@@ -1,0 +1,22 @@
+{
+  "name": "@aicv-app/api-client",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "rm -rf dist && tsc",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aicv-app/api": "workspace:^",
+    "@aicv-app/eslint-config": "workspace:^",
+    "@types/node": "^22.10.2",
+    "hono": "^4.6.13"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "typescript": "~5.7.2"
+  }
+}

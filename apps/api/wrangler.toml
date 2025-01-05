@@ -1,0 +1,23 @@
+name = "aicv-app"
+main = "src/app.ts"
+compatibility_date = "2025-01-05"
+compatibility_flags = [ "nodejs_compat" ]
+
+[assets]
+directory = "public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "aicv-app"
+database_id = "c82d56ac-6281-4c4d-95ec-c34f1e265469"
+migrations_dir = "src/db/migrations"
+
+[vars]
+LOG_LEVEL = "debug"
+AUTH_URL = "http://your-site/api/auth"
+GITHUB_CLIENT_ID = "your-github-client-id"
+GITHUB_CLIENT_SECRET = "your-github-client-secret"
+AUTH_SECRET = "your-auth-secret"
+AUTH_GOOGLE_ID="your-google-client-id"
+AUTH_GOOGLE_SECRET="your-google-client-secret" 
