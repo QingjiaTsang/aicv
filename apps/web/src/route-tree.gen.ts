@@ -11,27 +11,36 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/~__root'
+import { Route as LandingLayoutImport } from './routes/~_landing-layout'
+import { Route as LandingLayoutIndexImport } from './routes/~_landing-layout.index'
 import { Route as coreAuthenticatedLayoutImport } from './routes/~(core)/~_authenticated-layout'
 import { Route as authSignupImport } from './routes/~(auth)/~signup'
 import { Route as authSigninImport } from './routes/~(auth)/~signin'
-import { Route as coreAuthenticatedLayoutIndexImport } from './routes/~(core)/~_authenticated-layout/~index'
-import { Route as coreAuthenticatedLayoutDashboardLayoutImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~_layout'
-import { Route as coreAuthenticatedLayoutDashboardLayoutSettingsImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~_layout/~settings'
-import { Route as coreAuthenticatedLayoutDashboardLayoutAnalyticsImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~_layout/~analytics'
-import { Route as coreAuthenticatedLayoutDashboardLayoutIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~_layout/~index'
+import { Route as coreAuthenticatedLayoutDashboardDocumentsImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~documents'
+import { Route as coreAuthenticatedLayoutDashboardIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~index'
+import { Route as coreAuthenticatedLayoutDashboardDocumentDocumentIdEditImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~edit'
+import { Route as coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~index'
 
 // Create Virtual Routes
 
 const coreImport = createFileRoute('/(core)')()
-const coreAuthenticatedLayoutDashboardImport = createFileRoute(
-  '/(core)/_authenticated-layout/dashboard',
-)()
 
 // Create/Update Routes
 
 const coreRoute = coreImport.update({
   id: '/(core)',
   getParentRoute: () => rootRoute,
+} as any)
+
+const LandingLayoutRoute = LandingLayoutImport.update({
+  id: '/_landing-layout',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LandingLayoutIndexRoute = LandingLayoutIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LandingLayoutRoute,
 } as any)
 
 const coreAuthenticatedLayoutRoute = coreAuthenticatedLayoutImport.update({
@@ -51,51 +60,45 @@ const authSigninRoute = authSigninImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const coreAuthenticatedLayoutDashboardRoute =
-  coreAuthenticatedLayoutDashboardImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
+const coreAuthenticatedLayoutDashboardDocumentsRoute =
+  coreAuthenticatedLayoutDashboardDocumentsImport.update({
+    id: '/dashboard/documents',
+    path: '/dashboard/documents',
     getParentRoute: () => coreAuthenticatedLayoutRoute,
   } as any)
 
-const coreAuthenticatedLayoutIndexRoute =
-  coreAuthenticatedLayoutIndexImport.update({
-    id: '/',
-    path: '/',
+const coreAuthenticatedLayoutDashboardIndexRoute =
+  coreAuthenticatedLayoutDashboardIndexImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
     getParentRoute: () => coreAuthenticatedLayoutRoute,
   } as any)
 
-const coreAuthenticatedLayoutDashboardLayoutRoute =
-  coreAuthenticatedLayoutDashboardLayoutImport.update({
-    id: '/_layout',
-    getParentRoute: () => coreAuthenticatedLayoutDashboardRoute,
+const coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute =
+  coreAuthenticatedLayoutDashboardDocumentDocumentIdEditImport.update({
+    id: '/dashboard/document/$document-id/edit',
+    path: '/dashboard/document/$document-id/edit',
+    getParentRoute: () => coreAuthenticatedLayoutRoute,
   } as any)
 
-const coreAuthenticatedLayoutDashboardLayoutSettingsRoute =
-  coreAuthenticatedLayoutDashboardLayoutSettingsImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => coreAuthenticatedLayoutDashboardLayoutRoute,
-  } as any)
-
-const coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute =
-  coreAuthenticatedLayoutDashboardLayoutAnalyticsImport.update({
-    id: '/analytics',
-    path: '/analytics',
-    getParentRoute: () => coreAuthenticatedLayoutDashboardLayoutRoute,
-  } as any)
-
-const coreAuthenticatedLayoutDashboardLayoutIndexRoute =
-  coreAuthenticatedLayoutDashboardLayoutIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => coreAuthenticatedLayoutDashboardLayoutRoute,
+const coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute =
+  coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexImport.update({
+    id: '/dashboard/document/$document-id/',
+    path: '/dashboard/document/$document-id/',
+    getParentRoute: () => coreAuthenticatedLayoutRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_landing-layout': {
+      id: '/_landing-layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LandingLayoutImport
+      parentRoute: typeof rootRoute
+    }
     '/(auth)/signin': {
       id: '/(auth)/signin'
       path: '/signin'
@@ -124,99 +127,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof coreAuthenticatedLayoutImport
       parentRoute: typeof coreRoute
     }
-    '/(core)/_authenticated-layout/': {
-      id: '/(core)/_authenticated-layout/'
+    '/_landing-layout/': {
+      id: '/_landing-layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof coreAuthenticatedLayoutIndexImport
-      parentRoute: typeof coreAuthenticatedLayoutImport
+      preLoaderRoute: typeof LandingLayoutIndexImport
+      parentRoute: typeof LandingLayoutImport
     }
-    '/(core)/_authenticated-layout/dashboard': {
-      id: '/(core)/_authenticated-layout/dashboard'
+    '/(core)/_authenticated-layout/dashboard/': {
+      id: '/(core)/_authenticated-layout/dashboard/'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardImport
+      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardIndexImport
       parentRoute: typeof coreAuthenticatedLayoutImport
     }
-    '/(core)/_authenticated-layout/dashboard/_layout': {
-      id: '/(core)/_authenticated-layout/dashboard/_layout'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardLayoutImport
-      parentRoute: typeof coreAuthenticatedLayoutDashboardRoute
+    '/(core)/_authenticated-layout/dashboard/documents': {
+      id: '/(core)/_authenticated-layout/dashboard/documents'
+      path: '/dashboard/documents'
+      fullPath: '/dashboard/documents'
+      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardDocumentsImport
+      parentRoute: typeof coreAuthenticatedLayoutImport
     }
-    '/(core)/_authenticated-layout/dashboard/_layout/': {
-      id: '/(core)/_authenticated-layout/dashboard/_layout/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardLayoutIndexImport
-      parentRoute: typeof coreAuthenticatedLayoutDashboardLayoutImport
+    '/(core)/_authenticated-layout/dashboard/document/$document-id/': {
+      id: '/(core)/_authenticated-layout/dashboard/document/$document-id/'
+      path: '/dashboard/document/$document-id'
+      fullPath: '/dashboard/document/$document-id'
+      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexImport
+      parentRoute: typeof coreAuthenticatedLayoutImport
     }
-    '/(core)/_authenticated-layout/dashboard/_layout/analytics': {
-      id: '/(core)/_authenticated-layout/dashboard/_layout/analytics'
-      path: '/analytics'
-      fullPath: '/dashboard/analytics'
-      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardLayoutAnalyticsImport
-      parentRoute: typeof coreAuthenticatedLayoutDashboardLayoutImport
-    }
-    '/(core)/_authenticated-layout/dashboard/_layout/settings': {
-      id: '/(core)/_authenticated-layout/dashboard/_layout/settings'
-      path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardLayoutSettingsImport
-      parentRoute: typeof coreAuthenticatedLayoutDashboardLayoutImport
+    '/(core)/_authenticated-layout/dashboard/document/$document-id/edit': {
+      id: '/(core)/_authenticated-layout/dashboard/document/$document-id/edit'
+      path: '/dashboard/document/$document-id/edit'
+      fullPath: '/dashboard/document/$document-id/edit'
+      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditImport
+      parentRoute: typeof coreAuthenticatedLayoutImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface coreAuthenticatedLayoutDashboardLayoutRouteChildren {
-  coreAuthenticatedLayoutDashboardLayoutIndexRoute: typeof coreAuthenticatedLayoutDashboardLayoutIndexRoute
-  coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute: typeof coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute
-  coreAuthenticatedLayoutDashboardLayoutSettingsRoute: typeof coreAuthenticatedLayoutDashboardLayoutSettingsRoute
+interface LandingLayoutRouteChildren {
+  LandingLayoutIndexRoute: typeof LandingLayoutIndexRoute
 }
 
-const coreAuthenticatedLayoutDashboardLayoutRouteChildren: coreAuthenticatedLayoutDashboardLayoutRouteChildren =
-  {
-    coreAuthenticatedLayoutDashboardLayoutIndexRoute:
-      coreAuthenticatedLayoutDashboardLayoutIndexRoute,
-    coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute:
-      coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute,
-    coreAuthenticatedLayoutDashboardLayoutSettingsRoute:
-      coreAuthenticatedLayoutDashboardLayoutSettingsRoute,
-  }
-
-const coreAuthenticatedLayoutDashboardLayoutRouteWithChildren =
-  coreAuthenticatedLayoutDashboardLayoutRoute._addFileChildren(
-    coreAuthenticatedLayoutDashboardLayoutRouteChildren,
-  )
-
-interface coreAuthenticatedLayoutDashboardRouteChildren {
-  coreAuthenticatedLayoutDashboardLayoutRoute: typeof coreAuthenticatedLayoutDashboardLayoutRouteWithChildren
+const LandingLayoutRouteChildren: LandingLayoutRouteChildren = {
+  LandingLayoutIndexRoute: LandingLayoutIndexRoute,
 }
 
-const coreAuthenticatedLayoutDashboardRouteChildren: coreAuthenticatedLayoutDashboardRouteChildren =
-  {
-    coreAuthenticatedLayoutDashboardLayoutRoute:
-      coreAuthenticatedLayoutDashboardLayoutRouteWithChildren,
-  }
-
-const coreAuthenticatedLayoutDashboardRouteWithChildren =
-  coreAuthenticatedLayoutDashboardRoute._addFileChildren(
-    coreAuthenticatedLayoutDashboardRouteChildren,
-  )
+const LandingLayoutRouteWithChildren = LandingLayoutRoute._addFileChildren(
+  LandingLayoutRouteChildren,
+)
 
 interface coreAuthenticatedLayoutRouteChildren {
-  coreAuthenticatedLayoutIndexRoute: typeof coreAuthenticatedLayoutIndexRoute
-  coreAuthenticatedLayoutDashboardRoute: typeof coreAuthenticatedLayoutDashboardRouteWithChildren
+  coreAuthenticatedLayoutDashboardIndexRoute: typeof coreAuthenticatedLayoutDashboardIndexRoute
+  coreAuthenticatedLayoutDashboardDocumentsRoute: typeof coreAuthenticatedLayoutDashboardDocumentsRoute
+  coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute: typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
+  coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute: typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
 const coreAuthenticatedLayoutRouteChildren: coreAuthenticatedLayoutRouteChildren =
   {
-    coreAuthenticatedLayoutIndexRoute: coreAuthenticatedLayoutIndexRoute,
-    coreAuthenticatedLayoutDashboardRoute:
-      coreAuthenticatedLayoutDashboardRouteWithChildren,
+    coreAuthenticatedLayoutDashboardIndexRoute:
+      coreAuthenticatedLayoutDashboardIndexRoute,
+    coreAuthenticatedLayoutDashboardDocumentsRoute:
+      coreAuthenticatedLayoutDashboardDocumentsRoute,
+    coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute:
+      coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute,
+    coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute:
+      coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute,
   }
 
 const coreAuthenticatedLayoutRouteWithChildren =
@@ -235,78 +214,84 @@ const coreRouteChildren: coreRouteChildren = {
 const coreRouteWithChildren = coreRoute._addFileChildren(coreRouteChildren)
 
 export interface FileRoutesByFullPath {
+  '': typeof LandingLayoutRouteWithChildren
   '/signin': typeof authSigninRoute
   '/signup': typeof authSignupRoute
-  '/': typeof coreAuthenticatedLayoutIndexRoute
-  '/dashboard': typeof coreAuthenticatedLayoutDashboardLayoutRouteWithChildren
-  '/dashboard/': typeof coreAuthenticatedLayoutDashboardLayoutIndexRoute
-  '/dashboard/analytics': typeof coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute
-  '/dashboard/settings': typeof coreAuthenticatedLayoutDashboardLayoutSettingsRoute
+  '/': typeof LandingLayoutIndexRoute
+  '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
+  '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
+  '/dashboard/document/$document-id': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
+  '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
 export interface FileRoutesByTo {
   '/signin': typeof authSigninRoute
   '/signup': typeof authSignupRoute
-  '/': typeof coreAuthenticatedLayoutIndexRoute
-  '/dashboard': typeof coreAuthenticatedLayoutDashboardLayoutIndexRoute
-  '/dashboard/analytics': typeof coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute
-  '/dashboard/settings': typeof coreAuthenticatedLayoutDashboardLayoutSettingsRoute
+  '/': typeof LandingLayoutIndexRoute
+  '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
+  '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
+  '/dashboard/document/$document-id': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
+  '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/_landing-layout': typeof LandingLayoutRouteWithChildren
   '/(auth)/signin': typeof authSigninRoute
   '/(auth)/signup': typeof authSignupRoute
   '/(core)': typeof coreRouteWithChildren
   '/(core)/_authenticated-layout': typeof coreAuthenticatedLayoutRouteWithChildren
-  '/(core)/_authenticated-layout/': typeof coreAuthenticatedLayoutIndexRoute
-  '/(core)/_authenticated-layout/dashboard': typeof coreAuthenticatedLayoutDashboardRouteWithChildren
-  '/(core)/_authenticated-layout/dashboard/_layout': typeof coreAuthenticatedLayoutDashboardLayoutRouteWithChildren
-  '/(core)/_authenticated-layout/dashboard/_layout/': typeof coreAuthenticatedLayoutDashboardLayoutIndexRoute
-  '/(core)/_authenticated-layout/dashboard/_layout/analytics': typeof coreAuthenticatedLayoutDashboardLayoutAnalyticsRoute
-  '/(core)/_authenticated-layout/dashboard/_layout/settings': typeof coreAuthenticatedLayoutDashboardLayoutSettingsRoute
+  '/_landing-layout/': typeof LandingLayoutIndexRoute
+  '/(core)/_authenticated-layout/dashboard/': typeof coreAuthenticatedLayoutDashboardIndexRoute
+  '/(core)/_authenticated-layout/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
+  '/(core)/_authenticated-layout/dashboard/document/$document-id/': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
+  '/(core)/_authenticated-layout/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | ''
     | '/signin'
     | '/signup'
     | '/'
     | '/dashboard'
-    | '/dashboard/'
-    | '/dashboard/analytics'
-    | '/dashboard/settings'
+    | '/dashboard/documents'
+    | '/dashboard/document/$document-id'
+    | '/dashboard/document/$document-id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/signin'
     | '/signup'
     | '/'
     | '/dashboard'
-    | '/dashboard/analytics'
-    | '/dashboard/settings'
+    | '/dashboard/documents'
+    | '/dashboard/document/$document-id'
+    | '/dashboard/document/$document-id/edit'
   id:
     | '__root__'
+    | '/_landing-layout'
     | '/(auth)/signin'
     | '/(auth)/signup'
     | '/(core)'
     | '/(core)/_authenticated-layout'
-    | '/(core)/_authenticated-layout/'
-    | '/(core)/_authenticated-layout/dashboard'
-    | '/(core)/_authenticated-layout/dashboard/_layout'
-    | '/(core)/_authenticated-layout/dashboard/_layout/'
-    | '/(core)/_authenticated-layout/dashboard/_layout/analytics'
-    | '/(core)/_authenticated-layout/dashboard/_layout/settings'
+    | '/_landing-layout/'
+    | '/(core)/_authenticated-layout/dashboard/'
+    | '/(core)/_authenticated-layout/dashboard/documents'
+    | '/(core)/_authenticated-layout/dashboard/document/$document-id/'
+    | '/(core)/_authenticated-layout/dashboard/document/$document-id/edit'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
+  LandingLayoutRoute: typeof LandingLayoutRouteWithChildren
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
   coreRoute: typeof coreRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  LandingLayoutRoute: LandingLayoutRouteWithChildren,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,
   coreRoute: coreRouteWithChildren,
@@ -322,9 +307,16 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "~__root.tsx",
       "children": [
+        "/_landing-layout",
         "/(auth)/signin",
         "/(auth)/signup",
         "/(core)"
+      ]
+    },
+    "/_landing-layout": {
+      "filePath": "~_landing-layout.tsx",
+      "children": [
+        "/_landing-layout/"
       ]
     },
     "/(auth)/signin": {
@@ -343,41 +335,31 @@ export const routeTree = rootRoute
       "filePath": "~(core)/~_authenticated-layout.tsx",
       "parent": "/(core)",
       "children": [
-        "/(core)/_authenticated-layout/",
-        "/(core)/_authenticated-layout/dashboard"
+        "/(core)/_authenticated-layout/dashboard/",
+        "/(core)/_authenticated-layout/dashboard/documents",
+        "/(core)/_authenticated-layout/dashboard/document/$document-id/",
+        "/(core)/_authenticated-layout/dashboard/document/$document-id/edit"
       ]
     },
-    "/(core)/_authenticated-layout/": {
-      "filePath": "~(core)/~_authenticated-layout/~index.tsx",
+    "/_landing-layout/": {
+      "filePath": "~_landing-layout.index.tsx",
+      "parent": "/_landing-layout"
+    },
+    "/(core)/_authenticated-layout/dashboard/": {
+      "filePath": "~(core)/~_authenticated-layout/~dashboard/~index.tsx",
       "parent": "/(core)/_authenticated-layout"
     },
-    "/(core)/_authenticated-layout/dashboard": {
-      "filePath": "~(core)/~_authenticated-layout/~dashboard",
-      "parent": "/(core)/_authenticated-layout",
-      "children": [
-        "/(core)/_authenticated-layout/dashboard/_layout"
-      ]
+    "/(core)/_authenticated-layout/dashboard/documents": {
+      "filePath": "~(core)/~_authenticated-layout/~dashboard/~documents.tsx",
+      "parent": "/(core)/_authenticated-layout"
     },
-    "/(core)/_authenticated-layout/dashboard/_layout": {
-      "filePath": "~(core)/~_authenticated-layout/~dashboard/~_layout.tsx",
-      "parent": "/(core)/_authenticated-layout/dashboard",
-      "children": [
-        "/(core)/_authenticated-layout/dashboard/_layout/",
-        "/(core)/_authenticated-layout/dashboard/_layout/analytics",
-        "/(core)/_authenticated-layout/dashboard/_layout/settings"
-      ]
+    "/(core)/_authenticated-layout/dashboard/document/$document-id/": {
+      "filePath": "~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~index.tsx",
+      "parent": "/(core)/_authenticated-layout"
     },
-    "/(core)/_authenticated-layout/dashboard/_layout/": {
-      "filePath": "~(core)/~_authenticated-layout/~dashboard/~_layout/~index.tsx",
-      "parent": "/(core)/_authenticated-layout/dashboard/_layout"
-    },
-    "/(core)/_authenticated-layout/dashboard/_layout/analytics": {
-      "filePath": "~(core)/~_authenticated-layout/~dashboard/~_layout/~analytics.tsx",
-      "parent": "/(core)/_authenticated-layout/dashboard/_layout"
-    },
-    "/(core)/_authenticated-layout/dashboard/_layout/settings": {
-      "filePath": "~(core)/~_authenticated-layout/~dashboard/~_layout/~settings.tsx",
-      "parent": "/(core)/_authenticated-layout/dashboard/_layout"
+    "/(core)/_authenticated-layout/dashboard/document/$document-id/edit": {
+      "filePath": "~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~edit.tsx",
+      "parent": "/(core)/_authenticated-layout"
     }
   }
 }
