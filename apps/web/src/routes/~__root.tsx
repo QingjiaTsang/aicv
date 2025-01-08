@@ -4,7 +4,7 @@ import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 import AppNavbar from "@/web/components/app-navbar";
 
-type Session = NonNullable<ReturnType<typeof getSession>>;
+type Session = Awaited<ReturnType<typeof getSession>>;
 
 export const Route = createRootRouteWithContext<{
   session: Session;

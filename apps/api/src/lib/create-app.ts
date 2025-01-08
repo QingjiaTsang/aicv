@@ -27,23 +27,25 @@ export default function createApp() {
         return next();
       },
     )
-    // .use("/auth/*", authHandler())
     .use("/*", async (c, next) => {
+      // Handle credential signup and verify
       if (c.req.path.startsWith("/api/auth/signup")
         || c.req.path.startsWith("/api/auth/verify")) {
         return next();
       }
-      // 其他认证相关的路由交给 auth.js 处理
+
+      // Other authentication-related routes are handled by auth.js
       if (c.req.path.startsWith("/api/auth")) {
         return authHandler()(c, next);
       }
       return verifyAuth()(c, next);
     })
     .use("/*", async (c, next) => {
-      console.log("Current path:", c.req.path);
+      console.log({ path: c.req.path });
       if (c.req.path.startsWith("/api/auth")) {
         return next();
       }
+
       return verifyAuth()(c, next);
     })
     .notFound(notFound)

@@ -22,7 +22,7 @@ export const signup: AppRouteHandler<SignupRoute> = async (c) => {
     .from(users)
     .where(eq(users.email, body.email!));
 
-  if (existingUser) {
+  if (existingUser && existingUser.emailVerified) {
     return c.json(
       { message: HttpStatusPhrases.CONFLICT },
       HttpStatusCodes.CONFLICT,
@@ -53,18 +53,32 @@ export const signup: AppRouteHandler<SignupRoute> = async (c) => {
   const verificationToken = createId();
   const expires = addHours(now, 1);
 
-  await db.batch([
-    db.insert(users).values({
-      ...body,
-      password: hashedPassword,
-      emailVerified: null,
-    }),
-    db.insert(verificationTokens).values({
-      identifier: body.email!,
-      token: verificationToken,
-      expires,
-    }),
-  ]);
+  if (existingUser) {
+    await db.batch([
+      db.update(users).set({
+        password: hashedPassword,
+      }).where(eq(users.id, existingUser.id)),
+      db.insert(verificationTokens).values({
+        identifier: body.email!,
+        token: verificationToken,
+        expires,
+      }),
+    ]);
+  }
+  else {
+    await db.batch([
+      db.insert(users).values({
+        ...body,
+        password: hashedPassword,
+        emailVerified: null,
+      }),
+      db.insert(verificationTokens).values({
+        identifier: body.email!,
+        token: verificationToken,
+        expires,
+      }),
+    ]);
+  }
 
   await sendVerificationEmail(body.email!, verificationToken, c.env);
 

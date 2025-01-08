@@ -5,7 +5,7 @@ import { routeTree } from "@/web/route-tree.gen";
 const router = createRouter({
   routeTree,
   context: {
-    session: undefined,
+    session: null,
   },
   defaultNotFoundComponent: () => <div>global not found</div>,
   defaultErrorComponent: () => <div>global error</div>,
