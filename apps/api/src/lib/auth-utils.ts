@@ -42,13 +42,17 @@ export async function getUserFromDb(db: DrizzleD1Database, email: string, passwo
     };
   }
 
+  if (!existingUser.emailVerified) {
+    return {
+      success: false,
+      message: "Email not verified",
+    };
+  }
+
+  const { password: _, ...user } = existingUser;
+
   return {
     success: true,
-    user: {
-      id: existingUser.id,
-      email: existingUser.email,
-      name: existingUser.name,
-      image: existingUser.image,
-    },
+    user,
   };
 }

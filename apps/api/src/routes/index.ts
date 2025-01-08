@@ -10,7 +10,7 @@ import me from "@/api/routes/me/me.index";
 export function registerRoutes(app: AppOpenAPI) {
   return app
     .route("/", index)
-    .route("/", auth)
+    .route("/auth", auth)
     .route("/", me);
 }
 

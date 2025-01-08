@@ -51,7 +51,7 @@ pnpm i
 ### Create / Update Cloudflare D1 Database id
 
 ```sh
-pnpm dlx wrangler create d1 replace-with-your-database-name-here
+pnpm dlx wrangler d1 create replace-with-your-database-name-here
 ```
 
 Update `database_name` and `database_id` in [apps/api/wrangler.toml](./apps/api/wrangler.toml) with the output from wrangler.

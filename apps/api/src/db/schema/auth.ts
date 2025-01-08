@@ -123,3 +123,11 @@ export const credentialsSchema = createUserSchema.omit({
 });
 
 export type CredentialsSchema = z.infer<typeof credentialsSchema>;
+
+export const verificationTokenSchema = createSelectSchema(verificationTokens);
+export const verifyEmailSchema = verificationTokenSchema.pick({
+  token: true,
+});
+
+export type VerificationToken = z.infer<typeof verificationTokenSchema>;
+export type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;

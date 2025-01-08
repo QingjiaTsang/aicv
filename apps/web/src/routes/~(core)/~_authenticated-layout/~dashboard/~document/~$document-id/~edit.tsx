@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  '/(core)/_authenticated-layout/dashboard/document/$document-id/edit',
+  "/(core)/_authenticated-layout/dashboard/document/$document-id/edit",
 )({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
@@ -12,5 +12,5 @@ function RouteComponent() {
       Hello
       "/(core)/_authenticated-layout/dashboard/document/$document-id/edit"!
     </div>
-  )
+  );
 }

@@ -1,5 +1,6 @@
 import type { AuthConfig } from "@hono/auth-js";
 
+import { AuthError, CredentialsSignin } from "@auth/core/errors";
 import { encode } from "@auth/core/jwt";
 import Credentials from "@auth/core/providers/credentials";
 import GitHub from "@auth/core/providers/github";
@@ -11,6 +12,11 @@ import { v4 as uuidv4 } from "uuid";
 import type { AppEnv } from "./types";
 
 import { getUserFromDb } from "./auth-utils";
+
+// todo: not working for stacks with Vite, React and Honojs
+class InvalidLoginError extends CredentialsSignin {
+  code = "custom_error";
+}
 
 export default function createAuthConfig(env: AppEnv["Bindings"]): AuthConfig {
   const adapter = DrizzleAdapter(drizzle(env.DB));
@@ -46,13 +52,14 @@ export default function createAuthConfig(env: AppEnv["Bindings"]): AuthConfig {
             return null;
           }
 
-          const { success, user } = await getUserFromDb(db, credentials.email as string, credentials.password as string);
+          const result = await getUserFromDb(db, credentials.email as string, credentials.password as string);
 
-          if (!success) {
-            return null;
+          // Wrong password or email not verified
+          if (!result.success) {
+            throw new InvalidLoginError("hello world");
           }
 
-          return user!;
+          return result.user!;
         },
       }),
     ],

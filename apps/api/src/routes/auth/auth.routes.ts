@@ -3,7 +3,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { createUserSchema } from "@/api/db/schema/auth";
+import { createUserSchema, verifyEmailSchema } from "@/api/db/schema/auth";
 import { conflictSchema } from "@/api/lib/constants";
 
 const tags = ["Auth"];
@@ -15,7 +15,7 @@ export const signup = createRoute({
   request: {
     body: jsonContent(
       createUserSchema,
-      "注册信息",
+      "Sign-up info",
     ),
   },
   responses: {
@@ -33,4 +33,22 @@ export const signup = createRoute({
   },
 });
 
+export const verifyEmail = createRoute({
+  tags: ["Auth"],
+  method: "get",
+  path: "/verify",
+  request: {
+    query: verifyEmailSchema,
+  },
+  responses: {
+    [HttpStatusCodes.OK]: {
+      description: "Email verified successfully",
+    },
+    [HttpStatusCodes.BAD_REQUEST]: {
+      description: "Invalid or expired token",
+    },
+  },
+});
+
 export type SignupRoute = typeof signup;
+export type VerifyEmailRoute = typeof verifyEmail;

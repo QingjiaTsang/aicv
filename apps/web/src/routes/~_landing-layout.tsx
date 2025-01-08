@@ -1,8 +1,8 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_landing-layout')({
+export const Route = createFileRoute("/_landing-layout")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
@@ -10,5 +10,5 @@ function RouteComponent() {
       <h1>Hello "/(landing)/_landing-layout"!</h1>
       <Outlet />
     </div>
-  )
+  );
 }

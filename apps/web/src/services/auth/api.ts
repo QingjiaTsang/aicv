@@ -8,7 +8,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const authApi = {
   signup: async (data: CreateUserSchema) => {
-    const response = await apiClient.api.signup.$post({
+    const response = await apiClient.api.auth.signup.$post({
       json: data,
     });
 
@@ -28,16 +28,24 @@ export const authApi = {
   },
 
   credentialSignin: async (data: CredentialsSchema & { callbackUrl?: string }) => {
-    const response = await signIn("credentials", {
-      ...data,
-      callbackUrl: data.callbackUrl,
-    });
+    try {
+      const response = await signIn("credentials", {
+        ...data,
+        callbackUrl: data.callbackUrl,
+        redirect: false,
+      });
+      console.log({
+        response,
+      });
 
-    if (response && response.status !== HttpStatusCodes.OK) {
-      throw new Error(response.error);
+      return response;
     }
-
-    return response;
+    catch (error) {
+      console.log({
+        error,
+      });
+      // throw new Error(error);
+    }
   },
 
   githubSignin: async (callbackUrl?: string) => {
