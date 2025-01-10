@@ -107,7 +107,7 @@ function SigninPage() {
   const signinError = credentialSigninError || githubSigninError || googleSigninError;
 
   return (
-    <div className="flex h-full w-full items-center justify-center p-4 mt-4 relative">
+    <div className="flex h-full w-full px-4 items-center justify-center relative">
       <AuthBackground />
       <Card className="w-full max-w-sm border-0 dark:border dark:border-violet-800/20 bg-white/80 dark:bg-gray-950/50 shadow-2xl dark:shadow-violet-900/5 backdrop-blur-xl">
         <CardHeader className="space-y-1">

@@ -54,7 +54,7 @@ const signupSchema = createUserSchema
 type SignupSchema = z.infer<typeof signupSchema>;
 
 function SignUpPage() {
-  const [emailSent, setEmailSent] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
 
   const form = useForm<SignupSchema>({
     resolver: zodResolver(signupSchema),
@@ -68,7 +68,7 @@ function SignUpPage() {
 
   const { mutate: signup, isPending: isSigningUp, error: signupError } = useSignupMutation({
     onSuccess: () => {
-      setEmailSent(true);
+      setIsEmailSent(true);
     },
     onError: (error) => {
       console.error(error);
@@ -79,11 +79,11 @@ function SignUpPage() {
     signup(data);
   };
 
-  if (emailSent) {
+  if (isEmailSent) {
     return (
-      <div className="flex h-full items-center justify-center p-4 relative">
+      <div className="flex h-full px-4 items-center justify-center relative">
         <AuthBackground />
-        <Card className="w-full max-w-sm border dark:border-gray-800 dark:bg-gray-950/80 shadow-2xl backdrop-blur-sm overflow-hidden">
+        <Card className="p-0 w-full max-w-sm border dark:border-gray-800 dark:bg-gray-950/80 shadow-2xl backdrop-blur-sm overflow-hidden">
           <div className="flex flex-col items-center justify-center p-8 space-y-6">
             <motion.div
               initial={{ scale: 0 }}
@@ -121,7 +121,7 @@ function SignUpPage() {
     = signupError?.message === HttpStatusPhrases.CONFLICT ? "Email already exists" : signupError?.message;
 
   return (
-    <div className="flex h-full w-full items-center justify-center p-4 mt-4 relative">
+    <div className="flex h-full w-full px-4 items-center justify-center relative">
       <AuthBackground />
       <Card className="w-full max-w-sm border dark:border-gray-800 dark:bg-gray-950/80 shadow-2xl backdrop-blur-sm">
         <CardHeader className="space-y-1">

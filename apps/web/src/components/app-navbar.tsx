@@ -13,7 +13,7 @@ export default function AppNavbar() {
 
   return (
     <nav className="w-full border-b border-violet-100/20 dark:border-violet-800/10 bg-white/60 dark:bg-gray-950/60 backdrop-blur-xl shadow-sm">
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-3">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0">
             <Link to="/">

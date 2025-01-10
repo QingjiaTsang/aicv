@@ -121,13 +121,12 @@ export const credentialsSchema = createUserSchema.omit({
   //   "Password must contain uppercase and lowercase letters and numbers",
   // ),
 });
-
 export type CredentialsSchema = z.infer<typeof credentialsSchema>;
 
 export const verificationTokenSchema = createSelectSchema(verificationTokens);
+export type VerificationToken = z.infer<typeof verificationTokenSchema>;
+
 export const verifyEmailSchema = verificationTokenSchema.pick({
   token: true,
 });
-
-export type VerificationToken = z.infer<typeof verificationTokenSchema>;
 export type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;

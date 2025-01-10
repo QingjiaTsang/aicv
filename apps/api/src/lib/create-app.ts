@@ -41,7 +41,6 @@ export default function createApp() {
       return verifyAuth()(c, next);
     })
     .use("/*", async (c, next) => {
-      console.log({ path: c.req.path });
       if (c.req.path.startsWith("/api/auth")) {
         return next();
       }

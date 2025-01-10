@@ -3,7 +3,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { createUserSchema, verifyEmailSchema } from "@/api/db/schema/auth";
+import { createUserSchema, verifyEmailSchema } from "@/api/db/schema/auth/auth";
 import { conflictSchema } from "@/api/lib/constants";
 
 const tags = ["Auth"];

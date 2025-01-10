@@ -27,12 +27,12 @@ function RootLayout() {
   const isHideNav = hideNavRoutes.some(route => matchRoute({ to: route }));
 
   return (
-    <>
+    <div className="h-dvh w-dvw flex flex-col">
       {!isHideNav ? <AppNavbar /> : null}
-      <main className="mt-2 h-[calc(100dvh-6rem)] w-dvw">
+      <main className="flex-1">
         <Outlet />
-        <TanStackRouterDevtools />
       </main>
-    </>
+      <TanStackRouterDevtools />
+    </div>
   );
 };

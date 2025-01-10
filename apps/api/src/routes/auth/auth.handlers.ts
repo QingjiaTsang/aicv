@@ -7,7 +7,7 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type { AppRouteHandler } from "@/api/lib/types";
 
-import { users, verificationTokens } from "@/api/db/schema/auth";
+import { users, verificationTokens } from "@/api/db/schema/auth/auth";
 import { hashPassword } from "@/api/lib/auth-utils";
 import { sendVerificationEmail } from "@/api/lib/email-utils";
 
