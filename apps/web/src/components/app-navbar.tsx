@@ -2,92 +2,89 @@ import { ModeToggle } from "@/web/components/shadcn-ui/mode-toggle";
 import type { User } from "@auth/core/types";
 import { signOut, useSession } from "@hono/auth-js/react";
 import { Link } from "@tanstack/react-router";
+import { LogOut, Settings, User as UserIcon } from "lucide-react";
 
-const getInitials = (name: string | null) => {
+import { Avatar, AvatarFallback, AvatarImage } from "@/web/components/shadcn-ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/web/components/shadcn-ui/dropdown-menu";
+
+const getInitials = (name: string | null | undefined) => {
   if (!name) return '?';
   return name.charAt(0).toUpperCase();
 };
+
+function UserProfile({ user }: { user: User }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-violet-500/20 hover:ring-violet-500/40 transition-all">
+          <AvatarImage src={user.image ?? ''} alt={user.name ?? 'User avatar'} />
+          <AvatarFallback className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white">
+            {getInitials(user.name)}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="cursor-pointer">
+            <UserIcon className="mr-2" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            <Settings className="mr-2" />
+            <span>Settings</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="text-red-600 dark:text-red-400 focus:text-red-700 dark:focus:text-red-300 cursor-pointer"
+          onClick={() => signOut()}
+        >
+          <LogOut className="mr-2" />
+          <span>Sign Out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export default function AppNavbar() {
   const session = useSession();
 
   return (
-    <nav className="w-full border-b border-violet-100/20 dark:border-violet-800/10 bg-white/60 dark:bg-gray-950/60 backdrop-blur-xl shadow-sm">
-      <div className="container mx-auto p-3">
+    <nav className="sticky top-0 z-50 w-full shadow-sm border-b border-violet-100/20 dark:border-violet-800/10 bg-white/60 dark:bg-gray-950/60 backdrop-blur-xl">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0">
             <Link to="/">
-              <strong className="text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent hover:scale-110 transition-transform duration-200 cursor-pointer">
+              <strong className="text-2xl md:text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent hover:scale-110 transition-transform duration-200 cursor-pointer">
                 AICV
               </strong>
             </Link>
           </div>
 
-          <div className="flex items-center gap-6">
-            <NavLinks />
-            {session.data?.user && <UserProfile user={session.data.user} />}
+          <div className="flex items-center gap-3 md:gap-6">
             <ModeToggle />
+            {session.data?.user && <UserProfile user={session.data.user} />}
           </div>
         </div>
       </div>
     </nav>
-  );
-}
-
-
-function NavLinks() {
-  return (
-    <>
-      <Link
-        to="/"
-        className="font-medium text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 transition-all hover:scale-105"
-        activeProps={{
-          className: "font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-fuchsia-500 dark:from-violet-400 dark:to-fuchsia-400"
-        }}
-      >
-        Home
-      </Link>
-      <Link
-        to="/dashboard"
-        className="font-semibold text-gray-700 dark:text-gray-200 hover:text-violet-600 dark:hover:text-violet-400 transition-all hover:scale-105"
-        activeProps={{
-          className: "font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-500"
-        }}
-      >
-        Dashboard
-      </Link>
-    </>
-  );
-}
-
-function UserProfile({ user }: { user: User }) {
-  return (
-    <div className="flex items-center gap-6">
-      <div className="flex items-center gap-3">
-        {user.image ? (
-          <img
-            src={user.image}
-            alt={`${user.name}'s avatar`}
-            className="w-10 h-10 rounded-full object-cover ring-2 ring-violet-500/20"
-          />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 flex items-center justify-center ring-2 ring-violet-500/20">
-            <span className="text-white font-semibold text-lg">
-              {getInitials(user.name!)}
-            </span>
-          </div>
-        )}
-        <span className="font-medium text-gray-700 dark:text-gray-200">
-          {user.name || 'Anonymous User'}
-        </span>
-      </div>
-      <button
-        type="button"
-        onClick={() => signOut()}
-        className="px-4 py-2 rounded-md bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/50 transition-colors font-medium"
-      >
-        Sign Out
-      </button>
-    </div>
   );
 } 

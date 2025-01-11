@@ -5,7 +5,7 @@ import Google from "@auth/core/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { drizzle } from "drizzle-orm/d1";
 
-import type { AppEnv } from "./types";
+import type { AppEnv } from "@/api/lib/types";
 
 // import { AuthError, CredentialsSignin } from "@auth/core/errors";
 // import { encode } from "@auth/core/jwt";

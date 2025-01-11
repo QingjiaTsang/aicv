@@ -3,6 +3,8 @@ import type { DrizzleD1Database } from "drizzle-orm/d1";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
+import type * as schema from "@/api/db/schema";
+
 import { users } from "@/api/db/schema/auth/auth";
 
 export async function hashPassword(password: string) {
@@ -13,7 +15,11 @@ export async function verifyPassword(password: string, hashedPassword: string) {
   return bcrypt.compare(password, hashedPassword);
 }
 
-export async function getUserFromDb(db: DrizzleD1Database, email: string, password: string) {
+export async function getUserFromDb(
+  db: DrizzleD1Database<typeof schema>,
+  email: string,
+  password: string,
+) {
   const [existingUser] = await db
     .select()
     .from(users)

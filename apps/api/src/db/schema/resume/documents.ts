@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import { users } from "@/api/db/schema/auth/auth";
@@ -10,7 +10,7 @@ import { insertPersonalInfoSchema, personalInfo } from "@/api/db/schema/resume/p
 import { insertSkillsSchema, skills } from "@/api/db/schema/resume/skills";
 import { baseFields, baseFieldsOmitConfig } from "@/api/db/schema/utils/base-schema-fields";
 
-export const statusEnum = z.enum(["private", "public1", "archived"]);
+export const statusEnum = z.enum(["private", "public", "archived"]);
 type Status = z.infer<typeof statusEnum>;
 
 export const documents = sqliteTable("document", {
@@ -74,3 +74,6 @@ export const updateDocumentSchema = z.object({
   skills: z.array(insertSkillsSchema).optional(),
 });
 export type UpdateDocumentSchema = z.infer<typeof updateDocumentSchema>;
+
+export const selectDocumentSchema = createSelectSchema(documents);
+export type SelectDocumentSchema = z.infer<typeof selectDocumentSchema>;

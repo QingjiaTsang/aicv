@@ -1,22 +1,22 @@
 import { createId } from "@paralleldrive/cuid2";
 import { addDays, addHours } from "date-fns";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/d1";
 import { setCookie } from "hono/cookie";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type { AppRouteHandler } from "@/api/lib/types";
 
+import { createDb } from "@/api/db";
 import { sessions, users, verificationTokens } from "@/api/db/schema/auth/auth";
-import { getUserFromDb, hashPassword } from "@/api/lib/auth-utils";
-import { sendVerificationEmail } from "@/api/lib/email-utils";
+import { getUserFromDb, hashPassword } from "@/api/routes/auth/lib/auth-utils";
+import { sendVerificationEmail } from "@/api/routes/auth/lib/email-utils";
 
 import type { CredentialsSigninRoute, SignupRoute, VerifyEmailRoute } from "./auth.routes";
 
 export const signup: AppRouteHandler<SignupRoute> = async (c) => {
   const body = c.req.valid("json");
-  const db = drizzle(c.env.DB);
+  const db = createDb(c.env);
 
   const [existingUser] = await db
     .select()
@@ -90,7 +90,7 @@ export const signup: AppRouteHandler<SignupRoute> = async (c) => {
 
 export const verifyEmail: AppRouteHandler<VerifyEmailRoute> = async (c) => {
   const { token } = c.req.valid("query");
-  const db = drizzle(c.env.DB);
+  const db = createDb(c.env);
 
   const [verificationToken] = await db
     .select()
@@ -121,7 +121,7 @@ export const verifyEmail: AppRouteHandler<VerifyEmailRoute> = async (c) => {
 };
 
 export const credentialsSignin: AppRouteHandler<CredentialsSigninRoute> = async (c) => {
-  const db = drizzle(c.env.DB);
+  const db = createDb(c.env);
   const body = c.req.valid("json");
 
   const result = await getUserFromDb(db, body.email, body.password);

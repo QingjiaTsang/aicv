@@ -1,4 +1,4 @@
-import createRouter from "@/api/lib/create-router";
+import createRouter from "@/api/lib/app-config/create-router";
 
 import * as handlers from "./auth.handlers";
 import * as routes from "./auth.routes";

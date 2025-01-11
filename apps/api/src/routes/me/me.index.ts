@@ -2,7 +2,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 
-import createRouter from "@/api/lib/create-router";
+import createRouter from "@/api/lib/app-config/create-router";
 
 const authUserInfoSchema = z.object({
   id: z.string(),

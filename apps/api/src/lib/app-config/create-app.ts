@@ -1,11 +1,11 @@
 import { authHandler, verifyAuth } from "@hono/auth-js";
 import { notFound, onError } from "stoker/middlewares";
 
-import type { AppOpenAPI } from "./types";
+import type { AppOpenAPI } from "@/api/lib/types";
 
-import { BASE_PATH } from "./constants";
-import createAuthConfig from "./create-auth-config";
-import createRouter from "./create-router";
+import createAuthConfig from "@/api/lib/app-config/create-auth-config";
+import createRouter from "@/api/lib/app-config/create-router";
+import { BASE_PATH } from "@/api/lib/constants";
 
 export default function createApp() {
   const app = createRouter()
