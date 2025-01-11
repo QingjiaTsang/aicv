@@ -15,6 +15,13 @@
       "when": 1736534772544,
       "tag": "0001_empty_liz_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1736612631776,
+      "tag": "0002_ambitious_bushwacker",
+      "breakpoints": true
     }
   ]
 }

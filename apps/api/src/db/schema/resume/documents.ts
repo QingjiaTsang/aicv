@@ -10,7 +10,7 @@ import { insertPersonalInfoSchema, personalInfo } from "@/api/db/schema/resume/p
 import { insertSkillsSchema, skills } from "@/api/db/schema/resume/skills";
 import { baseFields, baseFieldsOmitConfig } from "@/api/db/schema/utils/base-schema-fields";
 
-export const statusEnum = z.enum(["draft", "published", "archived"]);
+export const statusEnum = z.enum(["private", "public1", "archived"]);
 type Status = z.infer<typeof statusEnum>;
 
 export const documents = sqliteTable("document", {
@@ -27,7 +27,7 @@ export const documents = sqliteTable("document", {
   currentPosition: integer("current_position")
     .notNull()
     .default(1),
-  status: text("status").$type<Status>().notNull().default("draft"),
+  status: text("status").$type<Status>().notNull().default("private"),
   authorName: text("author_name").notNull(),
   authorEmail: text("author_email").notNull(),
 });

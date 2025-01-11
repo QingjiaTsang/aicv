@@ -98,6 +98,11 @@ export const createUserSchema = createInsertSchema(users)
     password: z.string()
       .min(6, "Password must be at least 6 characters")
       .max(100, "Password cannot exceed 100 characters"),
+    // TODO: add strong password validation later on
+    // .regex(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+    //   "Password must contain uppercase and lowercase letters and numbers",
+    // ),
   });
 export type CreateUserSchema = z.infer<typeof createUserSchema>;
 
@@ -116,10 +121,6 @@ export const credentialsSigninSchema = createUserSchema.omit({
   password: z.string()
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password cannot exceed 100 characters"),
-  // .regex(
-  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-  //   "Password must contain uppercase and lowercase letters and numbers",
-  // ),
 });
 export type CredentialsSigninSchema = z.infer<typeof credentialsSigninSchema>;
 
