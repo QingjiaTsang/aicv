@@ -107,7 +107,7 @@ export const selectUsersSchema = createSelectSchema(users).omit({
 });
 export type SelectUsersSchema = z.infer<typeof selectUsersSchema>;
 
-export const credentialsSchema = createUserSchema.omit({
+export const credentialsSigninSchema = createUserSchema.omit({
   name: true,
 }).extend({
   email: z.string()
@@ -121,7 +121,7 @@ export const credentialsSchema = createUserSchema.omit({
   //   "Password must contain uppercase and lowercase letters and numbers",
   // ),
 });
-export type CredentialsSchema = z.infer<typeof credentialsSchema>;
+export type CredentialsSigninSchema = z.infer<typeof credentialsSigninSchema>;
 
 export const verificationTokenSchema = createSelectSchema(verificationTokens);
 export type VerificationToken = z.infer<typeof verificationTokenSchema>;

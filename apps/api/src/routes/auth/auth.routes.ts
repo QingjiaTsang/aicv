@@ -1,9 +1,9 @@
 import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { createErrorSchema } from "stoker/openapi/schemas";
+import { createErrorSchema, createMessageObjectSchema } from "stoker/openapi/schemas";
 
-import { createUserSchema, verifyEmailSchema } from "@/api/db/schema/auth/auth";
+import { createUserSchema, credentialsSigninSchema, selectUsersSchema, verifyEmailSchema } from "@/api/db/schema/auth/auth";
 import { conflictSchema } from "@/api/lib/constants";
 
 const tags = ["Auth"];
@@ -50,5 +50,25 @@ export const verifyEmail = createRoute({
   },
 });
 
+export const credentialsSignin = createRoute({
+  tags: ["Auth"],
+  method: "post",
+  path: "/credentials/signin",
+  request: {
+    body: jsonContent(credentialsSigninSchema, "Sign-in info"),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      selectUsersSchema,
+      "Signin success",
+    ),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+      createMessageObjectSchema("Signin failed"),
+      "Signin failed",
+    ),
+  },
+});
+
 export type SignupRoute = typeof signup;
 export type VerifyEmailRoute = typeof verifyEmail;
+export type CredentialsSigninRoute = typeof credentialsSignin;

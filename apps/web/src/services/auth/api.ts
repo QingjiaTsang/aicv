@@ -1,4 +1,4 @@
-import type { CreateUserSchema, CredentialsSchema } from "@aicv-app/api/schema";
+import type { CreateUserSchema, CredentialsSigninSchema } from "@aicv-app/api/schema";
 
 import { signIn } from "@hono/auth-js/react";
 import * as HttpStatusCodes from "stoker/http-status-codes";
@@ -27,25 +27,17 @@ export const authApi = {
     }
   },
 
-  credentialSignin: async (data: CredentialsSchema & { callbackUrl?: string }) => {
-    try {
-      const response = await signIn("credentials", {
-        ...data,
-        callbackUrl: data.callbackUrl,
-        redirect: false,
-      });
-      console.log({
-        response,
-      });
+  credentialSignin: async (data: CredentialsSigninSchema) => {
+    const response = await apiClient.api.auth.credentials.signin.$post({
+      json: data,
+    });
 
-      return response;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
     }
-    catch (error) {
-      console.log({
-        error,
-      });
-      // throw new Error(error);
-    }
+
+    return response.json();
   },
 
   githubSignin: async (callbackUrl?: string) => {

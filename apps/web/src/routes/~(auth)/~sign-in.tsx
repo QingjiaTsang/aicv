@@ -1,9 +1,9 @@
-import type { CredentialsSchema } from "@aicv-app/api/schema";
+import type { CredentialsSigninSchema } from "@aicv-app/api/schema";
 
-import { credentialsSchema } from "@aicv-app/api/schema";
+import { credentialsSigninSchema } from "@aicv-app/api/schema";
 import { getSession } from "@hono/auth-js/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
@@ -54,10 +54,9 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 
 function SigninPage() {
   const { callbackUrl } = Route.useSearch();
-  const navigate = useNavigate();
 
-  const form = useForm<CredentialsSchema>({
-    resolver: zodResolver(credentialsSchema),
+  const form = useForm<CredentialsSigninSchema>({
+    resolver: zodResolver(credentialsSigninSchema),
     defaultValues: {
       email: '',
       password: ''
@@ -70,9 +69,7 @@ function SigninPage() {
     error: credentialSigninError,
   } = useCredentialSigninMutation({
     onSuccess: () => {
-      navigate({
-        to: callbackUrl || "/",
-      });
+      window.location.href = callbackUrl || "/";
     },
   });
 
@@ -88,11 +85,8 @@ function SigninPage() {
     error: googleSigninError,
   } = useGoogleSigninMutation();
 
-  const handleCredentialsSignIn = async (data: CredentialsSchema) => {
-    credentialSignin({
-      ...data,
-      callbackUrl,
-    });
+  const handleCredentialsSignIn = async (data: CredentialsSigninSchema) => {
+    credentialSignin(data);
   };
 
   const handleGoogleSignIn = async () => {

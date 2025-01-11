@@ -1,17 +1,18 @@
 import { createId } from "@paralleldrive/cuid2";
-import { addHours } from "date-fns";
+import { addDays, addHours } from "date-fns";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
+import { setCookie } from "hono/cookie";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type { AppRouteHandler } from "@/api/lib/types";
 
-import { users, verificationTokens } from "@/api/db/schema/auth/auth";
-import { hashPassword } from "@/api/lib/auth-utils";
+import { sessions, users, verificationTokens } from "@/api/db/schema/auth/auth";
+import { getUserFromDb, hashPassword } from "@/api/lib/auth-utils";
 import { sendVerificationEmail } from "@/api/lib/email-utils";
 
-import type { SignupRoute, VerifyEmailRoute } from "./auth.routes";
+import type { CredentialsSigninRoute, SignupRoute, VerifyEmailRoute } from "./auth.routes";
 
 export const signup: AppRouteHandler<SignupRoute> = async (c) => {
   const body = c.req.valid("json");
@@ -117,4 +118,35 @@ export const verifyEmail: AppRouteHandler<VerifyEmailRoute> = async (c) => {
   ]);
 
   return c.redirect("/sign-in");
+};
+
+export const credentialsSignin: AppRouteHandler<CredentialsSigninRoute> = async (c) => {
+  const db = drizzle(c.env.DB);
+  const body = c.req.valid("json");
+
+  const result = await getUserFromDb(db, body.email, body.password);
+
+  if (!result.success) {
+    return c.json({
+      message: result.message!,
+    }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const sessionToken = createId();
+  const expires = addDays(new Date(), 30);
+
+  await db.insert(sessions).values({
+    sessionToken,
+    userId: result.user!.id,
+    expires,
+  });
+
+  setCookie(c, "authjs.session-token", sessionToken, {
+    expires,
+    httpOnly: true,
+    secure: c.env.ENV === "production",
+    path: "/",
+  });
+
+  return c.json(result.user, HttpStatusCodes.OK);
 };

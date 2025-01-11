@@ -4,6 +4,7 @@ import type { BASE_PATH } from "./constants";
 
 export type AppEnv = {
   Bindings: {
+    ENV: string;
     AUTH_SECRET: string;
     GITHUB_CLIENT_ID: string;
     GITHUB_CLIENT_SECRET: string;

@@ -30,7 +30,8 @@ export default function createApp() {
     .use("/*", async (c, next) => {
       // Handle credential signup and verify
       if (c.req.path.startsWith("/api/auth/signup")
-        || c.req.path.startsWith("/api/auth/verify")) {
+        || c.req.path.startsWith("/api/auth/verify")
+        || c.req.path.startsWith("/api/auth/credentials/signin")) {
         return next();
       }
 
@@ -38,13 +39,6 @@ export default function createApp() {
       if (c.req.path.startsWith("/api/auth")) {
         return authHandler()(c, next);
       }
-      return verifyAuth()(c, next);
-    })
-    .use("/*", async (c, next) => {
-      if (c.req.path.startsWith("/api/auth")) {
-        return next();
-      }
-
       return verifyAuth()(c, next);
     })
     .notFound(notFound)

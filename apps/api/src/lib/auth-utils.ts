@@ -33,19 +33,19 @@ export async function getUserFromDb(db: DrizzleD1Database, email: string, passwo
     };
   }
 
+  if (!existingUser.emailVerified) {
+    return {
+      success: false,
+      message: "Email not verified",
+    };
+  }
+
   const isValid = await verifyPassword(password, existingUser.password);
 
   if (!isValid) {
     return {
       success: false,
       message: "Invalid password",
-    };
-  }
-
-  if (!existingUser.emailVerified) {
-    return {
-      success: false,
-      message: "Email not verified",
     };
   }
 

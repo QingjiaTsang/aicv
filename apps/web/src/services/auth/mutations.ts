@@ -1,4 +1,4 @@
-import type { CreateUserSchema, CredentialsSchema } from "@aicv-app/api/schema";
+import type { CreateUserSchema, CredentialsSigninSchema } from "@aicv-app/api/schema";
 import type { UseMutationOptions } from "@tanstack/react-query";
 
 import { useMutation } from "@tanstack/react-query";
@@ -11,10 +11,10 @@ type SignupOptions = UseMutationOptions<
   CreateUserSchema
 >;
 
-type SigninOptions = UseMutationOptions<
+type CredentialsSigninOptions = UseMutationOptions<
   Awaited<ReturnType<typeof authApi.credentialSignin>>,
   Error,
-  CredentialsSchema & { callbackUrl?: string }
+  CredentialsSigninSchema
 >;
 
 type GithubSigninOptions = UseMutationOptions<
@@ -41,7 +41,7 @@ export const useSignupMutation = (options?: SignupOptions) => {
   });
 };
 
-export const useCredentialSigninMutation = (options?: SigninOptions) => {
+export const useCredentialSigninMutation = (options?: CredentialsSigninOptions) => {
   return useMutation({
     mutationFn: authApi.credentialSignin,
     ...options,
