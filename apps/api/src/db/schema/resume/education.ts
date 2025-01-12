@@ -11,10 +11,10 @@ export const education = sqliteTable("education", {
   documentId: text("document_id")
     .notNull()
     .references(() => documents.id, { onDelete: "cascade" }),
-  universityName: text("university_name"),
-  degree: text("degree"),
-  major: text("major"),
-  description: text("description"),
+  universityName: text("university_name", { length: 255 }),
+  degree: text("degree", { length: 255 }),
+  major: text("major", { length: 255 }),
+  description: text("description", { length: 1000 }),
   startDate: integer("start_date", { mode: "timestamp_ms" }),
   endDate: integer("end_date", { mode: "timestamp_ms" }),
 });

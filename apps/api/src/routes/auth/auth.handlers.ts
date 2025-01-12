@@ -18,10 +18,12 @@ export const signup: AppRouteHandler<SignupRoute> = async (c) => {
   const body = c.req.valid("json");
   const db = createDb(c.env);
 
-  const [existingUser] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, body.email!));
+  const existingUser = await db
+    .query
+    .users
+    .findFirst({
+      where: (users, { eq }) => eq(users.email, body.email!),
+    });
 
   if (existingUser && existingUser.emailVerified) {
     return c.json(
@@ -30,10 +32,12 @@ export const signup: AppRouteHandler<SignupRoute> = async (c) => {
     );
   }
 
-  const [existingToken] = await db
-    .select()
-    .from(verificationTokens)
-    .where(eq(verificationTokens.identifier, body.email!));
+  const existingToken = await db
+    .query
+    .verificationTokens
+    .findFirst({
+      where: (verificationTokens, { eq }) => eq(verificationTokens.identifier, body.email!),
+    });
 
   const now = new Date();
 
@@ -92,10 +96,12 @@ export const verifyEmail: AppRouteHandler<VerifyEmailRoute> = async (c) => {
   const { token } = c.req.valid("query");
   const db = createDb(c.env);
 
-  const [verificationToken] = await db
-    .select()
-    .from(verificationTokens)
-    .where(eq(verificationTokens.token, token));
+  const verificationToken = await db
+    .query
+    .verificationTokens
+    .findFirst({
+      where: (verificationTokens, { eq }) => eq(verificationTokens.token, token),
+    });
 
   if (!verificationToken) {
     return c.json({

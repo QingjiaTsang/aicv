@@ -117,7 +117,8 @@ export const credentialsSigninSchema = createUserSchema.omit({
 }).extend({
   email: z.string()
     .min(1, "Email cannot be empty")
-    .email("Please enter a valid email address"),
+    .email("Please enter a valid email address")
+    .transform(value => value.toLowerCase()),
   password: z.string()
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password cannot exceed 100 characters"),

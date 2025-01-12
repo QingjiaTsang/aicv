@@ -20,10 +20,12 @@ export async function getUserFromDb(
   email: string,
   password: string,
 ) {
-  const [existingUser] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email as string));
+  const existingUser = await db
+    .query
+    .users
+    .findFirst({
+      where: (users, { eq }) => eq(users.email, email),
+    });
 
   if (!existingUser) {
     return {

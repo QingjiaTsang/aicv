@@ -57,7 +57,7 @@ export function ResumeList({ resumes, isLoading, onEdit, onDelete }: ResumeListP
 
 function ResumeCard({ resume, onEdit, onDelete }: { resume: Resume; onEdit?: () => void; onDelete?: () => void }) {
   return (
-    <Card className="group relative overflow-hidden shadow-sm border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-violet-500/5 dark:hover:shadow-violet-400/5">
+    <Card className="group relative overflow-hidden shadow-sm hover:scale-105 border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-violet-500/5 dark:hover:shadow-violet-400/5">
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500/[0.08] to-purple-500/[0.08] dark:from-violet-500/[0.05] dark:to-purple-500/[0.05] group-hover:from-violet-500/[0.12] group-hover:to-purple-500/[0.12] transition-all duration-300" />
 
       <div className="relative p-6">

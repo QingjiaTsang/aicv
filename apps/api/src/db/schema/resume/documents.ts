@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -18,8 +18,8 @@ export const documents = sqliteTable("document", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  summary: text("summary"),
+  title: text("title", { length: 255 }).notNull(),
+  summary: text("summary", { length: 1000 }),
   themeColor: text("theme_color")
     .notNull()
     .default("#7c3aed"),
@@ -28,9 +28,16 @@ export const documents = sqliteTable("document", {
     .notNull()
     .default(1),
   status: text("status").$type<Status>().notNull().default("private"),
-  authorName: text("author_name").notNull(),
-  authorEmail: text("author_email").notNull(),
-});
+  authorName: text("author_name", { length: 255 }).notNull(),
+  authorEmail: text("author_email", { length: 255 }).notNull(),
+}, table => ([
+  index("user_status_idx").on(table.userId, table.status),
+  index("title_idx").on(table.title),
+  index("author_name_idx").on(table.authorName),
+  index("author_email_idx").on(table.authorEmail),
+  index("created_at_idx").on(table.createdAt),
+  index("updated_at_idx").on(table.updatedAt),
+]));
 
 export const documentRelations = relations(documents, ({ one, many }) => ({
   personalInfo: one(personalInfo),
@@ -54,7 +61,8 @@ export const insertDocumentSchema = createInsertSchema(documents, {
   authorEmail: z
     .string()
     .email("Please enter a valid email address")
-    .max(255, "Email address cannot exceed 255 characters"),
+    .max(255, "Email address cannot exceed 255 characters")
+    .transform(value => value.toLowerCase()),
 }).omit(baseFieldsOmitConfig);
 export type InsertDocumentSchema = z.infer<typeof insertDocumentSchema>;
 

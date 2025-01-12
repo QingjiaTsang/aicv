@@ -11,12 +11,12 @@ export const experience = sqliteTable("experience", {
   documentId: text("document_id")
     .notNull()
     .references(() => documents.id, { onDelete: "cascade" }),
-  title: text("title"),
-  companyName: text("company_name"),
-  state: text("state"),
-  city: text("city"),
-  isCurrentlyEmployed: integer("is_currently_employed").$defaultFn(() => 0),
-  workSummary: text("work_summary"),
+  title: text("title", { length: 255 }),
+  companyName: text("company_name", { length: 255 }),
+  state: text("state", { length: 255 }),
+  city: text("city", { length: 255 }),
+  isCurrentlyEmployed: integer("is_currently_employed", { mode: "boolean" }).notNull().default(false),
+  workSummary: text("work_summary", { length: 2000 }),
   startDate: integer("start_date", { mode: "timestamp_ms" }),
   endDate: integer("end_date", { mode: "timestamp_ms" }),
 });

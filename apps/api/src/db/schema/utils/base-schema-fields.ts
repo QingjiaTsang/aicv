@@ -4,8 +4,13 @@ export const baseFields = {
   id: text()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  createdAt: integer({ mode: "timestamp_ms" }).$defaultFn(() => new Date()),
-  updatedAt: integer({ mode: "timestamp_ms" }).$onUpdateFn(() => new Date()),
+  createdAt: integer({ mode: "timestamp_ms" })
+    .notNull()
+    .$default(() => new Date()),
+  updatedAt: integer({ mode: "timestamp_ms" })
+    .notNull()
+    .$default(() => new Date())
+    .$onUpdate(() => new Date()),
 };
 
 export const baseFieldsOmitConfig = {
