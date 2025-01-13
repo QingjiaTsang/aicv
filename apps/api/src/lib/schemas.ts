@@ -1,8 +1,8 @@
 import { z } from "@hono/zod-openapi";
 
 export const paginationQuerySchema = z.object({
-  page: z.string().regex(/^\d+$/).transform(Number).optional(),
-  limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+  page: z.number().int().positive().optional(),
+  limit: z.number().int().positive().optional(),
 });
 
 export function paginatedResponseSchemaGenerator<T>(dataSchema: z.ZodSchema<T>) {

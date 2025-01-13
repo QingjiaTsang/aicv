@@ -1,6 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { jsonContent } from "stoker/openapi/helpers";
+import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema, createMessageObjectSchema } from "stoker/openapi/schemas";
 
 import { createUserSchema, credentialsSigninSchema, selectUsersSchema, verifyEmailSchema } from "@/api/db/schema/auth/auth";
@@ -13,7 +13,7 @@ export const signup = createRoute({
   method: "post",
   path: "/signup",
   request: {
-    body: jsonContent(
+    body: jsonContentRequired(
       createUserSchema,
       "Sign-up info",
     ),
@@ -55,7 +55,7 @@ export const credentialsSignin = createRoute({
   method: "post",
   path: "/credentials/signin",
   request: {
-    body: jsonContent(credentialsSigninSchema, "Sign-in info"),
+    body: jsonContentRequired(credentialsSigninSchema, "Sign-in info"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(

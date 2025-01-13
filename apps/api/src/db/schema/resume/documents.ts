@@ -4,17 +4,23 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import { users } from "@/api/db/schema/auth/auth";
-import { education, insertEducationSchema } from "@/api/db/schema/resume/education";
-import { experience, insertExperienceSchema } from "@/api/db/schema/resume/experience";
-import { insertPersonalInfoSchema, personalInfo } from "@/api/db/schema/resume/personal-info";
-import { insertSkillsSchema, skills } from "@/api/db/schema/resume/skills";
-import { baseFields, baseFieldsOmitConfig } from "@/api/db/schema/utils/base-schema-fields";
+import { education } from "@/api/db/schema/resume/education";
+import { experience } from "@/api/db/schema/resume/experience";
+import { personalInfo } from "@/api/db/schema/resume/personal-info";
+import { skills } from "@/api/db/schema/resume/skills";
 
-export const statusEnum = z.enum(["private", "public", "archived"]);
-type Status = z.infer<typeof statusEnum>;
+export const DOCUMENT_STATUS = {
+  PRIVATE: "private",
+  PUBLIC: "public",
+  ARCHIVED: "archived",
+} as const;
+export type DocumentStatus = typeof DOCUMENT_STATUS[keyof typeof DOCUMENT_STATUS];
 
 export const documents = sqliteTable("document", {
-  ...baseFields,
+  // Note: can't use baseFields to replace id, createdAt and updatedAt because it's not good for type inference here
+  id: text()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -27,9 +33,19 @@ export const documents = sqliteTable("document", {
   currentPosition: integer("current_position")
     .notNull()
     .default(1),
-  status: text("status").$type<Status>().notNull().default("private"),
+  status: text("status")
+    .notNull()
+    .$type<DocumentStatus>()
+    .default(DOCUMENT_STATUS.PRIVATE),
   authorName: text("author_name", { length: 255 }).notNull(),
   authorEmail: text("author_email", { length: 255 }).notNull(),
+  createdAt: integer({ mode: "timestamp_ms" })
+    .notNull()
+    .$default(() => new Date()),
+  updatedAt: integer({ mode: "timestamp_ms" })
+    .notNull()
+    .$default(() => new Date())
+    .$onUpdate(() => new Date()),
 }, table => ([
   index("user_status_idx").on(table.userId, table.status),
   index("title_idx").on(table.title),
@@ -40,6 +56,10 @@ export const documents = sqliteTable("document", {
 ]));
 
 export const documentRelations = relations(documents, ({ one, many }) => ({
+  user: one(users, {
+    fields: [documents.userId],
+    references: [users.id],
+  }),
   personalInfo: one(personalInfo),
   experience: many(experience),
   education: many(education),
@@ -47,6 +67,7 @@ export const documentRelations = relations(documents, ({ one, many }) => ({
 }));
 
 export const insertDocumentSchema = createInsertSchema(documents, {
+  userId: z.string(),
   title: z.string().min(1, "Title cannot be empty").max(255, "Title cannot exceed 255 characters"),
   summary: z.string().max(1000, "Summary cannot exceed 1000 characters").optional(),
   themeColor: z
@@ -56,32 +77,30 @@ export const insertDocumentSchema = createInsertSchema(documents, {
     .optional(),
   thumbnail: z.string().url("Please enter a valid URL address").optional(),
   currentPosition: z.number().int().min(1).default(1).optional(),
-  status: statusEnum,
+  status: z.enum([DOCUMENT_STATUS.PRIVATE, DOCUMENT_STATUS.PUBLIC, DOCUMENT_STATUS.ARCHIVED]),
   authorName: z.string().min(1, "Author name cannot be empty").max(255, "Author name cannot exceed 255 characters"),
   authorEmail: z
     .string()
     .email("Please enter a valid email address")
     .max(255, "Email address cannot exceed 255 characters")
     .transform(value => value.toLowerCase()),
-}).omit(baseFieldsOmitConfig);
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 export type InsertDocumentSchema = z.infer<typeof insertDocumentSchema>;
 
-export const updateDocumentSchema = z.object({
-  title: insertDocumentSchema.shape.title.optional(),
-  summary: insertDocumentSchema.shape.summary.optional(),
-  themeColor: insertDocumentSchema.shape.themeColor.optional(),
-  thumbnail: insertDocumentSchema.shape.thumbnail.optional(),
-  currentPosition: insertDocumentSchema.shape.currentPosition.optional(),
-  status: insertDocumentSchema.shape.status.optional(),
-  authorName: insertDocumentSchema.shape.authorName.optional(),
-  authorEmail: insertDocumentSchema.shape.authorEmail.optional(),
-
-  personalInfo: insertPersonalInfoSchema.optional(),
-  education: z.array(insertEducationSchema).optional(),
-  experience: z.array(insertExperienceSchema).optional(),
-  skills: z.array(insertSkillsSchema).optional(),
-});
+export const updateDocumentSchema = insertDocumentSchema.partial();
 export type UpdateDocumentSchema = z.infer<typeof updateDocumentSchema>;
 
-export const selectDocumentSchema = createSelectSchema(documents);
+export const selectDocumentSchema = createSelectSchema(documents).extend({
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  status: z.enum([
+    DOCUMENT_STATUS.PRIVATE,
+    DOCUMENT_STATUS.PUBLIC,
+    DOCUMENT_STATUS.ARCHIVED,
+  ]),
+});
 export type SelectDocumentSchema = z.infer<typeof selectDocumentSchema>;

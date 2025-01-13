@@ -1,7 +1,7 @@
 import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createErrorSchema, createMessageObjectSchema } from "stoker/openapi/schemas";
+import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { insertDocumentSchema, selectDocumentSchema, updateDocumentSchema } from "@/api/db/schema";
 import { notFoundSchema } from "@/api/lib/constants";
@@ -17,7 +17,7 @@ export const list = createRoute({
     query: paginationQuerySchema,
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
+    [HttpStatusCodes.OK]: jsonContentRequired(
       paginatedResponseSchemaGenerator(selectDocumentSchema),
       "Documents",
     ),
@@ -46,7 +46,7 @@ export const create = createRoute({
   method: "post",
   path: "/documents",
   request: {
-    body: jsonContent(insertDocumentSchema, "Document"),
+    body: jsonContentRequired(insertDocumentSchema, "Document"),
   },
   responses: {
     [HttpStatusCodes.CREATED]: jsonContent(selectDocumentSchema, "Document created"),
@@ -63,7 +63,7 @@ export const update = createRoute({
   path: "/documents/{id}",
   request: {
     params: idStringParamsSchema,
-    body: jsonContent(updateDocumentSchema, "Document"),
+    body: jsonContentRequired(updateDocumentSchema, "Document"),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(selectDocumentSchema, "Document updated"),

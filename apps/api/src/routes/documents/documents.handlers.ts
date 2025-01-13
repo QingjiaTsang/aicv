@@ -99,7 +99,11 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
     );
   }
 
-  const [updatedData] = await db.update(documents).set(dataToUpdate).where(eq(documents.id, String(id))).returning();
+  const [updatedData] = await db
+    .update(documents)
+    .set(dataToUpdate)
+    .where(eq(documents.id, String(id)))
+    .returning();
 
   if (!updatedData) {
     return c.json(
