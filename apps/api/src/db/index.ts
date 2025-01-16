@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/d1";
 
-import type { AppEnv } from "../lib/types";
+import type { AppEnv } from "@/api/lib/types";
 
 import * as schema from "./schema";
 

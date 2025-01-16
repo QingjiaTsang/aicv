@@ -19,7 +19,6 @@ import { Route as authSignInImport } from './routes/~(auth)/~sign-in'
 import { Route as coreAuthenticatedLayoutDashboardDocumentsImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~documents'
 import { Route as coreAuthenticatedLayoutDashboardIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~index'
 import { Route as coreAuthenticatedLayoutDashboardDocumentDocumentIdEditImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~edit'
-import { Route as coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~index'
 
 // Create Virtual Routes
 
@@ -78,13 +77,6 @@ const coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute =
   coreAuthenticatedLayoutDashboardDocumentDocumentIdEditImport.update({
     id: '/dashboard/document/$document-id/edit',
     path: '/dashboard/document/$document-id/edit',
-    getParentRoute: () => coreAuthenticatedLayoutRoute,
-  } as any)
-
-const coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute =
-  coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexImport.update({
-    id: '/dashboard/document/$document-id/',
-    path: '/dashboard/document/$document-id/',
     getParentRoute: () => coreAuthenticatedLayoutRoute,
   } as any)
 
@@ -148,13 +140,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof coreAuthenticatedLayoutDashboardDocumentsImport
       parentRoute: typeof coreAuthenticatedLayoutImport
     }
-    '/(core)/_authenticated-layout/dashboard/document/$document-id/': {
-      id: '/(core)/_authenticated-layout/dashboard/document/$document-id/'
-      path: '/dashboard/document/$document-id'
-      fullPath: '/dashboard/document/$document-id'
-      preLoaderRoute: typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexImport
-      parentRoute: typeof coreAuthenticatedLayoutImport
-    }
     '/(core)/_authenticated-layout/dashboard/document/$document-id/edit': {
       id: '/(core)/_authenticated-layout/dashboard/document/$document-id/edit'
       path: '/dashboard/document/$document-id/edit'
@@ -182,7 +167,6 @@ const LandingLayoutRouteWithChildren = LandingLayoutRoute._addFileChildren(
 interface coreAuthenticatedLayoutRouteChildren {
   coreAuthenticatedLayoutDashboardIndexRoute: typeof coreAuthenticatedLayoutDashboardIndexRoute
   coreAuthenticatedLayoutDashboardDocumentsRoute: typeof coreAuthenticatedLayoutDashboardDocumentsRoute
-  coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute: typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
   coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute: typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
@@ -192,8 +176,6 @@ const coreAuthenticatedLayoutRouteChildren: coreAuthenticatedLayoutRouteChildren
       coreAuthenticatedLayoutDashboardIndexRoute,
     coreAuthenticatedLayoutDashboardDocumentsRoute:
       coreAuthenticatedLayoutDashboardDocumentsRoute,
-    coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute:
-      coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute,
     coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute:
       coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute,
   }
@@ -220,7 +202,6 @@ export interface FileRoutesByFullPath {
   '/': typeof LandingLayoutIndexRoute
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
-  '/dashboard/document/$document-id': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
   '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
@@ -230,7 +211,6 @@ export interface FileRoutesByTo {
   '/': typeof LandingLayoutIndexRoute
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
-  '/dashboard/document/$document-id': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
   '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
@@ -244,7 +224,6 @@ export interface FileRoutesById {
   '/_landing-layout/': typeof LandingLayoutIndexRoute
   '/(core)/_authenticated-layout/dashboard/': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/(core)/_authenticated-layout/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
-  '/(core)/_authenticated-layout/dashboard/document/$document-id/': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdIndexRoute
   '/(core)/_authenticated-layout/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
@@ -257,7 +236,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/dashboard/documents'
-    | '/dashboard/document/$document-id'
     | '/dashboard/document/$document-id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -266,7 +244,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/dashboard/documents'
-    | '/dashboard/document/$document-id'
     | '/dashboard/document/$document-id/edit'
   id:
     | '__root__'
@@ -278,7 +255,6 @@ export interface FileRouteTypes {
     | '/_landing-layout/'
     | '/(core)/_authenticated-layout/dashboard/'
     | '/(core)/_authenticated-layout/dashboard/documents'
-    | '/(core)/_authenticated-layout/dashboard/document/$document-id/'
     | '/(core)/_authenticated-layout/dashboard/document/$document-id/edit'
   fileRoutesById: FileRoutesById
 }
@@ -337,7 +313,6 @@ export const routeTree = rootRoute
       "children": [
         "/(core)/_authenticated-layout/dashboard/",
         "/(core)/_authenticated-layout/dashboard/documents",
-        "/(core)/_authenticated-layout/dashboard/document/$document-id/",
         "/(core)/_authenticated-layout/dashboard/document/$document-id/edit"
       ]
     },
@@ -351,10 +326,6 @@ export const routeTree = rootRoute
     },
     "/(core)/_authenticated-layout/dashboard/documents": {
       "filePath": "~(core)/~_authenticated-layout/~dashboard/~documents.tsx",
-      "parent": "/(core)/_authenticated-layout"
-    },
-    "/(core)/_authenticated-layout/dashboard/document/$document-id/": {
-      "filePath": "~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~index.tsx",
       "parent": "/(core)/_authenticated-layout"
     },
     "/(core)/_authenticated-layout/dashboard/document/$document-id/edit": {

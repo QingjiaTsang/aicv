@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-import type { AppEnv } from "./types";
+import type { AppEnv } from "@/api/lib/types";
 
 export async function sendVerificationEmail(
   email: string,

@@ -29,7 +29,7 @@ function RootLayout() {
   return (
     <div className="h-dvh w-dvw flex flex-col">
       {!isHideNav ? <AppNavbar /> : null}
-      <main className="flex-1">
+      <main className="flex-1 pb-8">
         <Outlet />
       </main>
       <TanStackRouterDevtools />

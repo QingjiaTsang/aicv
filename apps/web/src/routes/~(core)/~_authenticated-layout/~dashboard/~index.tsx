@@ -1,60 +1,63 @@
+import useConfirm from "@/web/hooks/useConfirm";
+import queryClient from "@/web/lib/query-client";
 import { DashboardHero } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/hero-section";
 import { ResumeList } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/resume-list";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useCreateDocumentMutation, useDeleteDocumentMutation } from "@/web/services/documents/mutations";
+import { documentsQueryOptionsFn } from "@/web/services/documents/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
   "/(core)/_authenticated-layout/dashboard/",
 )({
   component: DashboardPage,
+  loader: () => queryClient.ensureQueryData(documentsQueryOptionsFn({ page: 1, pageSize: 100 })),
 });
 
-// 模拟数据，实际应该从 API 获取
-const mockResumes = [
-  {
-    id: "1",
-    title: "Software Engineer Resume",
-    updatedAt: "2024-03-15T10:00:00Z",
-    status: "public" as const,
-  },
-  {
-    id: "2",
-    title: "Product Manager Draft",
-    updatedAt: "2024-03-14T15:30:00Z",
-    status: "private" as const,
-  },
-];
-
 function DashboardPage() {
-  const navigate = useNavigate();
+  const { data: preloadedData, isPending: isPreloading } = useSuspenseQuery(documentsQueryOptionsFn({ page: 1, pageSize: 100 }));
+  const { mutate: deleteDocument } = useDeleteDocumentMutation();
+  const { mutate: createDocument, isPending: isCreatingDocument } = useCreateDocumentMutation();
 
-  const handleEdit = (id: string) => {
-    navigate({ to: "/dashboard/document/$document-id/edit", params: { "document-id": id } });
+  const [DeleteResumeConfirmDialog, confirmDeleteResume] = useConfirm({
+    title: "Delete Resume",
+    message: "Are you sure you want to delete this resume?",
+  }) as [() => JSX.Element, () => Promise<boolean>];
+
+  const handleCreate = () => {
+    createDocument({ title: "Untitled Resume" });
   };
 
   const handleDelete = async (id: string) => {
-    // 实现删除逻辑
-    console.log("Delete resume:", id);
+    const confirmed = await confirmDeleteResume();
+    if (!confirmed) {
+      return;
+    }
+    deleteDocument(id);
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <DashboardHero />
+    <>
+      <DeleteResumeConfirmDialog />
+      <div className="flex flex-col gap-8">
+        <DashboardHero isPending={isPreloading || isCreatingDocument} onCreate={handleCreate} />
 
-      <div className="container mx-auto px-4">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              All Resumes
-            </h2>
+        <div className="container mx-auto w-full max-w-6xl px-6">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                All Resumes
+              </h2>
+            </div>
+
+            <ResumeList
+              isLoading={isPreloading}
+              resumes={preloadedData.data}
+              onDelete={handleDelete}
+            />
           </div>
-
-          <ResumeList
-            resumes={mockResumes}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
         </div>
       </div>
-    </div>
+    </>
   );
 }

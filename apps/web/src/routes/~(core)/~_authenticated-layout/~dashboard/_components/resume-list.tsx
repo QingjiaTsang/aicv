@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, MoreVertical, Pencil, Star, Trash2 } from "lucide-react";
+import { FileText, MoreVertical, Pencil, Star, Trash2, Eye, LockOpen, Lock, Archive } from "lucide-react";
 
 import { Button } from "@/web/components/shadcn-ui/button";
 import { Card } from "@/web/components/shadcn-ui/card";
@@ -10,23 +10,18 @@ import {
   DropdownMenuTrigger,
 } from "@/web/components/shadcn-ui/dropdown-menu";
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton";
+import { SelectDocumentSchema } from "@aicv-app/api/schema";
 
-type Resume = {
-  id: string;
-  title: string;
-  updatedAt: string;
-  status: "private" | "public";
-  thumbnail?: string;
-};
+import { format } from "date-fns"
+import { Link, useRouter } from "@tanstack/react-router";
+import { getStatusIcon } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/utils/getStatusIcon";
 
 type ResumeListProps = {
-  resumes: Resume[];
-  isLoading?: boolean;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  resumes: SelectDocumentSchema[];
+  isLoading: boolean;
+  onDelete: (id: string) => void;
 };
-
-export function ResumeList({ resumes, isLoading, onEdit, onDelete }: ResumeListProps) {
+export function ResumeList({ resumes, isLoading, onDelete }: ResumeListProps) {
   if (isLoading) {
     return <ResumeListSkeleton />;
   }
@@ -46,7 +41,6 @@ export function ResumeList({ resumes, isLoading, onEdit, onDelete }: ResumeListP
         >
           <ResumeCard
             resume={resume}
-            onEdit={() => onEdit?.(resume.id)}
             onDelete={() => onDelete?.(resume.id)}
           />
         </motion.div>
@@ -55,21 +49,38 @@ export function ResumeList({ resumes, isLoading, onEdit, onDelete }: ResumeListP
   );
 }
 
-function ResumeCard({ resume, onEdit, onDelete }: { resume: Resume; onEdit?: () => void; onDelete?: () => void }) {
+type ResumeCardProps = {
+  resume: SelectDocumentSchema;
+  onDelete: () => void;
+};
+function ResumeCard({ resume, onDelete, }: ResumeCardProps) {
+  const router = useRouter();
+
+  // Prefetch data when hovering over the card
+  const handleMouseEnter = () => {
+    router.preloadRoute({
+      to: "/dashboard/document/$document-id/edit",
+      params: { "document-id": resume.id }
+    });
+  };
+
   return (
-    <Card className="group relative overflow-hidden shadow-sm hover:scale-105 border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-violet-500/5 dark:hover:shadow-violet-400/5">
+    <Card
+      onMouseEnter={handleMouseEnter}
+      className="w-full group relative overflow-hidden shadow-sm hover:scale-105 border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-violet-500/5 dark:hover:shadow-violet-400/5"
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500/[0.08] to-purple-500/[0.08] dark:from-violet-500/[0.05] dark:to-purple-500/[0.05] group-hover:from-violet-500/[0.12] group-hover:to-purple-500/[0.12] transition-all duration-300" />
 
-      <div className="relative p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
+      <div className="w-full relative p-6">
+        <div className="w-full flex items-start justify-between">
+          <div className="w-full flex items-center gap-3">
             <div className="rounded-full bg-violet-100/80 dark:bg-violet-900/80 p-2 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
               <FileText className="h-5 w-5 text-violet-600 dark:text-violet-300" />
             </div>
             <div>
-              <h3 className="font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Updated {new Date(resume.updatedAt).toLocaleDateString()}
+              <h3 className="truncate max-w-[220px] font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                Updated {format(resume.updatedAt, "MMM dd, yyyy HH:mm")}
               </p>
             </div>
           </div>
@@ -85,13 +96,22 @@ function ResumeCard({ resume, onEdit, onDelete }: { resume: Resume; onEdit?: () 
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onEdit}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
+              <DropdownMenuItem>
+                <Link
+                  to="/dashboard/document/$document-id/edit"
+                  params={{ "document-id": resume.id }}
+                  preload="intent"
+                  className="w-full flex items-center gap-2"
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span>Edit</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onDelete} className="text-red-600 dark:text-red-400">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                <div className="w-full flex items-center gap-2 cursor-pointer">
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete</span>
+                </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -99,11 +119,11 @@ function ResumeCard({ resume, onEdit, onDelete }: { resume: Resume; onEdit?: () 
 
         <div className="mt-4 flex items-center gap-2">
           <div className="text-xs px-2 py-1 rounded-full bg-violet-100/80 dark:bg-violet-900/80 text-violet-700 dark:text-violet-300 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
-            {resume.status}
+            <div className="flex items-center gap-1">
+              {getStatusIcon(resume.status)}
+              {resume.status}
+            </div>
           </div>
-          {resume.status === "public" && (
-            <Star className="h-4 w-4 text-yellow-500 dark:text-yellow-400" fill="currentColor" />
-          )}
         </div>
       </div>
     </Card>
@@ -142,4 +162,5 @@ function ResumeListSkeleton() {
       ))}
     </div>
   );
-} 
+}
+

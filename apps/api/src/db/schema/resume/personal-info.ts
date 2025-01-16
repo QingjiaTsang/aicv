@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { index, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import { documents } from "@/api/db/schema/resume/documents";
@@ -49,3 +49,4 @@ export const insertPersonalInfoSchema = createInsertSchema(personalInfo, {
 }).omit(baseFieldsOmitConfig);
 
 export type InsertPersonalInfoSchema = z.infer<typeof insertPersonalInfoSchema>;
+

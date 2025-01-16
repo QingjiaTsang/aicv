@@ -1,16 +1,21 @@
-import type { InsertDocumentSchema, UpdateDocumentSchema } from "@aicv-app/api/schema";
+import type { InsertDocumentSchema, SelectDocumentWithRelationsSchema, UpdateDocumentSchema } from "@aicv-app/api/schema";
 
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
 import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
+export type ListDocumentsParams = {
+  page?: number;
+  pageSize?: number;
+};
+
 export const documentsApi = {
-  listDocuments: async ({ limit = 10, page = 1 }: { limit?: number; page?: number } = {}) => {
+  listDocuments: async (params: ListDocumentsParams | undefined) => {
     const response = await apiClient.api.documents.$get({
       query: {
-        limit,
-        page,
+        pageSize: params?.pageSize,
+        page: params?.page,
       },
     });
 
@@ -32,7 +37,7 @@ export const documentsApi = {
       throw new Error(message);
     }
 
-    return json;
+    return json as SelectDocumentWithRelationsSchema
   },
 
   createDocument: async (document: InsertDocumentSchema) => {

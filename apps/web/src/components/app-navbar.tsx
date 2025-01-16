@@ -2,7 +2,7 @@ import { ModeToggle } from "@/web/components/shadcn-ui/mode-toggle";
 import type { User } from "@auth/core/types";
 import { signOut, useSession } from "@hono/auth-js/react";
 import { Link } from "@tanstack/react-router";
-import { LogOut, Settings, User as UserIcon } from "lucide-react";
+import { ChevronDown, LogOut, Settings, User as UserIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/web/components/shadcn-ui/avatar";
 import {
@@ -24,12 +24,15 @@ function UserProfile({ user }: { user: User }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-violet-500/20 hover:ring-violet-500/40 transition-all">
-          <AvatarImage src={user.image ?? ''} alt={user.name ?? 'User avatar'} />
-          <AvatarFallback className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white">
-            {getInitials(user.name)}
-          </AvatarFallback>
-        </Avatar>
+        <div className="flex items-center gap-1 cursor-pointer">
+          <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-violet-500/20 hover:ring-violet-500/40 transition-all">
+            <AvatarImage src={user.image ?? ''} alt={user.name ?? 'User avatar'} />
+            <AvatarFallback className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white">
+              {getInitials(user.name)}
+            </AvatarFallback>
+          </Avatar>
+          <ChevronDown className="w-4 h-4" />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuLabel className="font-normal">
@@ -69,7 +72,7 @@ export default function AppNavbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full shadow-sm border-b border-violet-100/20 dark:border-violet-800/10 bg-white/60 dark:bg-gray-950/60 backdrop-blur-xl">
-      <div className="container mx-auto px-4 py-3">
+      <div className="container max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0">
             <Link to="/">
@@ -79,7 +82,7 @@ export default function AppNavbar() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-3 md:gap-6">
+          <div className="flex items-center gap-3 md:gap-5">
             <ModeToggle />
             {session.data?.user && <UserProfile user={session.data.user} />}
           </div>

@@ -5,7 +5,7 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import type { AppRouteHandler } from "@/api/lib/types";
 
 import { createDb } from "@/api/db";
-import { documents } from "@/api/db/schema/resume/documents";
+import { DOCUMENT_STATUS, documents } from "@/api/db/schema/resume/documents";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants";
 
 import type { CreateRoute, GetOneRoute, ListRoute, RemoveRoute, UpdateRoute } from "./documents.routes";
@@ -23,6 +23,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     db.query.documents.findMany({
       limit,
       offset,
+      orderBy: (documents, { desc }) => [desc(documents.updatedAt)],
     }),
     db.select({ count: documents.id }).from(documents).then(result => result.length),
   ]);
@@ -50,13 +51,39 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 
   const document = await db.query.documents.findFirst({
     where: (documents, { eq }) => eq(documents.id, String(id)),
+    with: {
+      education: true,
+      experience: true,
+      skills: true,
+      personalInfo: true,
+    },
   });
 
   if (!document) {
     return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
   }
 
-  return c.json(document, HttpStatusCodes.OK);
+  const formattedDocument = {
+    ...document,
+    experience: document.experience.map(exp => ({
+      ...exp,
+      startDate: exp.startDate ? new Date(exp.startDate).getTime() : null,
+      endDate: exp.endDate ? new Date(exp.endDate).getTime() : null,
+      createdAt: exp.createdAt.toISOString(),
+      updatedAt: exp.updatedAt.toISOString(),
+    })),
+    education: document.education.map(edu => ({
+      ...edu,
+      startDate: edu.startDate ? new Date(edu.startDate).getTime() : null,
+      endDate: edu.endDate ? new Date(edu.endDate).getTime() : null,
+      createdAt: edu.createdAt.toISOString(),
+      updatedAt: edu.updatedAt.toISOString(),
+    })),
+    createdAt: document.createdAt.toISOString(),
+    updatedAt: document.updatedAt.toISOString(),
+  };
+
+  return c.json(formattedDocument, HttpStatusCodes.OK);
 };
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
@@ -67,8 +94,11 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const session = c.get("authUser");
 
   const [inserted] = await db.insert(documents).values({
-    ...document,
+    title: document.title,
     userId: session.user!.id,
+    status: DOCUMENT_STATUS.PRIVATE,
+    authorName: session.user!.name!,
+    authorEmail: session.user!.email!,
   }).returning();
 
   return c.json(inserted, HttpStatusCodes.CREATED);

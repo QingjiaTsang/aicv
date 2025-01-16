@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export function HeroIllustration() {
   return (
-    <div className="relative w-full aspect-square md:aspect-[4/3] p-4">
+    <div className="relative w-full aspect-square md:aspect-[4/3] p-4 ml-8">
       <svg
         viewBox="0 0 400 400"
         className="w-full h-full"

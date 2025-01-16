@@ -67,7 +67,7 @@ export const documentRelations = relations(documents, ({ one, many }) => ({
 }));
 
 export const insertDocumentSchema = createInsertSchema(documents, {
-  userId: z.string(),
+  userId: z.string().optional(),
   title: z.string().min(1, "Title cannot be empty").max(255, "Title cannot exceed 255 characters"),
   summary: z.string().max(1000, "Summary cannot exceed 1000 characters").optional(),
   themeColor: z
@@ -77,13 +77,14 @@ export const insertDocumentSchema = createInsertSchema(documents, {
     .optional(),
   thumbnail: z.string().url("Please enter a valid URL address").optional(),
   currentPosition: z.number().int().min(1).default(1).optional(),
-  status: z.enum([DOCUMENT_STATUS.PRIVATE, DOCUMENT_STATUS.PUBLIC, DOCUMENT_STATUS.ARCHIVED]),
-  authorName: z.string().min(1, "Author name cannot be empty").max(255, "Author name cannot exceed 255 characters"),
+  status: z.enum([DOCUMENT_STATUS.PRIVATE, DOCUMENT_STATUS.PUBLIC, DOCUMENT_STATUS.ARCHIVED]).default(DOCUMENT_STATUS.PRIVATE).optional(),
+  authorName: z.string().min(1, "Author name cannot be empty").max(255, "Author name cannot exceed 255 characters").optional(),
   authorEmail: z
     .string()
     .email("Please enter a valid email address")
     .max(255, "Email address cannot exceed 255 characters")
-    .transform(value => value.toLowerCase()),
+    .transform(value => value.toLowerCase())
+    .optional(),
 }).omit({
   id: true,
   createdAt: true,
@@ -104,3 +105,71 @@ export const selectDocumentSchema = createSelectSchema(documents).extend({
   ]),
 });
 export type SelectDocumentSchema = z.infer<typeof selectDocumentSchema>;
+
+// FIXME: why it's not working for type inference in frontend when written in this way?
+// export const selectUserSchema = createSelectSchema(users).omit({
+//   password: true,
+//   emailVerified: true,
+// });
+// export const selectPersonalInfoSchema = createSelectSchema(personalInfo).nullable();
+// export const selectExperienceSchema = createSelectSchema(experience);
+// export const selectEducationSchema = createSelectSchema(education);
+// export const selectSkillsSchema = createSelectSchema(skills);
+
+// so I have to write this way which is not so clean:
+export const selectPersonalInfoSchema = z.object({
+  id: z.string(),
+  documentId: z.string(),
+  firstName: z.string().nullable(),
+  lastName: z.string().nullable(),
+  jobTitle: z.string().nullable(),
+  city: z.string().nullable(),
+  address: z.string().nullable(),
+  phone: z.string().nullable(),
+  email: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+}).nullable();
+export const selectExperienceSchema = z.object({
+  id: z.string(),
+  documentId: z.string(),
+  title: z.string().nullable(),
+  companyName: z.string().nullable(),
+  state: z.string().nullable(),
+  city: z.string().nullable(),
+  isCurrentlyEmployed: z.boolean(),
+  workSummary: z.string().nullable(),
+  startDate: z.number().nullable(),
+  endDate: z.number().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export const selectEducationSchema = z.object({
+  id: z.string(),
+  documentId: z.string(),
+  universityName: z.string().nullable(),
+  degree: z.string().nullable(),
+  major: z.string().nullable(),
+  description: z.string().nullable(),
+  startDate: z.number().nullable(),
+  endDate: z.number().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export const selectSkillsSchema = z.object({
+  id: z.string(),
+  documentId: z.string(),
+  name: z.string().nullable(),
+  rating: z.number(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const selectDocumentWithRelationsSchema = selectDocumentSchema.extend({
+  personalInfo: selectPersonalInfoSchema,
+  experience: selectExperienceSchema.array(),
+  education: selectEducationSchema.array(),
+  skills: selectSkillsSchema.array(),
+});
+
+export type SelectDocumentWithRelationsSchema = z.infer<typeof selectDocumentWithRelationsSchema>;

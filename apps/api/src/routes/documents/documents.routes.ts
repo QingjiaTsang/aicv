@@ -3,7 +3,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { insertDocumentSchema, selectDocumentSchema, updateDocumentSchema } from "@/api/db/schema";
+import { insertDocumentSchema, selectDocumentSchema, selectDocumentWithRelationsSchema, updateDocumentSchema } from "@/api/db/schema";
 import { notFoundSchema } from "@/api/lib/constants";
 import { idStringParamsSchema, paginatedResponseSchemaGenerator, paginationQuerySchema } from "@/api/lib/schemas";
 
@@ -32,7 +32,7 @@ export const getOne = createRoute({
     params: idStringParamsSchema,
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(selectDocumentSchema, "Document"),
+    [HttpStatusCodes.OK]: jsonContent(selectDocumentWithRelationsSchema, "Document with relations"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "Document not found"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(idStringParamsSchema),
