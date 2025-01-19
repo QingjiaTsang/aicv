@@ -109,8 +109,6 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
     title: document.title,
     userId: authUser.user!.id,
     status: DOCUMENT_STATUS.PRIVATE,
-    authorName: authUser.user!.name!,
-    authorEmail: authUser.user!.email!,
   }).returning();
 
   return c.json(inserted, HttpStatusCodes.CREATED);
@@ -136,18 +134,12 @@ type HandlePersonalInfoUpdateParams = {
   data: UpdatePersonalInfoSchema;
 };
 async function handlePersonalInfoUpdate({ db, id, data }: HandlePersonalInfoUpdateParams) {
-  // one-to-one relationship upsert
   const [updated] = await db
-    .insert(personalInfo)
-    .values({
-      ...data,
-      documentId: id,
-    })
-    .onConflictDoUpdate({
-      target: personalInfo.documentId,
-      set: data,
-    })
+    .update(personalInfo)
+    .set(data)
+    .where(eq(personalInfo.documentId, id))
     .returning();
+
   return updated;
 }
 
@@ -192,6 +184,11 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
   const { id } = c.req.valid("param");
   const { type, data } = c.req.valid("json");
   const authUser = c.get("authUser");
+
+  console.log('update logger',{
+    type,
+    data,
+  });
 
   const document = await db.query.documents.findFirst({
     where: (documents, { eq }) =>

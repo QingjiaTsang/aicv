@@ -40,7 +40,7 @@ export const useCreateDocumentMutation = (options?: CreateDocumentOptions) => {
   });
 };
 
-export const useUpdateDocumentMutation = (options?: UpdateDocumentOptions) => {
+export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions) => {
   const queryClient = useQueryClient();
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
   return useMutation({
@@ -48,10 +48,7 @@ export const useUpdateDocumentMutation = (options?: UpdateDocumentOptions) => {
     onSuccess: async (...args) => {
       const { id } = args[1];
       await queryClient.invalidateQueries({
-        queryKey: [
-          ...documentKeys.LIST_DOCUMENTS,
-          ...documentKeys.LIST_DOCUMENT(id),
-        ],
+        queryKey: [...documentKeys.LIST_DOCUMENT(id)],
       });
       await userOnSuccess?.(...args);
     },

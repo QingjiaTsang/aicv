@@ -55,15 +55,6 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
                   <FileText className="mr-2 h-5 w-5" />
                   Create New Resume
                 </Button>
-                {/* TODO: reconsider wheter to add this button */}
-                {/* <Button
-                variant="outline"
-                size="lg"
-                className="border-violet-200 dark:border-violet-800 hover:border-violet-300 dark:hover:border-violet-700"
-              >
-                <Sparkles className="mr-2 h-5 w-5" />
-                AI Optimization Suggestions
-              </Button> */}
               </motion.div>
             </div>
 

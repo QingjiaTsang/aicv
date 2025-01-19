@@ -9,6 +9,7 @@ import queryClient from "@/web/lib/query-client"
 import { documentKeys } from "@/web/services/documents/queries"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/web/lib/utils"
+import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 
 type PersonalInfoFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -24,9 +25,17 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
     }
   })
 
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+
   const onSubmit = async () => {
-    // TODO: Save personal information
-    console.log('form', form.getValues())
+    const formData = form.getValues()
+    updateDocumentByTypeMutation({
+      id: document.id,
+      document: {
+        data: formData,
+        type: 'personalInfo'
+      }
+    })
   }
 
   const handleFieldChange = (field: keyof UpdatePersonalInfoSchema, value: string) => {
@@ -245,7 +254,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
           <div className="flex justify-end mt-8">
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isUpdatingDocumentByType}
               className={cn(
                 "bg-gradient-to-r from-violet-600 to-purple-600",
                 "hover:from-violet-700 hover:to-purple-700",

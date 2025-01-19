@@ -37,8 +37,6 @@ export const documents = sqliteTable("document", {
     .notNull()
     .$type<DocumentStatus>()
     .default(DOCUMENT_STATUS.PRIVATE),
-  authorName: text("author_name", { length: 255 }).notNull(),
-  authorEmail: text("author_email", { length: 255 }).notNull(),
   createdAt: integer({ mode: "timestamp_ms" })
     .notNull()
     .$default(() => new Date()),
@@ -54,10 +52,6 @@ export const documents = sqliteTable("document", {
   index("user_status_idx").on(table.userId, table.status),
   // TODO: for searching
   index("user_title_idx").on(table.userId, table.title),
-  // TODO: for sorting
-  index("user_author_name_idx").on(table.userId, table.authorName),
-  // TODO: for filtering
-  index("user_author_email_idx").on(table.userId, table.authorEmail),
 ]));
 
 export const documentRelations = relations(documents, ({ one, many }) => ({
@@ -83,13 +77,6 @@ export const insertDocumentSchema = createInsertSchema(documents, {
   thumbnail: z.string().url("Please enter a valid URL address").optional(),
   currentPosition: z.number().int().min(1).default(1).optional(),
   status: z.enum([DOCUMENT_STATUS.PRIVATE, DOCUMENT_STATUS.PUBLIC, DOCUMENT_STATUS.ARCHIVED]).default(DOCUMENT_STATUS.PRIVATE).optional(),
-  authorName: z.string().min(1, "Author name cannot be empty").max(255, "Author name cannot exceed 255 characters").optional(),
-  authorEmail: z
-    .string()
-    .email("Please enter a valid email address")
-    .max(255, "Email address cannot exceed 255 characters")
-    .transform(value => value.toLowerCase())
-    .optional(),
 }).omit({
   id: true,
   createdAt: true,
@@ -241,15 +228,27 @@ export type UpdateSkillsSchema = z.infer<typeof updateSkillsSchema>;
 export const updateBasicDocumentSchema = insertDocumentSchema.partial();
 export type UpdateBasicDocumentSchema = z.infer<typeof updateBasicDocumentSchema>;
 
-export const updateDocumentDataSchema = z.object({
-  type: z.enum(["document", "personalInfo", "experience", "education", "skills"]),
-  data: z.union([
-    updateBasicDocumentSchema,
-    updatePersonalInfoSchema,
-    updateExperienceSchema,
-    updateEducationSchema,
-    updateSkillsSchema,
-  ]),
-});
+export const updateDocumentDataSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("document"),
+    data: updateBasicDocumentSchema,
+  }),
+  z.object({
+    type: z.literal("personalInfo"),
+    data: updatePersonalInfoSchema,
+  }),
+  z.object({
+    type: z.literal("experience"),
+    data: updateExperienceSchema,
+  }),
+  z.object({
+    type: z.literal("education"),
+    data: updateEducationSchema,
+  }),
+  z.object({
+    type: z.literal("skills"),
+    data: updateSkillsSchema,
+  }),
+]);
 
 export type UpdateDocumentDataSchema = z.infer<typeof updateDocumentDataSchema>;

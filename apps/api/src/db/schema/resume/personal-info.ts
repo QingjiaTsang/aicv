@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { index, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 import { documents } from "@/api/db/schema/resume/documents";
 import { baseFields } from "@/api/db/schema/utils/base-schema-fields";
@@ -8,6 +8,7 @@ export const personalInfo = sqliteTable("personal_info", {
   ...baseFields,
   documentId: text("document_id")
     .notNull()
+    .unique()
     .references(() => documents.id, { onDelete: "cascade" }),
   firstName: text("first_name", { length: 50 }),
   lastName: text("last_name", { length: 50 }),
@@ -17,6 +18,7 @@ export const personalInfo = sqliteTable("personal_info", {
   phone: text("phone", { length: 11 }),
   email: text("email", { length: 255 }),
 }, table => ([
+  uniqueIndex("document_id_unique_idx").on(table.documentId),
   index("phone_idx").on(table.phone),
   index("email_idx").on(table.email),
 ]));

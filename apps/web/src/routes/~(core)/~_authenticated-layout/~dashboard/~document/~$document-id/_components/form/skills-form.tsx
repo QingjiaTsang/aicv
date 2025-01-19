@@ -11,6 +11,7 @@ import { documentKeys } from "@/web/services/documents/queries"
 import useConfirm from "@/web/hooks/useConfirm"
 import { z } from "zod"
 import { cn } from "@/web/lib/utils"
+import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 
 type SkillsFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -25,13 +26,11 @@ type FormValues = {
 export default function SkillsForm({ document, isLoading, className }: SkillsFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
-      skills: z.array(selectSkillsSchema)
+      skills: updateSkillsSchema
     })),
     defaultValues: {
       skills: document.skills?.map(skill => ({
         ...skill,
-        createdAt: skill?.createdAt,
-        updatedAt: skill?.updatedAt,
       })) || []
     }
   })
@@ -41,9 +40,18 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
     message: "Are you sure you want to delete this skill?"
   }) as [() => JSX.Element, () => Promise<boolean>]
 
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+
   const onSubmit = async () => {
-    // TODO: Save skills
-    console.log('form', form.getValues())
+    const formData = form.getValues()
+
+    updateDocumentByTypeMutation({
+      id: document.id,
+      document: {
+        data: formData.skills,
+        type: 'skills'
+      }
+    })
   }
 
   const handleAddSkill = () => {
@@ -93,7 +101,11 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={
+          form.handleSubmit(onSubmit, (errors) => {
+            console.error('errors', errors)
+          })
+        }
         className={className}
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
@@ -196,7 +208,7 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
 
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isUpdatingDocumentByType}
               className={cn(
                 "bg-gradient-to-r from-violet-600 to-purple-600",
                 "hover:from-violet-700 hover:to-purple-700",

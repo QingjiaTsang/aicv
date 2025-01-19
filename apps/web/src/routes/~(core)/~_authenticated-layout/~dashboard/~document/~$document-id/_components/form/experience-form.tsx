@@ -12,6 +12,7 @@ import { documentKeys } from "@/web/services/documents/queries"
 import useConfirm from "@/web/hooks/useConfirm";
 import { z } from "node_modules/zod/lib"
 import { cn } from "@/web/lib/utils"
+import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 
 
 type ExperienceFormProps = {
@@ -27,15 +28,13 @@ type FormValues = {
 export default function ExperienceForm({ document, isLoading, className }: ExperienceFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
-      experiences: z.array(updateExperienceSchema)
+      experiences: updateExperienceSchema
     })),
     defaultValues: {
       experiences: document.experience?.map(exp => ({
         ...exp,
         startDate: exp?.startDate ? new Date(exp.startDate).getTime() : null,
         endDate: exp?.endDate ? new Date(exp.endDate).getTime() : null,
-        createdAt: exp?.createdAt,
-        updatedAt: exp?.updatedAt,
       })) || []
     }
   })
@@ -45,9 +44,18 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
     message: "Are you sure you want to delete this experience?"
   }) as [() => JSX.Element, () => Promise<boolean>]
 
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+
   const onSubmit = async () => {
-    // TODO: Save work experience
-    console.log('form', form.getValues())
+    const formData = form.getValues()
+
+    updateDocumentByTypeMutation({
+      id: document.id,
+      document: {
+        data: formData.experiences,
+        type: 'experience'
+      }
+    })
   }
 
   const handleAddExperience = () => {
@@ -103,7 +111,11 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={
+          form.handleSubmit(onSubmit, (errors) => {
+            console.error('errors', errors)
+          })
+        }
         className={className}
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
@@ -332,7 +344,7 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
 
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isUpdatingDocumentByType}
               className={cn(
                 "text-white shadow-lg transition-all duration-300",
                 "bg-gradient-to-r from-violet-600 to-purple-600",

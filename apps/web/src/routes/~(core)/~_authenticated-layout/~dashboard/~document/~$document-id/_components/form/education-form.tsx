@@ -12,6 +12,7 @@ import { documentKeys } from "@/web/services/documents/queries"
 import useConfirm from "@/web/hooks/useConfirm"
 import { z } from "zod"
 import { cn } from "@/web/lib/utils"
+import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 
 
 type EducationFormProps = {
@@ -27,15 +28,13 @@ type FormValues = {
 export default function EducationForm({ document, isLoading, className }: EducationFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
-      education: z.array(updateEducationSchema)
+      education: updateEducationSchema
     })),
     defaultValues: {
       education: document.education?.map(edu => ({
         ...edu,
         startDate: edu?.startDate ? new Date(edu.startDate).getTime() : null,
         endDate: edu?.endDate ? new Date(edu.endDate).getTime() : null,
-        createdAt: edu?.createdAt,
-        updatedAt: edu?.updatedAt,
       })) || []
     }
   })
@@ -45,9 +44,20 @@ export default function EducationForm({ document, isLoading, className }: Educat
     message: "Are you sure you want to delete this education entry?"
   }) as [() => JSX.Element, () => Promise<boolean>]
 
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+
   const onSubmit = async () => {
-    // TODO: Save education
-    console.log('form', form.getValues())
+    const formData = form.getValues()
+
+    console.log('formData', formData)
+
+    updateDocumentByTypeMutation({
+      id: document.id,
+      document: {
+        data: formData.education,
+        type: 'education'
+      }
+    })
   }
 
   const handleAddEducation = () => {
@@ -101,7 +111,11 @@ export default function EducationForm({ document, isLoading, className }: Educat
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={
+          form.handleSubmit(onSubmit, (errors) => {
+            console.error('errors', errors)
+          })
+        }
         className={className}
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
@@ -305,7 +319,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
 
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isUpdatingDocumentByType}
               className={cn(
                 "bg-gradient-to-r from-violet-600 to-purple-600",
                 "hover:from-violet-700 hover:to-purple-700",

@@ -26,8 +26,6 @@ const defaultDocuments = [
     summary: "5年全栈开发经验",
     themeColor: "#7c3aed",
     status: "public" as const,
-    authorName: "测试用户",
-    authorEmail: "test@example.com",
   },
 ] as const;
 
