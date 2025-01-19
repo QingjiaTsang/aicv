@@ -22,7 +22,7 @@ export default function Experience({ document, isLoading }: ExperienceProps) {
       <div className="flex flex-col gap-4 w-full">
         {document.experience?.map((exp) => (
           <ExperienceItem
-            key={exp.id}
+            key={exp?.id}
             experience={exp}
             themeColor={document.themeColor}
           />
@@ -52,7 +52,7 @@ function ExperienceItem({ experience, themeColor }: {
         </div>
 
         <div className="text-sm">
-          {experience?.companyName}
+          {experience?.companyName}, {experience?.city}, {experience?.state}
         </div>
       </div>
 

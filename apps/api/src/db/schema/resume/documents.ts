@@ -47,12 +47,17 @@ export const documents = sqliteTable("document", {
     .$default(() => new Date())
     .$onUpdate(() => new Date()),
 }, table => ([
+  index("user_id_idx").on(table.userId),
+  index("user_created_at_idx").on(table.userId, table.createdAt),
+  index("user_updated_at_idx").on(table.userId, table.updatedAt),
+  // TODO: for filtering
   index("user_status_idx").on(table.userId, table.status),
-  index("title_idx").on(table.title),
-  index("author_name_idx").on(table.authorName),
-  index("author_email_idx").on(table.authorEmail),
-  index("created_at_idx").on(table.createdAt),
-  index("updated_at_idx").on(table.updatedAt),
+  // TODO: for searching
+  index("user_title_idx").on(table.userId, table.title),
+  // TODO: for sorting
+  index("user_author_name_idx").on(table.userId, table.authorName),
+  // TODO: for filtering
+  index("user_author_email_idx").on(table.userId, table.authorEmail),
 ]));
 
 export const documentRelations = relations(documents, ({ one, many }) => ({
@@ -92,9 +97,6 @@ export const insertDocumentSchema = createInsertSchema(documents, {
 });
 export type InsertDocumentSchema = z.infer<typeof insertDocumentSchema>;
 
-export const updateDocumentSchema = insertDocumentSchema.partial();
-export type UpdateDocumentSchema = z.infer<typeof updateDocumentSchema>;
-
 export const selectDocumentSchema = createSelectSchema(documents).extend({
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -112,45 +114,54 @@ export type SelectDocumentSchema = z.infer<typeof selectDocumentSchema>;
 //   emailVerified: true,
 // });
 // export const selectPersonalInfoSchema = createSelectSchema(personalInfo).nullable();
-// export const selectExperienceSchema = createSelectSchema(experience);
-// export const selectEducationSchema = createSelectSchema(education);
-// export const selectSkillsSchema = createSelectSchema(skills);
+// export const selectExperienceSchema = createSelectSchema(experience).nullable();
+// export const selectEducationSchema = createSelectSchema(education).nullable();
+// export const selectSkillsSchema = createSelectSchema(skills).nullable();
 
 // so I have to write this way which is not so clean:
 export const selectPersonalInfoSchema = z.object({
   id: z.string(),
   documentId: z.string(),
-  firstName: z.string().nullable(),
-  lastName: z.string().nullable(),
-  jobTitle: z.string().nullable(),
-  city: z.string().nullable(),
-  address: z.string().nullable(),
-  phone: z.string().nullable(),
-  email: z.string().nullable(),
+  firstName: z.string().max(50, "First name cannot exceed 50 characters").nullable(),
+  lastName: z.string().max(50, "Last name cannot exceed 50 characters").nullable(),
+  jobTitle: z.string().max(255, "Job title cannot exceed 255 characters").nullable(),
+  state: z.string().max(255, "State name cannot exceed 255 characters").nullable(),
+  city: z.string().max(255, "City name cannot exceed 255 characters").nullable(),
+  phone: z.string().min(11, "Phone number cannot exceed 11 digits").nullable(),
+  email: z.string().email("Please enter a valid email address").max(255, "Email address cannot exceed 255 characters").nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
-}).nullable();
+});
 export const selectExperienceSchema = z.object({
   id: z.string(),
   documentId: z.string(),
-  title: z.string().nullable(),
-  companyName: z.string().nullable(),
-  state: z.string().nullable(),
-  city: z.string().nullable(),
-  isCurrentlyEmployed: z.boolean(),
-  workSummary: z.string().nullable(),
+  title: z.string().max(255, "Job title cannot exceed 255 characters").nullable(),
+  companyName: z.string().max(255, "Company name cannot exceed 255 characters").nullable(),
+  state: z.string().max(255, "State name cannot exceed 255 characters").nullable(),
+  city: z.string().max(255, "City name cannot exceed 255 characters").nullable(),
+  isCurrentlyEmployed: z.boolean().default(false),
+  workSummary: z.string().max(2000, "Work summary cannot exceed 2000 characters").nullable(),
   startDate: z.number().nullable(),
   endDate: z.number().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
+export type SelectExperienceSchema = z.infer<typeof selectExperienceSchema>;
 export const selectEducationSchema = z.object({
   id: z.string(),
   documentId: z.string(),
-  universityName: z.string().nullable(),
-  degree: z.string().nullable(),
-  major: z.string().nullable(),
-  description: z.string().nullable(),
+  universityName: z.string()
+    .max(255, "University name cannot exceed 255 characters")
+    .nullable(),
+  degree: z.string()
+    .max(255, "Degree name cannot exceed 255 characters")
+    .nullable(),
+  major: z.string()
+    .max(255, "Major name cannot exceed 255 characters")
+    .nullable(),
+  description: z.string()
+    .max(1000, "Description cannot exceed 1000 characters")
+    .nullable(),
   startDate: z.number().nullable(),
   endDate: z.number().nullable(),
   createdAt: z.string(),
@@ -159,17 +170,86 @@ export const selectEducationSchema = z.object({
 export const selectSkillsSchema = z.object({
   id: z.string(),
   documentId: z.string(),
-  name: z.string().nullable(),
-  rating: z.number(),
+  name: z.string()
+    .max(255, "Skill name cannot exceed 255 characters")
+    .nullable(),
+  rating: z.number()
+    .int("Rating must be an integer")
+    .min(0, "Rating cannot be negative")
+    .max(5, "Rating cannot exceed 5")
+    .default(0),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
 
 export const selectDocumentWithRelationsSchema = selectDocumentSchema.extend({
-  personalInfo: selectPersonalInfoSchema,
-  experience: selectExperienceSchema.array(),
-  education: selectEducationSchema.array(),
-  skills: selectSkillsSchema.array(),
+  personalInfo: selectPersonalInfoSchema.nullable(),
+  experience: selectExperienceSchema.nullable().array(),
+  education: selectEducationSchema.nullable().array(),
+  skills: selectSkillsSchema.nullable().array(),
+});
+export type SelectDocumentWithRelationsSchema = z.infer<typeof selectDocumentWithRelationsSchema>;
+
+const omitConfig = {
+  id: true,
+  documentId: true,
+  createdAt: true,
+  updatedAt: true,
+} as const;
+export const updatePersonalInfoSchema = selectPersonalInfoSchema.omit(omitConfig).required();
+export type UpdatePersonalInfoSchema = z.infer<typeof updatePersonalInfoSchema>;
+
+export const updateExperienceSchema = selectExperienceSchema
+  .omit(omitConfig)
+  .required()
+  .extend({ id: z.string().optional() })
+  .superRefine((data, ctx) => {
+    if (data.endDate && data.startDate && data.endDate < data.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date cannot be earlier than the start date",
+        path: ["endDate"],
+      });
+    }
+  })
+  .array();
+export type UpdateExperienceSchema = z.infer<typeof updateExperienceSchema>;
+
+export const updateEducationSchema = selectEducationSchema
+  .omit(omitConfig)
+  .required()
+  .extend({ id: z.string().optional() })
+  .superRefine((data, ctx) => {
+    if (data.endDate && data.startDate && data.endDate < data.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date cannot be earlier than the start date",
+        path: ["endDate"],
+      });
+    }
+  })
+  .array();
+export type UpdateEducationSchema = z.infer<typeof updateEducationSchema>;
+
+export const updateSkillsSchema = selectSkillsSchema
+  .omit(omitConfig)
+  .required()
+  .extend({ id: z.string().optional() })
+  .array();
+export type UpdateSkillsSchema = z.infer<typeof updateSkillsSchema>;
+
+export const updateBasicDocumentSchema = insertDocumentSchema.partial();
+export type UpdateBasicDocumentSchema = z.infer<typeof updateBasicDocumentSchema>;
+
+export const updateDocumentDataSchema = z.object({
+  type: z.enum(["document", "personalInfo", "experience", "education", "skills"]),
+  data: z.union([
+    updateBasicDocumentSchema,
+    updatePersonalInfoSchema,
+    updateExperienceSchema,
+    updateEducationSchema,
+    updateSkillsSchema,
+  ]),
 });
 
-export type SelectDocumentWithRelationsSchema = z.infer<typeof selectDocumentWithRelationsSchema>;
+export type UpdateDocumentDataSchema = z.infer<typeof updateDocumentDataSchema>;

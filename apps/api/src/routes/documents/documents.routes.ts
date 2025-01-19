@@ -1,9 +1,9 @@
 import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createErrorSchema } from "stoker/openapi/schemas";
+import { createErrorSchema, createMessageObjectSchema } from "stoker/openapi/schemas";
 
-import { insertDocumentSchema, selectDocumentSchema, selectDocumentWithRelationsSchema, updateDocumentSchema } from "@/api/db/schema";
+import { insertDocumentSchema, selectDocumentSchema, selectDocumentWithRelationsSchema, updateDocumentDataSchema } from "@/api/db/schema";
 import { notFoundSchema } from "@/api/lib/constants";
 import { idStringParamsSchema, paginatedResponseSchemaGenerator, paginationQuerySchema } from "@/api/lib/schemas";
 
@@ -63,15 +63,14 @@ export const update = createRoute({
   path: "/documents/{id}",
   request: {
     params: idStringParamsSchema,
-    body: jsonContentRequired(updateDocumentSchema, "Document"),
+    body: jsonContentRequired(updateDocumentDataSchema, "Update document data based on type"),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(selectDocumentSchema, "Document updated"),
+    [HttpStatusCodes.OK]: jsonContent(selectDocumentWithRelationsSchema, "Document updated"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "Document not found"),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(updateDocumentSchema)
-        .or(createErrorSchema(idStringParamsSchema)),
-      "The validation error(s)",
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+      createMessageObjectSchema("Update document failed"),
+      "Update document failed",
     ),
   },
 });

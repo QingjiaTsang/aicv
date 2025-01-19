@@ -1,11 +1,8 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
 
 import type * as schema from "@/api/db/schema";
-
-import { users } from "@/api/db/schema/auth/auth";
 
 export async function hashPassword(password: string) {
   return bcrypt.hash(password, 10);

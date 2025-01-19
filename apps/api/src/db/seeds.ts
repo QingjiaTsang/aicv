@@ -35,8 +35,8 @@ const defaultPersonalInfo = {
   firstName: "测试",
   lastName: "用户",
   jobTitle: "高级软件工程师",
-  city: "上海",
-  address: "浦东新区",
+  state: "广东省",
+  city: "广州市",
   phone: "13800138000",
   email: "test@example.com",
 };
@@ -45,8 +45,8 @@ const defaultExperience = [
   {
     title: "高级前端工程师",
     companyName: "某科技公司",
-    state: "上海",
-    city: "浦东新区",
+    state: "广东省",
+    city: "广州市",
     isCurrentlyEmployed: true,
     workSummary: "负责公司核心产品的前端开发",
     startDate: new Date("2020-01-01"),
@@ -55,8 +55,8 @@ const defaultExperience = [
   {
     title: "全栈工程师",
     companyName: "某互联网公司",
-    state: "北京",
-    city: "朝阳区",
+    state: "广东省",
+    city: "广州市",
     isCurrentlyEmployed: false,
     workSummary: "全栈开发,负责产品从0到1的构建",
     startDate: new Date("2018-01-01"),

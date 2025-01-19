@@ -7,7 +7,6 @@ type DocumentHeaderProps = {
 }
 
 export function DocumentHeader({ document }: DocumentHeaderProps) {
-  const a = document.skills[0].id
   return (
     <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
       <DocumentHeaderTitle document={document} />

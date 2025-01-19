@@ -25,9 +25,9 @@ function UserProfile({ user }: { user: User }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex items-center gap-1 cursor-pointer">
-          <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-violet-500/20 hover:ring-violet-500/40 transition-all">
+          <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
             <AvatarImage src={user.image ?? ''} alt={user.name ?? 'User avatar'} />
-            <AvatarFallback className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white">
+            <AvatarFallback className="bg-gradient-to-r from-primary to-fuchsia-500 text-white">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
@@ -75,8 +75,8 @@ export default function AppNavbar() {
       <div className="container max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0">
-            <Link to="/">
-              <strong className="text-2xl md:text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent hover:scale-110 transition-transform duration-200 cursor-pointer">
+            <Link to="/dashboard">
+              <strong className="text-2xl md:text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-primary via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent hover:scale-110 transition-transform duration-200 cursor-pointer">
                 AICV
               </strong>
             </Link>

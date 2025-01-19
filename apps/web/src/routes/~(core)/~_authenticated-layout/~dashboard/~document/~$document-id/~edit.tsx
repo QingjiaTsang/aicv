@@ -9,6 +9,8 @@ import Summary from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~doc
 import Experience from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/experience";
 import Education from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/education";
 import Skills from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/skills";
+import ResumeForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/resume-form";
+import { cn } from "@/web/lib/utils";
 
 
 export const Route = createFileRoute(
@@ -29,8 +31,16 @@ function RouteComponent() {
       <div className="flex-1">
         <div className="p-4 flex md:flex-row flex-col gap-4">
           {/* edit form */}
-          <div className="flex-1">
-            edit form
+          <div
+            className={cn(
+              'flex-1 border-t-4 shadow-md rounded-md',
+              'border-t-primary',
+              'dark:bg-card dark:border',
+              'dark:border-gray-800'
+            )}
+            style={{ borderTopLeftRadius: `12px solid ${document.themeColor}` }}
+          >
+            <ResumeForm document={document} isLoading={isPending} />
           </div>
 
           {/* preview */}

@@ -1,5 +1,5 @@
 import type { UseMutationOptions } from "@tanstack/react-query";
-import type { InsertDocumentSchema, UpdateDocumentSchema } from "@aicv-app/api/schema";
+import type { InsertDocumentSchema, UpdateDocumentDataSchema } from "@aicv-app/api/schema";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -15,7 +15,7 @@ type CreateDocumentOptions = UseMutationOptions<
 type UpdateDocumentOptions = UseMutationOptions<
   void,
   Error,
-  { id: string; document: UpdateDocumentSchema }
+  { id: string; document: UpdateDocumentDataSchema }
 >;
 
 type DeleteDocumentOptions = UseMutationOptions<

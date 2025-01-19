@@ -1,4 +1,4 @@
-import type { InsertDocumentSchema, SelectDocumentWithRelationsSchema, UpdateDocumentSchema } from "@aicv-app/api/schema";
+import type { InsertDocumentSchema, UpdateDocumentDataSchema } from "@aicv-app/api/schema";
 
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
@@ -37,7 +37,7 @@ export const documentsApi = {
       throw new Error(message);
     }
 
-    return json as SelectDocumentWithRelationsSchema
+    return json
   },
 
   createDocument: async (document: InsertDocumentSchema) => {
@@ -53,7 +53,7 @@ export const documentsApi = {
     return json;
   },
 
-  updateDocument: async ({ id, document }: { id: string; document: UpdateDocumentSchema }) => {
+  updateDocument: async ({ id, document }: { id: string; document: UpdateDocumentDataSchema }) => {
     const response = await apiClient.api.documents[":id"].$patch({
       param: {
         id,

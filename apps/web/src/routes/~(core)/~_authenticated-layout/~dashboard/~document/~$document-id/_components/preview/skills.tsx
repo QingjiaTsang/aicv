@@ -20,8 +20,8 @@ export default function Skills({ document, isLoading }: SkillsProps) {
       <hr className="w-full my-2 border-b-2" style={{ borderColor: document.themeColor }} />
 
       <div className="w-full flex flex-wrap gap-4">
-        {document.skills?.map((skill, index) => (
-          <div key={index} className="w-[calc(50%-8px)]">
+        {document.skills?.map((skill) => (
+          <div key={skill?.id} className="w-[calc(50%-8px)]">
             <SkillItem skill={skill} themeColor={document.themeColor} />
           </div>
         ))}
@@ -38,18 +38,18 @@ function SkillItem({ skill, themeColor }: {
     <div className="w-full group">
       <div className="flex justify-between items-center mb-1.5">
         <span className="text-sm font-medium truncate max-w-[70%]">
-          {skill.name || "Skill Name"}
+          {skill?.name || "Skill Name"}
         </span>
         <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
-          {skill.rating}/5
+          {skill?.rating || 0}/5
         </span>
       </div>
 
       <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
         <div
-          className="h-full transition-all duration-300 group-hover:opacity-90 rounded-full"
+          className="h-full transition-all duration-500 group-hover:opacity-90 rounded-full"
           style={{
-            width: `${(skill.rating / 5) * 100}%`,
+            width: `${((skill?.rating || 0) / 5) * 100}%`,
             backgroundColor: themeColor,
             boxShadow: `0 1px 2px ${themeColor}40`
           }}

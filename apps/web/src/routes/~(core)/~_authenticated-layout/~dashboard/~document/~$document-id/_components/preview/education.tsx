@@ -21,8 +21,8 @@ export default function Education({ document, isLoading }: EducationProps) {
       <hr className="w-full my-2 border-b-2" style={{ borderColor: document.themeColor }} />
 
       <div className="flex flex-col gap-4 w-full">
-        {document.education?.map((edu, index) => (
-          <EducationItem key={index} education={edu} themeColor={document.themeColor} />
+        {document.education?.map((edu) => (
+          <EducationItem key={edu?.id} education={edu} themeColor={document.themeColor} />
         ))}
       </div>
     </div>
@@ -38,20 +38,20 @@ function EducationItem({ education, themeColor }: {
       <div className="flex flex-col gap-1">
         <div className="flex justify-between">
           <div className="text-sm font-bold" style={{ color: themeColor }}>
-            {education.universityName}
+            {education?.universityName || "University Name"}
           </div>
 
           <div className="text-sm">
-            {format(education.startDate!, "MMM yyyy")} - {format(education.endDate!, "MMM yyyy")}
+            {format(education?.startDate!, "MMM yyyy")} - {format(education?.endDate!, "MMM yyyy")}
           </div>
         </div>
 
         <div className="text-sm">
-          {education.degree}
+          {education?.degree || "Degree"}
         </div>
       </div>
 
-      {education.description && (
+      {education?.description && (
         <div
           className="text-sm leading-[1.6] break-words"
           dangerouslySetInnerHTML={{ __html: education.description }}

@@ -11,7 +11,7 @@ export function HeroIllustration() {
         {/* Background decoration - gradient glow */}
         <defs>
           <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" className="text-violet-500/30 dark:text-violet-400/20" stopColor="currentColor" />
+            <stop offset="0%" className="text-primary/30 dark:text-violet-400/20" stopColor="currentColor" />
             <stop offset="100%" stopColor="transparent" />
           </radialGradient>
         </defs>
@@ -29,7 +29,7 @@ export function HeroIllustration() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="text-violet-500/20 dark:text-violet-400/10"
+          className="text-primary/20 dark:text-violet-400/10"
         >
           <NetworkLines />
         </motion.g>
@@ -131,7 +131,7 @@ function Particles() {
           cx={100 + Math.random() * 200}
           cy={100 + Math.random() * 200}
           r={1 + Math.random() * 2}
-          className="fill-violet-500/30 dark:fill-violet-400/20"
+          className="fill-primary/30 dark:fill-violet-400/20"
           animate={{
             scale: [1, 1.5, 1],
             opacity: [0.3, 0.8, 0.3],

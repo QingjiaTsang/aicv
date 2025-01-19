@@ -67,9 +67,9 @@ function ResumeCard({ resume, onDelete, }: ResumeCardProps) {
   return (
     <Card
       onMouseEnter={handleMouseEnter}
-      className="w-full group relative overflow-hidden shadow-sm hover:scale-105 border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-violet-500/5 dark:hover:shadow-violet-400/5"
+      className="w-full group relative overflow-hidden shadow-sm hover:scale-105 border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-primary/5 dark:hover:shadow-violet-400/5"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/[0.08] to-purple-500/[0.08] dark:from-violet-500/[0.05] dark:to-purple-500/[0.05] group-hover:from-violet-500/[0.12] group-hover:to-purple-500/[0.12] transition-all duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] to-purple-500/[0.08] dark:from-primary/[0.05] dark:to-purple-500/[0.05] group-hover:from-primary/[0.12] group-hover:to-purple-500/[0.12] transition-all duration-300" />
 
       <div className="w-full relative p-6">
         <div className="w-full flex items-start justify-between">

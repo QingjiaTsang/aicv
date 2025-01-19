@@ -21,7 +21,8 @@ export default function PersonalInfo({ document, isLoading }: PersonalInfoProps)
           {document.personalInfo?.jobTitle || "Job Title"}
         </div>
         <div className="text-sm font-normal tracking-wide text-slate-600 dark:text-slate-400 text-center break-words">
-          {document.personalInfo?.address || "Address"}
+          {document.personalInfo?.state} {document.personalInfo?.city}
+          {(!document.personalInfo?.state && !document.personalInfo?.city) && "state or city"}
         </div>
       </div>
 

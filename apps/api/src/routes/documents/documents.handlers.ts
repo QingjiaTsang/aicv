@@ -1,12 +1,19 @@
-import { eq } from "drizzle-orm";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+
+import { and, eq } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
+import type * as schema from "@/api/db/schema";
+import type { UpdateBasicDocumentSchema, UpdateEducationSchema, UpdateExperienceSchema, UpdatePersonalInfoSchema, UpdateSkillsSchema } from "@/api/db/schema/resume/documents";
 import type { AppRouteHandler } from "@/api/lib/types";
 
 import { createDb } from "@/api/db";
 import { DOCUMENT_STATUS, documents } from "@/api/db/schema/resume/documents";
-import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants";
+import { education } from "@/api/db/schema/resume/education";
+import { experience } from "@/api/db/schema/resume/experience";
+import { personalInfo } from "@/api/db/schema/resume/personal-info";
+import { skills } from "@/api/db/schema/resume/skills";
 
 import type { CreateRoute, GetOneRoute, ListRoute, RemoveRoute, UpdateRoute } from "./documents.routes";
 
@@ -19,10 +26,13 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
   const offset = (page - 1) * pageSize;
   const limit = pageSize;
 
+  const authUser = c.get("authUser");
+
   const [documentsList, total] = await Promise.all([
     db.query.documents.findMany({
       limit,
       offset,
+      where: (documents, { eq }) => eq(documents.userId, authUser.user!.id),
       orderBy: (documents, { desc }) => [desc(documents.updatedAt)],
     }),
     db.select({ count: documents.id }).from(documents).then(result => result.length),
@@ -49,8 +59,10 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 
   const { id } = c.req.valid("param");
 
+  const authUser = c.get("authUser");
+
   const document = await db.query.documents.findFirst({
-    where: (documents, { eq }) => eq(documents.id, String(id)),
+    where: (documents, { eq }) => and(eq(documents.id, String(id)), eq(documents.userId, authUser.user!.id)),
     with: {
       education: true,
       experience: true,
@@ -91,60 +103,190 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 
   const document = c.req.valid("json");
 
-  const session = c.get("authUser");
+  const authUser = c.get("authUser");
 
   const [inserted] = await db.insert(documents).values({
     title: document.title,
-    userId: session.user!.id,
+    userId: authUser.user!.id,
     status: DOCUMENT_STATUS.PRIVATE,
-    authorName: session.user!.name!,
-    authorEmail: session.user!.email!,
+    authorName: authUser.user!.name!,
+    authorEmail: authUser.user!.email!,
   }).returning();
 
   return c.json(inserted, HttpStatusCodes.CREATED);
 };
 
+type HandleDocumentUpdateParams = {
+  db: DrizzleD1Database<typeof schema>;
+  id: string;
+  data: UpdateBasicDocumentSchema;
+};
+async function handleBasicDocumentUpdate({ db, id, data }: HandleDocumentUpdateParams) {
+  const [updated] = await db
+    .update(documents)
+    .set(data)
+    .where(eq(documents.id, id))
+    .returning();
+  return updated;
+}
+
+type HandlePersonalInfoUpdateParams = {
+  db: DrizzleD1Database<typeof schema>;
+  id: string;
+  data: UpdatePersonalInfoSchema;
+};
+async function handlePersonalInfoUpdate({ db, id, data }: HandlePersonalInfoUpdateParams) {
+  // one-to-one relationship upsert
+  const [updated] = await db
+    .insert(personalInfo)
+    .values({
+      ...data,
+      documentId: id,
+    })
+    .onConflictDoUpdate({
+      target: personalInfo.documentId,
+      set: data,
+    })
+    .returning();
+  return updated;
+}
+
+type HandleOneToManyUpdateParams<T extends { id?: string }> = {
+  db: DrizzleD1Database<typeof schema>;
+  table: typeof experience | typeof education | typeof skills;
+  documentId: string;
+  items: T[];
+  transformData?: (item: T) => any;
+};
+async function handleOneToManyUpdate<T extends { id?: string }>({
+  db,
+  table,
+  documentId,
+  items,
+  transformData,
+}: HandleOneToManyUpdateParams<T>) {
+  const results = await Promise.all(
+    items.map(async (item) => {
+      const data = transformData ? transformData(item) : item;
+      // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
+      if (item.id) {
+        const [updated] = await db
+          .update(table)
+          .set({ ...data, documentId })
+          .where(eq(table.id, item.id))
+          .returning();
+        return updated;
+      }
+      const [inserted] = await db
+        .insert(table)
+        .values({ ...data, documentId })
+        .returning();
+      return inserted;
+    }),
+  );
+  return results[results.length - 1];
+}
+
 export const update: AppRouteHandler<UpdateRoute> = async (c) => {
   const db = createDb(c.env);
-
   const { id } = c.req.valid("param");
-  const dataToUpdate = c.req.valid("json");
+  const { type, data } = c.req.valid("json");
+  const authUser = c.get("authUser");
 
-  if (Object.keys(dataToUpdate).length === 0) {
+  const document = await db.query.documents.findFirst({
+    where: (documents, { eq }) =>
+      and(eq(documents.id, String(id)), eq(documents.userId, authUser.user!.id)),
+    with: {
+      personalInfo: true,
+      experience: true,
+      education: true,
+      skills: true,
+    },
+  });
+
+  if (!document) {
     return c.json(
-      {
-        success: false,
-        error: {
-          issues: [
-            {
-              code: ZOD_ERROR_CODES.INVALID_UPDATES,
-              path: [],
-              message: ZOD_ERROR_MESSAGES.NO_UPDATES,
-            },
-          ],
-          name: "ZodError",
-        },
-      },
-      HttpStatusCodes.UNPROCESSABLE_ENTITY,
-    );
-  }
-
-  const [updatedData] = await db
-    .update(documents)
-    .set(dataToUpdate)
-    .where(eq(documents.id, String(id)))
-    .returning();
-
-  if (!updatedData) {
-    return c.json(
-      {
-        message: HttpStatusPhrases.NOT_FOUND,
-      },
+      { message: HttpStatusPhrases.NOT_FOUND },
       HttpStatusCodes.NOT_FOUND,
     );
   }
 
-  return c.json(updatedData, HttpStatusCodes.OK);
+  try {
+    let updatedData;
+
+    switch (type) {
+      case "document":
+        updatedData = await handleBasicDocumentUpdate({ db, id, data: data as UpdateBasicDocumentSchema });
+        break;
+
+      case "personalInfo":
+        updatedData = await handlePersonalInfoUpdate({ db, id, data: data as UpdatePersonalInfoSchema });
+        break;
+
+      case "experience":
+        updatedData = await handleOneToManyUpdate({
+          db,
+          table: experience,
+          documentId: id,
+          items: data as UpdateExperienceSchema,
+          transformData: item => ({
+            ...item,
+            startDate: item.startDate ? new Date(item.startDate) : null,
+            endDate: item.endDate ? new Date(item.endDate) : null,
+          }),
+        });
+        break;
+
+      case "education":
+        updatedData = await handleOneToManyUpdate({
+          db,
+          table: education,
+          documentId: id,
+          items: data as UpdateEducationSchema,
+          transformData: item => ({
+            ...item,
+            startDate: item.startDate ? new Date(item.startDate) : null,
+            endDate: item.endDate ? new Date(item.endDate) : null,
+          }),
+        });
+        break;
+
+      case "skills":
+        updatedData = await handleOneToManyUpdate({
+          db,
+          table: skills,
+          documentId: id,
+          items: data as UpdateSkillsSchema,
+        });
+        break;
+    }
+
+    if (!updatedData) {
+      return c.json(
+        { message: HttpStatusPhrases.NOT_FOUND },
+        HttpStatusCodes.NOT_FOUND,
+      );
+    }
+
+    const updatedDocument = await db.query.documents.findFirst({
+      where: (documents, { eq }) => eq(documents.id, id),
+      with: {
+        personalInfo: true,
+        experience: true,
+        education: true,
+        skills: true,
+      },
+    });
+
+    return c.json(updatedDocument, HttpStatusCodes.OK);
+  }
+  catch (error) {
+    console.error("Update document failed:", error);
+    return c.json(
+      { message: "Update document failed" },
+      HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
@@ -152,7 +294,12 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
 
   const { id } = c.req.valid("param");
 
-  const [deleted] = await db.delete(documents).where(eq(documents.id, id)).returning();
+  const authUser = c.get("authUser");
+
+  const [deleted] = await db
+    .delete(documents)
+    .where(and(eq(documents.id, id), eq(documents.userId, authUser.user!.id)))
+    .returning();
 
   if (!deleted) {
     return c.json(

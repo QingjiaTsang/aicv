@@ -10,7 +10,7 @@ export function AuthBackground() {
       <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.015] dark:opacity-[0.05]" />
 
       {/* Adding a glow effect for dark mode */}
-      <div className="absolute -left-1/4 -top-1/4 w-1/2 h-1/2 bg-gradient-to-br from-violet-500/10 to-transparent dark:from-violet-500/5 rounded-full blur-3xl" />
+      <div className="absolute -left-1/4 -top-1/4 w-1/2 h-1/2 bg-gradient-to-br from-primary/10 to-transparent dark:from-primary/5 rounded-full blur-3xl" />
       <div className="absolute -right-1/4 -bottom-1/4 w-1/2 h-1/2 bg-gradient-to-br from-fuchsia-500/10 to-transparent dark:from-fuchsia-500/5 rounded-full blur-3xl" />
 
       {/* Dynamic Decorative Elements */}
@@ -102,7 +102,7 @@ export function AuthBackground() {
             ease: "easeInOut",
           }}
         >
-          <svg viewBox="0 0 24 24" className="h-full w-full text-violet-500">
+          <svg viewBox="0 0 24 24" className="h-full w-full text-primary">
             <path
               fill="currentColor"
               d="M13 3C9.23 3 6.19 5.95 6 9.66L4.08 12.19C3.84 12.5 4.06 13 4.5 13H6V16C6 17.11 6.89 18 8 18H9V21H16V16.31C18.37 15.19 20 12.8 20 10C20 6.14 16.88 3 13 3M14 14H12V12H14V14M15.75 8.81C15.46 9.21 15.09 9.5 14.64 9.74C14.39 9.9 14.22 10.07 14.13 10.26C14.04 10.45 14 10.69 14 11H12C12 10.45 12.11 10 12.33 9.63C12.55 9.25 12.92 8.91 13.45 8.59C13.85 8.35 14.15 8.1 14.34 7.82C14.53 7.55 14.62 7.25 14.62 6.92C14.62 6.56 14.5 6.28 14.26 6.07C14 5.86 13.65 5.76 13.19 5.76C12.76 5.76 12.41 5.86 12.14 6.05C11.87 6.25 11.72 6.54 11.7 6.93H9.66C9.69 6.04 10.01 5.37 10.61 4.91C11.21 4.44 12.05 4.21 13.11 4.21C14.15 4.21 14.97 4.45 15.56 4.95C16.15 5.44 16.45 6.09 16.45 6.89C16.45 7.5 16.22 8.1 15.75 8.81Z"

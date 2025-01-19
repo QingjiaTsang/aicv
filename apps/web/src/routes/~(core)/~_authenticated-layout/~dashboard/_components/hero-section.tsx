@@ -18,7 +18,7 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
 
       <Card className="relative overflow-hidden px-2 border-0 bg-gradient-to-br from-violet-50/50 via-fuchsia-50/50 to-purple-50/50 dark:from-violet-950/50 dark:via-fuchsia-950/50 dark:to-purple-950/50 backdrop-blur-xl">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.015] dark:opacity-[0.05]" />
-        <div className="absolute -left-1/4 -top-1/4 w-1/2 h-1/2 bg-gradient-to-br from-violet-500/10 to-transparent dark:from-violet-500/5 rounded-full blur-3xl" />
+        <div className="absolute -left-1/4 -top-1/4 w-1/2 h-1/2 bg-gradient-to-br from-primary/10 to-transparent dark:from-primary/5 rounded-full blur-3xl" />
 
         <div className="container mx-auto w-full max-w-6xl px-4 py-6 relative">
           <div className="flex items-center justify-between">
@@ -35,7 +35,7 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
                   Create a professional resume, let AI help you showcase your best career image
                 </p>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Sparkles className="w-4 h-4 text-violet-500" />
+                  <Sparkles className="w-4 h-4 text-primary" />
                   <span>AI-powered suggestions to optimize your content</span>
                 </div>
               </motion.div>
@@ -50,7 +50,7 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
                   size="lg"
                   onClick={onCreate}
                   disabled={isPending}
-                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 dark:from-violet-500 dark:to-purple-500 text-white shadow-lg hover:shadow-violet-500/25 transition-all duration-300"
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 dark:from-primary dark:to-purple-500 text-white shadow-lg hover:shadow-primary/25 transition-all duration-300"
                 >
                   <FileText className="mr-2 h-5 w-5" />
                   Create New Resume
