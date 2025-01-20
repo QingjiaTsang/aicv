@@ -28,10 +28,10 @@ export default function createApp() {
       },
     )
     .use("/*", async (c, next) => {
-      // Handle credential signup and verify
-      if (c.req.path.startsWith("/api/auth/signup")
-        || c.req.path.startsWith("/api/auth/verify")
-        || c.req.path.startsWith("/api/auth/credentials/signin")) {
+      const publicRoutes = ["/api/public/"];
+      // Handle custom authentication routes
+      const customAuthRoutes = ["/api/auth/signup", "/api/auth/verify", "/api/auth/credentials/signin"];
+      if (customAuthRoutes.includes(c.req.path) || publicRoutes.some(route => c.req.path.startsWith(route))) {
         return next();
       }
 

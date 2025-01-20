@@ -78,7 +78,7 @@ function ResumeCard({ resume, onDelete, }: ResumeCardProps) {
               <FileText className="size-5 text-violet-600 dark:text-violet-300" />
             </div>
             <div>
-              <h3 className="truncate max-w-[220px] font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
+              <h3 className="truncate max-w-[195px] font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                 Updated {format(resume.updatedAt, "MMM dd, yyyy HH:mm")}
               </p>

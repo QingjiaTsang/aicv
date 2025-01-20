@@ -32,10 +32,6 @@ export const documentsApi = {
     if ("message" in json) {
       throw new Error(json.message);
     }
-    if ("error" in json) {
-      const message = formatApiError(json);
-      throw new Error(message);
-    }
 
     return json
   },
@@ -84,4 +80,18 @@ export const documentsApi = {
       throw new Error(message);
     }
   },
+
+  publicPreview: async (id: string) => {
+    const response = await apiClient.api.public.documents[":id"].$get({
+      param: { id },
+    });
+
+    const json = await response.json();
+    if ("message" in json) {
+      throw new Error(json.message);
+    }
+
+    return json;
+  },
 };
+

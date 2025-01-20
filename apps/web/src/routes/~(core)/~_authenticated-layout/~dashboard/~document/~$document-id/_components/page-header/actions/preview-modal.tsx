@@ -50,7 +50,7 @@ export function PreviewModal({ document, children, isModalOpen, onModalChange, }
           <div className="p-1 md:p-4" >
             <div
               className={cn(
-                " p-10 shadow-lg border-t-[12px] dark:border",
+                "p-10 shadow-lg border-t-[12px] dark:border",
                 "rounded-md bg-white dark:bg-gray-950"
               )}
               style={{ borderTop: `12px solid ${document.themeColor}` }}

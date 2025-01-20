@@ -20,7 +20,7 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootLayout() {
-  const hideNavRoutes: string[] = [];
+  const hideNavRoutes: string[] = ['/preview/$documentId'];
 
   const matchRoute = useMatchRoute();
 

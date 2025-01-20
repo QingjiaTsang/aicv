@@ -51,3 +51,13 @@ export const documentQueryOptionsFn = (id: string, options?: DocumentQueryOption
     },
     ...options,
   });
+
+export const publicDocumentQueryOptionsFn = (id: string, options?: DocumentQueryOptions) => 
+  queryOptions({
+    queryKey: documentKeys.LIST_DOCUMENT(id),
+    queryFn: async () => {
+      const document = await documentsApi.publicPreview(id);
+      return document;
+    },
+    ...options,
+  });

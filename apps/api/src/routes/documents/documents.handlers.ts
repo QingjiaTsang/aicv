@@ -15,7 +15,72 @@ import { experience } from "@/api/db/schema/resume/experience";
 import { personalInfo } from "@/api/db/schema/resume/personal-info";
 import { skills } from "@/api/db/schema/resume/skills";
 
-import type { CreateRoute, GetOneRoute, ListRoute, RemoveRoute, UpdateRoute } from "./documents.routes";
+import type { CreateRoute, GetOneRoute, ListRoute, PublicPreviewRoute, RemoveRoute, UpdateRoute } from "./documents.routes";
+
+type HandleDocumentUpdateParams = {
+  db: DrizzleD1Database<typeof schema>;
+  id: string;
+  data: UpdateBasicDocumentSchema;
+};
+async function handleBasicDocumentUpdate({ db, id, data }: HandleDocumentUpdateParams) {
+  const [updated] = await db
+    .update(documents)
+    .set(data)
+    .where(eq(documents.id, id))
+    .returning();
+  return updated;
+}
+
+type HandlePersonalInfoUpdateParams = {
+  db: DrizzleD1Database<typeof schema>;
+  id: string;
+  data: UpdatePersonalInfoSchema;
+};
+async function handlePersonalInfoUpdate({ db, id, data }: HandlePersonalInfoUpdateParams) {
+  const [updated] = await db
+    .update(personalInfo)
+    .set(data)
+    .where(eq(personalInfo.documentId, id))
+    .returning();
+
+  return updated;
+}
+
+type HandleOneToManyUpdateParams<T extends { id?: string }> = {
+  db: DrizzleD1Database<typeof schema>;
+  table: typeof experience | typeof education | typeof skills;
+  documentId: string;
+  items: T[];
+  transformData?: (item: T) => any;
+};
+async function handleOneToManyUpdate<T extends { id?: string }>({
+  db,
+  table,
+  documentId,
+  items,
+  transformData,
+}: HandleOneToManyUpdateParams<T>) {
+  const results = await Promise.all(
+    items.map(async (item) => {
+      const data = transformData ? transformData(item) : item;
+      // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
+      if (item.id) {
+        const [updated] = await db
+          .update(table)
+          .set({ ...data, documentId })
+          .where(eq(table.id, item.id))
+          .returning();
+        return updated;
+      }
+      const [inserted] = await db
+        .insert(table)
+        .values({ ...data, documentId })
+        .returning();
+      return inserted;
+    }),
+  );
+  return results[results.length - 1];
+}
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
   const db = createDb(c.env);
@@ -113,71 +178,6 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 
   return c.json(inserted, HttpStatusCodes.CREATED);
 };
-
-type HandleDocumentUpdateParams = {
-  db: DrizzleD1Database<typeof schema>;
-  id: string;
-  data: UpdateBasicDocumentSchema;
-};
-async function handleBasicDocumentUpdate({ db, id, data }: HandleDocumentUpdateParams) {
-  const [updated] = await db
-    .update(documents)
-    .set(data)
-    .where(eq(documents.id, id))
-    .returning();
-  return updated;
-}
-
-type HandlePersonalInfoUpdateParams = {
-  db: DrizzleD1Database<typeof schema>;
-  id: string;
-  data: UpdatePersonalInfoSchema;
-};
-async function handlePersonalInfoUpdate({ db, id, data }: HandlePersonalInfoUpdateParams) {
-  const [updated] = await db
-    .update(personalInfo)
-    .set(data)
-    .where(eq(personalInfo.documentId, id))
-    .returning();
-
-  return updated;
-}
-
-type HandleOneToManyUpdateParams<T extends { id?: string }> = {
-  db: DrizzleD1Database<typeof schema>;
-  table: typeof experience | typeof education | typeof skills;
-  documentId: string;
-  items: T[];
-  transformData?: (item: T) => any;
-};
-async function handleOneToManyUpdate<T extends { id?: string }>({
-  db,
-  table,
-  documentId,
-  items,
-  transformData,
-}: HandleOneToManyUpdateParams<T>) {
-  const results = await Promise.all(
-    items.map(async (item) => {
-      const data = transformData ? transformData(item) : item;
-      // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
-      if (item.id) {
-        const [updated] = await db
-          .update(table)
-          .set({ ...data, documentId })
-          .where(eq(table.id, item.id))
-          .returning();
-        return updated;
-      }
-      const [inserted] = await db
-        .insert(table)
-        .values({ ...data, documentId })
-        .returning();
-      return inserted;
-    }),
-  );
-  return results[results.length - 1];
-}
 
 export const update: AppRouteHandler<UpdateRoute> = async (c) => {
   const db = createDb(c.env);
@@ -308,4 +308,49 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   }
 
   return c.body(null, HttpStatusCodes.NO_CONTENT);
+};
+
+export const publicPreview: AppRouteHandler<PublicPreviewRoute> = async (c) => {
+  const db = createDb(c.env);
+
+  const { id } = c.req.valid("param");
+
+  const document = await db
+    .query
+    .documents
+    .findFirst({
+      where: (documents, { eq }) => and(eq(documents.id, id), eq(documents.status, DOCUMENT_STATUS.PUBLIC)),
+      with: {
+        education: true,
+        experience: true,
+        skills: true,
+        personalInfo: true,
+      },
+    });
+
+  if (!document) {
+    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  const formattedDocument = {
+    ...document,
+    experience: document.experience.map(exp => ({
+      ...exp,
+      startDate: exp.startDate ? new Date(exp.startDate).getTime() : null,
+      endDate: exp.endDate ? new Date(exp.endDate).getTime() : null,
+      createdAt: exp.createdAt.toISOString(),
+      updatedAt: exp.updatedAt.toISOString(),
+    })),
+    education: document.education.map(edu => ({
+      ...edu,
+      startDate: edu.startDate ? new Date(edu.startDate).getTime() : null,
+      endDate: edu.endDate ? new Date(edu.endDate).getTime() : null,
+      createdAt: edu.createdAt.toISOString(),
+      updatedAt: edu.updatedAt.toISOString(),
+    })),
+    createdAt: document.createdAt.toISOString(),
+    updatedAt: document.updatedAt.toISOString(),
+  };
+
+  return c.json(formattedDocument, HttpStatusCodes.OK);
 };

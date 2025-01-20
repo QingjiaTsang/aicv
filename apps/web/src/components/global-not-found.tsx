@@ -11,7 +11,7 @@ type GlobalNotFoundProps = {
 export function GlobalNotFound({ className }: GlobalNotFoundProps) {
   return (
     <div className={cn(
-      "h-[calc(100dvh-65px)] w-full flex items-center justify-center p-4",
+      "h-[calc(100dvh-97px)] w-full flex items-center justify-center",
       className
     )}>
       <motion.div

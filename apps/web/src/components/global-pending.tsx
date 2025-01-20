@@ -9,7 +9,7 @@ type GlobalPendingProps = {
 export function GlobalPending({ className }: GlobalPendingProps) {
   return (
     <div className={cn(
-      "h-dvh w-full flex items-center justify-center p-4",
+      "h-[calc(100dvh-97px)] w-full flex items-center justify-center",
       className
     )}>
       <motion.div

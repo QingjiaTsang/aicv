@@ -16,7 +16,7 @@ import { Route as LandingLayoutIndexImport } from './routes/~_landing-layout.ind
 import { Route as coreAuthenticatedLayoutImport } from './routes/~(core)/~_authenticated-layout'
 import { Route as authSignUpImport } from './routes/~(auth)/~sign-up'
 import { Route as authSignInImport } from './routes/~(auth)/~sign-in'
-import { Route as authPreviewDocumentIdImport } from './routes/~(auth)/~preview.$documentId'
+import { Route as authPreviewDocumentIdImport } from './routes/~(auth)/~preview.$document-id'
 import { Route as coreAuthenticatedLayoutDashboardDocumentsImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~documents'
 import { Route as coreAuthenticatedLayoutDashboardIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~index'
 import { Route as coreAuthenticatedLayoutDashboardDocumentDocumentIdEditImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~edit'
@@ -61,8 +61,8 @@ const authSignInRoute = authSignInImport.update({
 } as any)
 
 const authPreviewDocumentIdRoute = authPreviewDocumentIdImport.update({
-  id: '/(auth)/preview/$documentId',
-  path: '/preview/$documentId',
+  id: '/(auth)/preview/$document-id',
+  path: '/preview/$document-id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -133,10 +133,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingLayoutIndexImport
       parentRoute: typeof LandingLayoutImport
     }
-    '/(auth)/preview/$documentId': {
-      id: '/(auth)/preview/$documentId'
-      path: '/preview/$documentId'
-      fullPath: '/preview/$documentId'
+    '/(auth)/preview/$document-id': {
+      id: '/(auth)/preview/$document-id'
+      path: '/preview/$document-id'
+      fullPath: '/preview/$document-id'
       preLoaderRoute: typeof authPreviewDocumentIdImport
       parentRoute: typeof rootRoute
     }
@@ -214,7 +214,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
   '/': typeof LandingLayoutIndexRoute
-  '/preview/$documentId': typeof authPreviewDocumentIdRoute
+  '/preview/$document-id': typeof authPreviewDocumentIdRoute
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
   '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
@@ -224,7 +224,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
   '/': typeof LandingLayoutIndexRoute
-  '/preview/$documentId': typeof authPreviewDocumentIdRoute
+  '/preview/$document-id': typeof authPreviewDocumentIdRoute
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
   '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
@@ -238,7 +238,7 @@ export interface FileRoutesById {
   '/(core)': typeof coreRouteWithChildren
   '/(core)/_authenticated-layout': typeof coreAuthenticatedLayoutRouteWithChildren
   '/_landing-layout/': typeof LandingLayoutIndexRoute
-  '/(auth)/preview/$documentId': typeof authPreviewDocumentIdRoute
+  '/(auth)/preview/$document-id': typeof authPreviewDocumentIdRoute
   '/(core)/_authenticated-layout/dashboard/': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/(core)/_authenticated-layout/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
   '/(core)/_authenticated-layout/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
@@ -251,7 +251,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/'
-    | '/preview/$documentId'
+    | '/preview/$document-id'
     | '/dashboard'
     | '/dashboard/documents'
     | '/dashboard/document/$document-id/edit'
@@ -260,7 +260,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/'
-    | '/preview/$documentId'
+    | '/preview/$document-id'
     | '/dashboard'
     | '/dashboard/documents'
     | '/dashboard/document/$document-id/edit'
@@ -272,7 +272,7 @@ export interface FileRouteTypes {
     | '/(core)'
     | '/(core)/_authenticated-layout'
     | '/_landing-layout/'
-    | '/(auth)/preview/$documentId'
+    | '/(auth)/preview/$document-id'
     | '/(core)/_authenticated-layout/dashboard/'
     | '/(core)/_authenticated-layout/dashboard/documents'
     | '/(core)/_authenticated-layout/dashboard/document/$document-id/edit'
@@ -309,7 +309,7 @@ export const routeTree = rootRoute
         "/(auth)/sign-in",
         "/(auth)/sign-up",
         "/(core)",
-        "/(auth)/preview/$documentId"
+        "/(auth)/preview/$document-id"
       ]
     },
     "/_landing-layout": {
@@ -343,8 +343,8 @@ export const routeTree = rootRoute
       "filePath": "~_landing-layout.index.tsx",
       "parent": "/_landing-layout"
     },
-    "/(auth)/preview/$documentId": {
-      "filePath": "~(auth)/~preview.$documentId.tsx"
+    "/(auth)/preview/$document-id": {
+      "filePath": "~(auth)/~preview.$document-id.tsx"
     },
     "/(core)/_authenticated-layout/dashboard/": {
       "filePath": "~(core)/~_authenticated-layout/~dashboard/~index.tsx",
