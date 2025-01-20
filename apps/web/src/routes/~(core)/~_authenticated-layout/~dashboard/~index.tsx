@@ -6,6 +6,7 @@ import { useCreateDocumentMutation, useDeleteDocumentMutation } from "@/web/serv
 import { documentsQueryOptionsFn } from "@/web/services/documents/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 export const Route = createFileRoute(
   "/(core)/_authenticated-layout/dashboard/",
@@ -16,7 +17,14 @@ export const Route = createFileRoute(
 
 function DashboardPage() {
   const { data: preloadedData, isPending: isPreloading } = useSuspenseQuery(documentsQueryOptionsFn({ page: 1, pageSize: 100 }));
-  const { mutate: deleteDocument } = useDeleteDocumentMutation();
+  const { mutate: deleteDocument } = useDeleteDocumentMutation({
+    onSuccess: () => {
+      toast.success('Resume deleted')
+    },
+    onError: () => {
+      toast.error("Failed to delete resume")
+    }
+  });
   const { mutate: createDocument, isPending: isCreatingDocument } = useCreateDocumentMutation();
 
   const [DeleteResumeConfirmDialog, confirmDeleteResume] = useConfirm({

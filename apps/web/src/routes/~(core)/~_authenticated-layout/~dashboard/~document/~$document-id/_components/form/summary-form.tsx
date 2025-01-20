@@ -10,14 +10,14 @@ import queryClient from "@/web/lib/query-client"
 import { documentKeys } from "@/web/services/documents/queries"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
+import { toast } from "sonner"
 
 type SummaryFormProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
   className?: string
 }
 
-export default function SummaryForm({ document, isLoading, className }: SummaryFormProps) {
+export default function SummaryForm({ document, className }: SummaryFormProps) {
   const { personalInfo, experience, education, skills, ...basic } = document
 
   const form = useForm<UpdateBasicDocumentSchema>({
@@ -30,12 +30,14 @@ export default function SummaryForm({ document, isLoading, className }: SummaryF
     }
   })
 
-  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
+    onSuccess: () => {
+      toast.success("Summary section updated")
+    }
+  })
 
 
-  const onSubmit = async () => {
-    console.log('form', form.getValues())
-
+  const onSubmit = () => {
     const formData = form.getValues()
 
     updateDocumentByTypeMutation({
@@ -82,7 +84,8 @@ export default function SummaryForm({ document, isLoading, className }: SummaryF
                 <FormItem>
                   <FormControl>
                     <div className="flex gap-4">
-                      <FileText className="w-4 h-4 mt-2 flex-shrink-0" />
+                      <FileText className="size-4 mt-2 flex-shrink-0" />
+                      {/* TODO: add markdown editor and AI feature */}
                       <Textarea
                         {...field}
                         placeholder="Example: I'm a full-stack developer with 5 years of experience, specializing in React and Node.js..."
@@ -104,7 +107,7 @@ export default function SummaryForm({ document, isLoading, className }: SummaryF
           <div className="flex justify-end mt-8">
             <Button
               type="submit"
-              disabled={isLoading || isUpdatingDocumentByType}
+              disabled={isUpdatingDocumentByType}
               className={cn(
                 "bg-gradient-to-r from-violet-600 to-purple-600",
                 "hover:from-violet-700 hover:to-purple-700",

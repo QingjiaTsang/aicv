@@ -68,7 +68,7 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
 
         <CredenzaBody>{message}</CredenzaBody>
 
-        <CredenzaFooter className="flex justify-center gap-6">
+        <CredenzaFooter className="flex justify-center gap-6 md:gap-2">
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>

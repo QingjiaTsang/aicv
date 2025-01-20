@@ -4,14 +4,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams, } from "@tanstack/react-router";
 import { DocumentHeader } from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/document-header'
 
-import PersonalInfo from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/personal-info";
-import Summary from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/summary";
-import Experience from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/experience";
-import Education from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/education";
-import Skills from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/skills";
 import ResumeForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/resume-form";
+import ResumePreview from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/resume-preview";
 import { cn } from "@/web/lib/utils";
-
 
 export const Route = createFileRoute(
   "/(core)/_authenticated-layout/dashboard/document/$document-id/edit",
@@ -22,8 +17,10 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const params = useParams({ from: Route.id });
-  const { data: document, isPending } = useSuspenseQuery(documentQueryOptionsFn(params["document-id"]));
+  const { data: document } = useSuspenseQuery(documentQueryOptionsFn(params["document-id"]));
 
+  // TODO: add user customizable section with editor that can output formatted text
+  // TODO: add react-dnd to allow user to drag and drop sections to reorder
   return (
     <div className="h-full w-full flex flex-col container mx-auto max-w-6xl">
       <DocumentHeader document={document} />
@@ -40,27 +37,19 @@ function RouteComponent() {
             )}
             style={{ borderTopLeftRadius: `12px solid ${document.themeColor}` }}
           >
-            <ResumeForm document={document} isLoading={isPending} />
+            <ResumeForm document={document} />
           </div>
 
           {/* preview */}
           <div
+            id="resume-preview"
             className={`flex-1 w-full p-10 shadow-lg border-t-[12px] dark:border`}
             style={{ borderTop: `12px solid ${document.themeColor}` }}
           >
-            <PersonalInfo document={document} isLoading={isPending} />
-
-            <Summary document={document} isLoading={isPending} />
-
-            <Experience document={document} isLoading={isPending} />
-
-            <Education document={document} isLoading={isPending} />
-
-            <Skills document={document} isLoading={isPending} />
+            <ResumePreview document={document} />
           </div>
         </div >
       </div>
     </div>
   );
-
 }

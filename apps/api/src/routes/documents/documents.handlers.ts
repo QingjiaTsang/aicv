@@ -185,7 +185,7 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
   const { type, data } = c.req.valid("json");
   const authUser = c.get("authUser");
 
-  console.log('update logger',{
+  console.log("update logger", {
     type,
     data,
   });

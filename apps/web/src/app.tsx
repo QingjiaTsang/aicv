@@ -1,15 +1,17 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-
 import { routeTree } from "@/web/route-tree.gen";
+import { GlobalError } from "@/web/components/global-error";
+import { GlobalNotFound } from "@/web/components/global-not-found";
+import { GlobalPending } from "@/web/components/global-pending";
 
 const router = createRouter({
   routeTree,
   context: {
     session: null,
   },
-  defaultNotFoundComponent: () => <div>global not found</div>,
-  defaultErrorComponent: () => <div>global error</div>,
-  defaultPendingComponent: () => <div>global pending</div>,
+  defaultNotFoundComponent: () => <GlobalNotFound />,
+  defaultErrorComponent: ({ error }) => <GlobalError error={error} />,
+  defaultPendingComponent: () => <GlobalPending />,
   defaultPreload: "intent",
   defaultViewTransition: true,
 });

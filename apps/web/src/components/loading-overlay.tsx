@@ -16,8 +16,8 @@ export function LoadingOverlay() {
         }}
         className="relative"
       >
-        <FileText className="h-12 w-12 text-violet-600 dark:text-violet-400" />
-        <Sparkles className="absolute -top-2 -right-2 h-4 w-4 text-violet-400 animate-pulse" />
+        <FileText className="size-12 text-violet-600 dark:text-violet-400" />
+        <Sparkles className="absolute -top-2 -right-2 size-4 text-violet-400 animate-pulse" />
       </motion.div>
 
       <p className="text-violet-600 dark:text-violet-400 animate-pulse">

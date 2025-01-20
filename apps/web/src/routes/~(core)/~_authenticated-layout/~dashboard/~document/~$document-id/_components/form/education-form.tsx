@@ -13,11 +13,11 @@ import useConfirm from "@/web/hooks/useConfirm"
 import { z } from "zod"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
+import { toast } from "sonner"
 
 
 type EducationFormProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
   className?: string
 }
 
@@ -25,7 +25,7 @@ type FormValues = {
   education: UpdateEducationSchema
 }
 
-export default function EducationForm({ document, isLoading, className }: EducationFormProps) {
+export default function EducationForm({ document, className }: EducationFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
       education: updateEducationSchema
@@ -44,12 +44,14 @@ export default function EducationForm({ document, isLoading, className }: Educat
     message: "Are you sure you want to delete this education entry?"
   }) as [() => JSX.Element, () => Promise<boolean>]
 
-  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
+    onSuccess: () => {
+      toast.success("Education section updated")
+    }
+  })
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     const formData = form.getValues()
-
-    console.log('formData', formData)
 
     updateDocumentByTypeMutation({
       id: document.id,
@@ -93,9 +95,16 @@ export default function EducationForm({ document, isLoading, className }: Educat
 
   const handleFieldChange = (index: number, field: keyof UpdateEducationSchema[0], value: string | number) => {
     const education = [...form.getValues('education')]
-    education[index] = {
-      ...education[index],
-      [field]: value
+    if (field === 'startDate' || field === 'endDate') {
+      education[index] = {
+        ...education[index],
+        [field]: value ? new Date(value).getTime() : null
+      }
+    } else {
+      education[index] = {
+        ...education[index],
+        [field]: value
+      }
     }
     form.setValue('education', education)
 
@@ -143,7 +152,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
                   onClick={() => handleRemoveEducation(index)}
                   className="absolute right-4 top-4"
                 >
-                  <Trash2 className="w-4 h-4 text-destructive" />
+                  <Trash2 className="size-4 text-destructive" />
                 </Button>
 
                 <FormField
@@ -152,7 +161,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
-                        <GraduationCap className="w-4 h-4" />
+                        <GraduationCap className="size-4" />
                         <span>University Name</span>
                       </FormLabel>
                       <FormControl>
@@ -178,7 +187,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <GraduationCap className="w-4 h-4" />
+                          <GraduationCap className="size-4" />
                           <span>Degree</span>
                         </FormLabel>
                         <FormControl>
@@ -203,7 +212,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <GraduationCap className="w-4 h-4" />
+                          <GraduationCap className="size-4" />
                           <span>Major</span>
                         </FormLabel>
                         <FormControl>
@@ -230,7 +239,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <CalendarIcon className="w-4 h-4" />
+                          <CalendarIcon className="size-4" />
                           <span>Start Date</span>
                         </FormLabel>
                         <FormControl>
@@ -256,7 +265,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <CalendarIcon className="w-4 h-4" />
+                          <CalendarIcon className="size-4" />
                           <span>End Date</span>
                         </FormLabel>
                         <FormControl>
@@ -283,7 +292,7 @@ export default function EducationForm({ document, isLoading, className }: Educat
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
-                        <GraduationCap className="w-4 h-4" />
+                        <GraduationCap className="size-4" />
                         <span>Academic Experience</span>
                       </FormLabel>
                       <FormControl>
@@ -313,13 +322,13 @@ export default function EducationForm({ document, isLoading, className }: Educat
               onClick={handleAddEducation}
               className="gap-2"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="size-4" />
               Add Education
             </Button>
 
             <Button
               type="submit"
-              disabled={isLoading || isUpdatingDocumentByType}
+              disabled={isUpdatingDocumentByType}
               className={cn(
                 "bg-gradient-to-r from-violet-600 to-purple-600",
                 "hover:from-violet-700 hover:to-purple-700",

@@ -4,20 +4,15 @@ import { format } from "date-fns"
 
 type ExperienceProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
 }
 
-export default function Experience({ document, isLoading }: ExperienceProps) {
-  if (isLoading) {
-    return <ExperienceSkeleton />
-  }
-
+export default function Experience({ document }: ExperienceProps) {
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
         Professional Experience
       </div>
-      <hr className="w-full my-2 border-b-2" style={{ borderColor: document.themeColor }} />
+      <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
       <div className="flex flex-col gap-4 w-full">
         {document.experience?.map((exp) => (
@@ -40,14 +35,14 @@ function ExperienceItem({ experience, themeColor }: {
     <div className="w-full flex flex-col gap-2">
       <div className="flex flex-col gap-1">
         <div className="flex justify-between">
-          <div className="text-base font-bold" style={{ color: themeColor }}>
+          <div className="max-w-[368px] text-base font-bold" style={{ color: themeColor }}>
             {experience?.title || "Position Title"}
           </div>
 
           <div className="text-sm">
-            {format(experience?.startDate!, "MMM yyyy")}
-            {experience?.startDate && " - "}
-            {experience?.isCurrentlyEmployed ? "Present" : format(experience?.endDate!, "MMM yyyy")}
+            {experience?.startDate ? format(experience.startDate, "MMM yyyy") : "Start Date"}
+            {" - "}
+            {experience?.isCurrentlyEmployed ? "Present" : experience?.endDate ? format(experience.endDate, "MMM yyyy") : "End Date"}
           </div>
         </div>
 

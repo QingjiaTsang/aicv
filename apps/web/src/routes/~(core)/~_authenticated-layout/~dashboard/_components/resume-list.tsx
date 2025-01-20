@@ -75,7 +75,7 @@ function ResumeCard({ resume, onDelete, }: ResumeCardProps) {
         <div className="w-full flex items-start justify-between">
           <div className="w-full flex items-center gap-3">
             <div className="rounded-full bg-violet-100/80 dark:bg-violet-900/80 p-2 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
-              <FileText className="h-5 w-5 text-violet-600 dark:text-violet-300" />
+              <FileText className="size-5 text-violet-600 dark:text-violet-300" />
             </div>
             <div>
               <h3 className="truncate max-w-[220px] font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
@@ -92,7 +92,7 @@ function ResumeCard({ resume, onDelete, }: ResumeCardProps) {
                 size="icon"
                 className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-violet-100/50 dark:hover:bg-violet-900/50"
               >
-                <MoreVertical className="h-4 w-4" />
+                <MoreVertical className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -103,13 +103,13 @@ function ResumeCard({ resume, onDelete, }: ResumeCardProps) {
                   preload="intent"
                   className="w-full flex items-center gap-2"
                 >
-                  <Pencil className="h-4 w-4" />
+                  <Pencil className="size-4" />
                   <span>Edit</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onDelete} className="text-red-600 dark:text-red-400">
                 <div className="w-full flex items-center gap-2 cursor-pointer">
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="size-4" />
                   <span>Delete</span>
                 </div>
               </DropdownMenuItem>
@@ -135,7 +135,7 @@ function EmptyResumeList() {
     <Card className="p-12 text-center shadow-sm">
       <div className="flex flex-col items-center gap-4">
         <div className="rounded-full bg-violet-100 dark:bg-violet-900/50 p-4">
-          <FileText className="h-8 w-8 text-violet-600 dark:text-violet-400" />
+          <FileText className="size-8 text-violet-600 dark:text-violet-400" />
         </div>
         <div className="space-y-2">
           <h3 className="text-xl font-medium">No resumes yet</h3>
@@ -152,7 +152,7 @@ function ResumeListSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <Card key={i} className="p-6 shadow-sm">
           <div className="flex items-start gap-3">
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="size-10 rounded-full" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-1/2" />

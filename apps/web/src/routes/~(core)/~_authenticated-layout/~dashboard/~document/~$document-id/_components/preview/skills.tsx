@@ -3,21 +3,16 @@ import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 
 type SkillsProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
 }
 
-export default function Skills({ document, isLoading }: SkillsProps) {
-  if (isLoading) {
-    return <SkillsSkeleton />
-  }
-
+export default function Skills({ document }: SkillsProps) {
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
         Skills
       </div>
 
-      <hr className="w-full my-2 border-b-2" style={{ borderColor: document.themeColor }} />
+      <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
       <div className="w-full flex flex-wrap gap-4">
         {document.skills?.map((skill) => (

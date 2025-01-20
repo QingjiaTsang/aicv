@@ -11,11 +11,11 @@ import { documentKeys } from "@/web/services/documents/queries"
 import useConfirm from "@/web/hooks/useConfirm"
 import { z } from "zod"
 import { cn } from "@/web/lib/utils"
+import { toast } from "sonner"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 
 type SkillsFormProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
   className?: string
 }
 
@@ -23,7 +23,7 @@ type FormValues = {
   skills: UpdateSkillsSchema
 }
 
-export default function SkillsForm({ document, isLoading, className }: SkillsFormProps) {
+export default function SkillsForm({ document, className }: SkillsFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
       skills: updateSkillsSchema
@@ -40,9 +40,13 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
     message: "Are you sure you want to delete this skill?"
   }) as [() => JSX.Element, () => Promise<boolean>]
 
-  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
+    onSuccess: () => {
+      toast.success("Skills section updated")
+    }
+  })
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     const formData = form.getValues()
 
     updateDocumentByTypeMutation({
@@ -133,7 +137,7 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
                   onClick={() => handleRemoveSkill(index)}
                   className="absolute right-2 top-2"
                 >
-                  <Trash2 className="w-4 h-4 text-destructive" />
+                  <Trash2 className="size-4 text-destructive" />
                 </Button>
 
                 <div className="grid gap-4 md:grid-cols-2">
@@ -143,7 +147,7 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <Star className="w-4 h-4" />
+                          <Star className="size-4" />
                           <span>Skill Name</span>
                         </FormLabel>
                         <FormControl>
@@ -168,7 +172,7 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <Star className="w-4 h-4" />
+                          <Star className="size-4" />
                           <span>Proficiency (1-5)</span>
                         </FormLabel>
                         <FormControl>
@@ -202,13 +206,13 @@ export default function SkillsForm({ document, isLoading, className }: SkillsFor
               onClick={handleAddSkill}
               className="gap-2"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="size-4" />
               Add Skill
             </Button>
 
             <Button
               type="submit"
-              disabled={isLoading || isUpdatingDocumentByType}
+              disabled={isUpdatingDocumentByType}
               className={cn(
                 "bg-gradient-to-r from-violet-600 to-purple-600",
                 "hover:from-violet-700 hover:to-purple-700",

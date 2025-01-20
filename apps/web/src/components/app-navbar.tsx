@@ -25,13 +25,13 @@ function UserProfile({ user }: { user: User }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex items-center gap-1 cursor-pointer">
-          <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
+          <Avatar className="size-9 cursor-pointer ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
             <AvatarImage src={user.image ?? ''} alt={user.name ?? 'User avatar'} />
             <AvatarFallback className="bg-gradient-to-r from-primary to-fuchsia-500 text-white">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
-          <ChevronDown className="w-4 h-4" />
+          <ChevronDown className="size-4" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">

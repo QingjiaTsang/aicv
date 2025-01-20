@@ -70,7 +70,7 @@ export function AuthBackground() {
 
         {/* Edit Cursor Animation */}
         <motion.div
-          className="absolute bottom-[30%] right-[35%] h-16 w-16 opacity-20 dark:opacity-10"
+          className="absolute bottom-[30%] right-[35%] size-16 opacity-20 dark:opacity-10"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.2, 0.4, 0.2],
@@ -91,7 +91,7 @@ export function AuthBackground() {
 
         {/* AI Brain Icon */}
         <motion.div
-          className="absolute top-1/3 right-[25%] h-20 w-20 opacity-20 dark:opacity-10"
+          className="absolute top-1/3 right-[25%] size-20 opacity-20 dark:opacity-10"
           animate={{
             scale: [1, 1.1, 1],
             rotate: [0, -5, 0],
@@ -112,7 +112,7 @@ export function AuthBackground() {
 
         {/* Career Icon */}
         <motion.div
-          className="absolute bottom-[20%] left-[30%] h-16 w-16 opacity-20 dark:opacity-10"
+          className="absolute bottom-[20%] left-[30%] size-16 opacity-20 dark:opacity-10"
           animate={{
             x: [0, 15, 0],
             y: [0, -10, 0],
@@ -136,7 +136,7 @@ export function AuthBackground() {
           {Array.from({ length: 20 }).map((_, i) => (
             <motion.div
               key={i}
-              className="absolute h-2 w-2 rounded-full"
+              className="absolute size-2 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,

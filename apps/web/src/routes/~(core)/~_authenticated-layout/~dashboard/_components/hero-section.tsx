@@ -4,7 +4,7 @@ import { FileText, Sparkles } from "lucide-react";
 import { Button } from "@/web/components/shadcn-ui/button";
 import { Card } from "@/web/components/shadcn-ui/card";
 import { HeroIllustration } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/hero-illustration";
-import { LoadingOverlay } from "@/web/components/ui/loading-overlay";
+import { LoadingOverlay } from "@/web/components/loading-overlay";
 
 type DashboardHeroProps = {
   isPending: boolean;
@@ -35,7 +35,7 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
                   Create a professional resume, let AI help you showcase your best career image
                 </p>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Sparkles className="w-4 h-4 text-primary" />
+                  <Sparkles className="size-4 text-primary" />
                   <span>AI-powered suggestions to optimize your content</span>
                 </div>
               </motion.div>
@@ -52,7 +52,7 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
                   disabled={isPending}
                   className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 dark:from-primary dark:to-purple-500 text-white shadow-lg hover:shadow-primary/25 transition-all duration-300"
                 >
-                  <FileText className="mr-2 h-5 w-5" />
+                  <FileText className="mr-2 size-5" />
                   Create New Resume
                 </Button>
               </motion.div>

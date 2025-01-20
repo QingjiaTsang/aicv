@@ -32,7 +32,7 @@ function RootLayout() {
       <main className="flex-1 pb-8">
         <Outlet />
       </main>
-      <TanStackRouterDevtools />
+      {/* <TanStackRouterDevtools /> */}
     </div>
   );
 };

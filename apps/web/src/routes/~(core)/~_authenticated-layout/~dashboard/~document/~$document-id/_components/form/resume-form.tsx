@@ -7,40 +7,28 @@ import EducationForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboar
 import { useState } from "react";
 import { Button } from "@/web/components/shadcn-ui/button";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
-
-const FORM_LABELS = [
-  "Personal Info",
-  "Summary",
-  "Experience",
-  "Education",
-  "Skills",
-] as const
+import { FORM_LABELS } from "@/web/lib/constants";
 
 type ResumeFormProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
 }
 
-export default function ResumeForm({ document, isLoading }: ResumeFormProps) {
+export default function ResumeForm({ document }: ResumeFormProps) {
   const [currentForm, setCurrentForm] = useState<{
     index: number
-    label: typeof FORM_LABELS[number]
   }>({
     index: 0,
-    label: FORM_LABELS[0],
   })
 
   const handleNextForm = () => {
     setCurrentForm((prev) => ({
       index: prev.index + 1,
-      label: FORM_LABELS[prev.index + 1],
     }))
   }
 
   const handlePreviousForm = () => {
     setCurrentForm((prev) => ({
       index: prev.index - 1,
-      label: FORM_LABELS[prev.index - 1],
     }))
   }
 
@@ -53,7 +41,7 @@ export default function ResumeForm({ document, isLoading }: ResumeFormProps) {
           onClick={handlePreviousForm}
           className="w-fit" disabled={currentForm.index === 0}
         >
-          <ArrowLeftIcon className="w-4 h-4" />
+          <ArrowLeftIcon className="size-4" />
           <span>Previous</span>
         </Button>
         <Button
@@ -64,7 +52,7 @@ export default function ResumeForm({ document, isLoading }: ResumeFormProps) {
           disabled={currentForm.index === FORM_LABELS.length - 1}
         >
           <span>Next</span>
-          <ArrowRightIcon className="w-4 h-4" />
+          <ArrowRightIcon className="size-4" />
         </Button>
       </div>
 
@@ -73,27 +61,22 @@ export default function ResumeForm({ document, isLoading }: ResumeFormProps) {
       <div className="flex flex-col">
         <PersonalInfoForm
           document={document}
-          isLoading={isLoading}
           className={`${currentForm.index === 0 ? 'block' : 'hidden'}`}
         />
         <SummaryForm
           document={document}
-          isLoading={isLoading}
           className={`${currentForm.index === 1 ? 'block' : 'hidden'}`}
         />
         <ExperienceForm
           document={document}
-          isLoading={isLoading}
           className={`${currentForm.index === 2 ? 'block' : 'hidden'}`}
         />
         <EducationForm
           document={document}
-          isLoading={isLoading}
           className={`${currentForm.index === 3 ? 'block' : 'hidden'}`}
         />
         <SkillsForm
           document={document}
-          isLoading={isLoading}
           className={`${currentForm.index === 4 ? 'block' : 'hidden'}`}
         />
       </div>

@@ -199,7 +199,7 @@ function SigninPage() {
                 disabled={isSigningIn}
                 className="w-full bg-white/80 dark:bg-gray-900/50 hover:bg-violet-50 dark:hover:bg-violet-900/20 text-gray-900 dark:text-gray-200 font-medium border border-violet-200 dark:border-violet-800/20 hover:border-violet-300 dark:hover:border-violet-700 rounded-xl transition-all duration-300"
               >
-                <FcGoogle className="mr-3 w-6 h-6 scale-125" />
+                <FcGoogle className="mr-3 size-6 scale-125" />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {isSigningIn ? "Starting..." : "Continue with Google"}
                 </span>
@@ -214,7 +214,7 @@ function SigninPage() {
                 disabled={isSigningIn}
                 className="w-full bg-white/80 dark:bg-gray-900/50 hover:bg-violet-50 dark:hover:bg-violet-900/20 text-gray-900 dark:text-gray-200 font-medium border border-violet-200 dark:border-violet-800/20 hover:border-violet-300 dark:hover:border-violet-700 rounded-xl transition-all duration-300"
               >
-                <FaGithub className="mr-3 w-6 h-6 scale-125" />
+                <FaGithub className="mr-3 size-6 scale-125" />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {isSigningIn ? "Starting..." : "Continue with GitHub"}
                 </span>

@@ -1,6 +1,7 @@
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
-import { DocumentHeaderTitle } from './document-header-title'
-import { DocumentHeaderActions } from './document-header-actions'
+import { DocumentHeaderTitle } from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/document-header-title'
+import { DocumentHeaderActions } from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/document-header-actions'
+import { cn } from "@/web/lib/utils"
 
 type DocumentHeaderProps = {
   document: SelectDocumentWithRelationsSchema
@@ -8,17 +9,15 @@ type DocumentHeaderProps = {
 
 export function DocumentHeader({ document }: DocumentHeaderProps) {
   return (
-    <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+    <div
+      className={cn(
+        "h-16 flex items-center justify-between px-4",
+        "border-b border-gray-200 dark:border-gray-800",
+        "bg-white dark:bg-gray-900"
+      )}
+    >
       <DocumentHeaderTitle document={document} />
-      {/* TODO: add actions */}
-      <DocumentHeaderActions
-        document={document}
-        onThemeChange={() => { }}
-        onPreview={() => { }}
-        onDelete={() => { }}
-        onShare={() => { }}
-        onDownload={() => { }}
-      />
+      <DocumentHeaderActions document={document} />
     </div>
   )
 }

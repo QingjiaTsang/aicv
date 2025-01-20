@@ -21,8 +21,6 @@ export const documentKeys = {
   LIST_DOCUMENT: (id: string) => [`list-document-${id}`],
 } as const;
 
-
-
 export const documentsQueryOptionsFn = (params?: ListDocumentsParams, options?: DocumentsQueryOptions) => queryOptions({
   queryKey: [...documentKeys.LIST_DOCUMENTS, params],
   queryFn: async () => {

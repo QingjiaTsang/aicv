@@ -5,20 +5,15 @@ import { format } from "date-fns"
 
 type EducationProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
 }
 
-export default function Education({ document, isLoading }: EducationProps) {
-  if (isLoading) {
-    return <EducationSkeleton />
-  }
-
+export default function Education({ document }: EducationProps) {
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
         Education
       </div>
-      <hr className="w-full my-2 border-b-2" style={{ borderColor: document.themeColor }} />
+      <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
       <div className="flex flex-col gap-4 w-full">
         {document.education?.map((edu) => (
@@ -37,12 +32,14 @@ function EducationItem({ education, themeColor }: {
     <div className="w-full flex flex-col gap-2">
       <div className="flex flex-col gap-1">
         <div className="flex justify-between">
-          <div className="text-sm font-bold" style={{ color: themeColor }}>
+          <div className="max-w-[368px] text-sm font-bold" style={{ color: themeColor }}>
             {education?.universityName || "University Name"}
           </div>
 
           <div className="text-sm">
-            {format(education?.startDate!, "MMM yyyy")} - {format(education?.endDate!, "MMM yyyy")}
+            {education?.startDate ? format(education.startDate, "MMM yyyy") : "Start Date"}
+            {" - "}
+            {education?.endDate ? format(education.endDate, "MMM yyyy") : "End Date"}
           </div>
         </div>
 

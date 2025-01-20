@@ -91,9 +91,9 @@ function SignUpPage() {
               className="relative"
             >
               <div className="absolute inset-0 animate-ping">
-                <Mail className="h-12 w-12 text-primary/40" />
+                <Mail className="size-12 text-primary/40" />
               </div>
-              <Mail className="h-12 w-12 text-primary relative animate-bounce" />
+              <Mail className="size-12 text-primary relative animate-bounce" />
             </motion.div>
 
             <div className="space-y-2 text-center">
@@ -102,7 +102,7 @@ function SignUpPage() {
                 animate={{ y: 0, opacity: 1 }}
                 className="inline-flex items-center gap-2"
               >
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                <CheckCircle2 className="size-5 text-green-500" />
                 <CardTitle className="text-2xl text-foreground">
                   Verification Email Sent
                 </CardTitle>

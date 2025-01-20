@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "@/web/*": ["./src/*"]
-    }
+    },
   },
   "references": [
     { "path": "./tsconfig.app.json" },

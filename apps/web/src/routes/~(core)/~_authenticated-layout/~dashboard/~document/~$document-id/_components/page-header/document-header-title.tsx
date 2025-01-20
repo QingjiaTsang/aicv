@@ -9,7 +9,7 @@ type DocumentTitleProps = {
 export function DocumentHeaderTitle({ document }: DocumentTitleProps) {
   return (
     <div className="max-w-[70%] flex items-center gap-2 sm:gap-3">
-      <FileText className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-primary dark:text-violet-400" />
+      <FileText className="size-4 sm:size-5 flex-shrink-0 text-primary dark:text-violet-400" />
       <div className="w-full flex items-center gap-2">
         <h1 className="truncate text-base sm:text-lg font-medium text-gray-900 dark:text-gray-50">
           {document.title}

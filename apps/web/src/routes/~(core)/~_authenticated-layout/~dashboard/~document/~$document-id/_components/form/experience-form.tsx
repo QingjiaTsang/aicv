@@ -13,11 +13,12 @@ import useConfirm from "@/web/hooks/useConfirm";
 import { z } from "node_modules/zod/lib"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
+import { Checkbox } from "@/web/components/shadcn-ui/checkbox"
+import { toast } from "sonner"
 
 
 type ExperienceFormProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
   className?: string
 }
 
@@ -25,7 +26,7 @@ type FormValues = {
   experiences: UpdateExperienceSchema
 }
 
-export default function ExperienceForm({ document, isLoading, className }: ExperienceFormProps) {
+export default function ExperienceForm({ document, className }: ExperienceFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
       experiences: updateExperienceSchema
@@ -44,9 +45,13 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
     message: "Are you sure you want to delete this experience?"
   }) as [() => JSX.Element, () => Promise<boolean>]
 
-  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
+    onSuccess: () => {
+      toast.success("Experience section updated")
+    }
+  })
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     const formData = form.getValues()
 
     updateDocumentByTypeMutation({
@@ -93,9 +98,16 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
 
   const handleFieldChange = (index: number, field: keyof UpdateExperienceSchema[0], value: string | number | boolean) => {
     const experiences = [...form.getValues('experiences')]
-    experiences[index] = {
-      ...experiences[index],
-      [field]: value
+    if (field === 'startDate' || field === 'endDate') {
+      experiences[index] = {
+        ...experiences[index],
+        [field]: value && typeof value !== 'boolean' ? new Date(value).getTime() : null
+      }
+    } else {
+      experiences[index] = {
+        ...experiences[index],
+        [field]: value
+      }
     }
     form.setValue('experiences', experiences)
 
@@ -143,58 +155,60 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
                   onClick={() => handleRemoveExperience(index)}
                   className="absolute right-4 top-4"
                 >
-                  <Trash2 className="w-4 h-4 text-destructive" />
+                  <Trash2 className="size-4 text-destructive" />
                 </Button>
 
-                <FormField
-                  control={form.control}
-                  name={`experiences.${index}.title`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Briefcase className="w-4 h-4" />
-                        <span>Position</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="e.g. Senior Frontend Engineer"
-                          value={field.value || ''}
-                          onChange={e => {
-                            field.onChange(e.target.value)
-                            handleFieldChange(index, 'title', e.target.value)
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid gap-4 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name={`experiences.${index}.title`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Briefcase className="size-4" />
+                          <span>Position</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="e.g. Senior Frontend Engineer"
+                            value={field.value || ''}
+                            onChange={e => {
+                              field.onChange(e.target.value)
+                              handleFieldChange(index, 'title', e.target.value)
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name={`experiences.${index}.companyName`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Briefcase className="w-4 h-4" />
-                        <span>Company</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="e.g. Tech Company"
-                          value={field.value || ''}
-                          onChange={e => {
-                            field.onChange(e.target.value)
-                            handleFieldChange(index, 'companyName', e.target.value)
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name={`experiences.${index}.companyName`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Briefcase className="size-4" />
+                          <span>Company</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="e.g. Ant Group"
+                            value={field.value || ''}
+                            onChange={e => {
+                              field.onChange(e.target.value)
+                              handleFieldChange(index, 'companyName', e.target.value)
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <FormField
@@ -203,8 +217,8 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          <span>State/Province</span>
+                          <MapPin className="size-4" />
+                          <span>State</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -228,7 +242,7 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
+                          <MapPin className="size-4" />
                           <span>City</span>
                         </FormLabel>
                         <FormControl>
@@ -248,55 +262,77 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
                   />
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name={`experiences.${index}.startDate`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <CalendarIcon className="w-4 h-4" />
-                          <span>Start Date</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="date"
-                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                            onChange={e => {
-                              const date = new Date(e.target.value).getTime()
-                              field.onChange(date)
-                              handleFieldChange(index, 'startDate', date)
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name={`experiences.${index}.startDate`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <CalendarIcon className="size-4" />
+                            <span>Start Date</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="date"
+                              value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                              onChange={e => {
+                                const date = new Date(e.target.value).getTime()
+                                field.onChange(date)
+                                handleFieldChange(index, 'startDate', date)
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`experiences.${index}.endDate`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <CalendarIcon className="size-4" />
+                            <span>End Date</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="date"
+                              disabled={form.watch(`experiences.${index}.isCurrentlyEmployed`)}
+                              value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                              onChange={e => {
+                                const date = new Date(e.target.value).getTime()
+                                field.onChange(date)
+                                handleFieldChange(index, 'endDate', date)
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
-                    name={`experiences.${index}.endDate`}
+                    name={`experiences.${index}.isCurrentlyEmployed`}
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <CalendarIcon className="w-4 h-4" />
-                          <span>End Date</span>
-                        </FormLabel>
+                      <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="date"
-                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                            onChange={e => {
-                              const date = new Date(e.target.value).getTime()
-                              field.onChange(date)
-                              handleFieldChange(index, 'endDate', date)
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked)
+                              handleFieldChange(index, 'isCurrentlyEmployed', checked)
                             }}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormLabel className="text-sm font-normal leading-none cursor-pointer">I currently work here</FormLabel>
                       </FormItem>
                     )}
                   />
@@ -308,19 +344,20 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
-                        <Briefcase className="w-4 h-4" />
+                        <Briefcase className="size-4" />
                         <span>Work Summary</span>
                       </FormLabel>
                       <FormControl>
+                        {/* TODO: add markdown editor and AI feature */}
                         <Textarea
                           {...field}
-                          placeholder="Describe your main responsibilities, achievements, and duties..."
-                          className="min-h-[120px] resize-none"
+                          placeholder="Describe your main responsibilities, achievements, and work content..."
                           value={field.value || ''}
                           onChange={e => {
                             field.onChange(e.target.value)
                             handleFieldChange(index, 'workSummary', e.target.value)
                           }}
+                          className="min-h-[120px]"
                         />
                       </FormControl>
                       <FormMessage />
@@ -338,13 +375,13 @@ export default function ExperienceForm({ document, isLoading, className }: Exper
               onClick={handleAddExperience}
               className="gap-2"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="size-4" />
               Add Experience
             </Button>
 
             <Button
               type="submit"
-              disabled={isLoading || isUpdatingDocumentByType}
+              disabled={isUpdatingDocumentByType}
               className={cn(
                 "text-white shadow-lg transition-all duration-300",
                 "bg-gradient-to-r from-violet-600 to-purple-600",

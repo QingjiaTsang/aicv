@@ -3,14 +3,9 @@ import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 
 type SummaryProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
 }
 
-export default function Summary({ document, isLoading }: SummaryProps) {
-  if (isLoading) {
-    return <SummarySkeleton />
-  }
-
+export default function Summary({ document }: SummaryProps) {
   return (
     <div className="text-sm break-words">
       {document.summary || "Enter a brief introduction of your professional background"}

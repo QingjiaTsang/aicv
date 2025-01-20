@@ -10,14 +10,14 @@ import { documentKeys } from "@/web/services/documents/queries"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
+import { toast } from "sonner"
 
 type PersonalInfoFormProps = {
   document: SelectDocumentWithRelationsSchema
-  isLoading: boolean
   className?: string
 }
 
-export default function PersonalInfoForm({ document, isLoading, className }: PersonalInfoFormProps) {
+export default function PersonalInfoForm({ document, className }: PersonalInfoFormProps) {
   const form = useForm<UpdatePersonalInfoSchema>({
     resolver: zodResolver(updatePersonalInfoSchema),
     defaultValues: {
@@ -25,9 +25,13 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
     }
   })
 
-  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
+  const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
+    onSuccess: () => {
+      toast.success("Personal info section updated")
+    }
+  })
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     const formData = form.getValues()
     updateDocumentByTypeMutation({
       id: document.id,
@@ -76,7 +80,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <User className="w-4 h-4" />
+                      <User className="size-4" />
                       <span>First Name</span>
                     </FormLabel>
                     <FormControl>
@@ -101,7 +105,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <User className="w-4 h-4" />
+                      <User className="size-4" />
                       <span>Last Name</span>
                     </FormLabel>
                     <FormControl>
@@ -127,7 +131,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4" />
+                    <Briefcase className="size-4" />
                     <span>Job Title</span>
                   </FormLabel>
                   <FormControl>
@@ -153,7 +157,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
+                      <MapPin className="size-4" />
                       <span>State/Province</span>
                     </FormLabel>
                     <FormControl>
@@ -178,7 +182,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
+                      <MapPin className="size-4" />
                       <span>City</span>
                     </FormLabel>
                     <FormControl>
@@ -205,7 +209,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Phone className="w-4 h-4" />
+                      <Phone className="size-4" />
                       <span>Phone</span>
                     </FormLabel>
                     <FormControl>
@@ -230,7 +234,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Mail className="w-4 h-4" />
+                      <Mail className="size-4" />
                       <span>Email</span>
                     </FormLabel>
                     <FormControl>
@@ -254,7 +258,7 @@ export default function PersonalInfoForm({ document, isLoading, className }: Per
           <div className="flex justify-end mt-8">
             <Button
               type="submit"
-              disabled={isLoading || isUpdatingDocumentByType}
+              disabled={isUpdatingDocumentByType}
               className={cn(
                 "bg-gradient-to-r from-violet-600 to-purple-600",
                 "hover:from-violet-700 hover:to-purple-700",
