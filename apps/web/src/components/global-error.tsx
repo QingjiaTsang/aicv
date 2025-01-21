@@ -2,13 +2,14 @@ import { motion } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/web/components/shadcn-ui/button";
 import { cn } from "@/web/lib/utils";
-import { useNavigate } from "node_modules/@tanstack/react-router/dist/esm/useNavigate";
+import { useNavigate } from "@tanstack/react-router";
 
 type GlobalErrorProps = {
   error: Error;
   className?: string;
 };
 
+// TODO: not showing the error message from backend but but user-friendly info to ensure better user experience
 export function GlobalError({ error, className }: GlobalErrorProps) {
   const navigate = useNavigate()
   return (

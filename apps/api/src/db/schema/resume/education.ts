@@ -12,7 +12,8 @@ export const education = sqliteTable("education", {
   universityName: text("university_name", { length: 255 }),
   degree: text("degree", { length: 255 }),
   major: text("major", { length: 255 }),
-  description: text("description", { length: 1000 }),
+  // Note: since the editor is using Quill, the content would be much longer with html tags, so it has to be set to a large value
+  description: text("description", { length: 10000 }),
   startDate: integer("start_date", { mode: "timestamp_ms" }),
   endDate: integer("end_date", { mode: "timestamp_ms" }),
 });

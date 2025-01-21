@@ -5,7 +5,6 @@ import { Button } from "@/web/components/shadcn-ui/button"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/web/components/shadcn-ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/web/components/shadcn-ui/form"
 import { Input } from "@/web/components/shadcn-ui/input"
-import { Textarea } from "@/web/components/shadcn-ui/textarea"
 import { Briefcase, CalendarIcon, MapPin, Plus, Trash2 } from "lucide-react"
 import queryClient from "@/web/lib/query-client"
 import { documentKeys } from "@/web/services/documents/queries"
@@ -15,7 +14,7 @@ import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { Checkbox } from "@/web/components/shadcn-ui/checkbox"
 import { toast } from "sonner"
-
+import Editor from "./editor"
 
 type ExperienceFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -348,16 +347,15 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                         <span>Work Summary</span>
                       </FormLabel>
                       <FormControl>
-                        {/* TODO: add markdown editor and AI feature */}
-                        <Textarea
-                          {...field}
-                          placeholder="Describe your main responsibilities, achievements, and work content..."
+                        {/* TODO: add AI feature */}
+                        <Editor
                           value={field.value || ''}
-                          onChange={e => {
-                            field.onChange(e.target.value)
-                            handleFieldChange(index, 'workSummary', e.target.value)
+                          onChange={(value: string) => {
+                            field.onChange(value)
+                            handleFieldChange(index, 'workSummary', value)
                           }}
-                          className="min-h-[120px]"
+                          placeholder="Describe your main responsibilities, achievements, and work content..."
+                          className="[&_.ql-editor]:min-h-[120px]"
                         />
                       </FormControl>
                       <FormMessage />

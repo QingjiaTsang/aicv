@@ -68,7 +68,8 @@ export const documentRelations = relations(documents, ({ one, many }) => ({
 export const insertDocumentSchema = createInsertSchema(documents, {
   userId: z.string().optional(),
   title: z.string().min(1, "Title cannot be empty").max(255, "Title cannot exceed 255 characters"),
-  summary: z.string().max(1000, "Summary cannot exceed 1000 characters").optional(),
+  // Note: since the editor is using Quill, the content would be much longer with html tags, so it has to be set to a large value
+  summary: z.string().max(10000, "Summary cannot exceed 10000 characters").optional(),
   themeColor: z
     .string()
     .regex(/^#[0-9A-F]{6}$/i, "Please enter a valid hexadecimal color value")

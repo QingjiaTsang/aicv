@@ -14,6 +14,7 @@ import { z } from "zod"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { toast } from "sonner"
+import Editor from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/editor"
 
 
 type EducationFormProps = {
@@ -296,15 +297,18 @@ export default function EducationForm({ document, className }: EducationFormProp
                         <span>Academic Experience</span>
                       </FormLabel>
                       <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder="Describe your key academic achievements, awards, projects participated in..."
+                        <Editor
                           value={field.value || ''}
-                          onChange={e => {
-                            field.onChange(e.target.value)
-                            handleFieldChange(index, 'description', e.target.value)
+                          onChange={(value: string) => {
+                            console.log({
+                              value,
+                              cnt: value.length
+                            })
+                            field.onChange(value)
+                            handleFieldChange(index, 'description', value)
                           }}
-                          className="min-h-[120px] resize-none"
+                          placeholder="Describe your key academic achievements, awards, projects participated in..."
+                          className="[&_.ql-editor]:min-h-[120px]"
                         />
                       </FormControl>
                       <FormMessage />

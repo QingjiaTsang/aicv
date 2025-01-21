@@ -11,13 +11,13 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/~__root'
-import { Route as LandingLayoutImport } from './routes/~_landing-layout'
-import { Route as LandingLayoutIndexImport } from './routes/~_landing-layout.index'
+import { Route as coreLandingLayoutImport } from './routes/~(core)/~_landing-layout'
 import { Route as coreAuthenticatedLayoutImport } from './routes/~(core)/~_authenticated-layout'
 import { Route as authSignUpImport } from './routes/~(auth)/~sign-up'
 import { Route as authSignInImport } from './routes/~(auth)/~sign-in'
-import { Route as authPreviewDocumentIdImport } from './routes/~(auth)/~preview.$document-id'
+import { Route as coreLandingLayoutIndexImport } from './routes/~(core)/~_landing-layout.index'
 import { Route as coreAuthenticatedLayoutDashboardDocumentsImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~documents'
+import { Route as corepublicPreviewDocumentIdImport } from './routes/~(core)/~(public)/~preview.$document-id'
 import { Route as coreAuthenticatedLayoutDashboardIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~index'
 import { Route as coreAuthenticatedLayoutDashboardDocumentDocumentIdEditImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/~edit'
 
@@ -32,15 +32,9 @@ const coreRoute = coreImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const LandingLayoutRoute = LandingLayoutImport.update({
+const coreLandingLayoutRoute = coreLandingLayoutImport.update({
   id: '/_landing-layout',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LandingLayoutIndexRoute = LandingLayoutIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => LandingLayoutRoute,
+  getParentRoute: () => coreRoute,
 } as any)
 
 const coreAuthenticatedLayoutRoute = coreAuthenticatedLayoutImport.update({
@@ -60,10 +54,10 @@ const authSignInRoute = authSignInImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const authPreviewDocumentIdRoute = authPreviewDocumentIdImport.update({
-  id: '/(auth)/preview/$document-id',
-  path: '/preview/$document-id',
-  getParentRoute: () => rootRoute,
+const coreLandingLayoutIndexRoute = coreLandingLayoutIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => coreLandingLayoutRoute,
 } as any)
 
 const coreAuthenticatedLayoutDashboardDocumentsRoute =
@@ -71,6 +65,13 @@ const coreAuthenticatedLayoutDashboardDocumentsRoute =
     id: '/dashboard/documents',
     path: '/dashboard/documents',
     getParentRoute: () => coreAuthenticatedLayoutRoute,
+  } as any)
+
+const corepublicPreviewDocumentIdRoute =
+  corepublicPreviewDocumentIdImport.update({
+    id: '/(public)/preview/$document-id',
+    path: '/preview/$document-id',
+    getParentRoute: () => coreRoute,
   } as any)
 
 const coreAuthenticatedLayoutDashboardIndexRoute =
@@ -91,13 +92,6 @@ const coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute =
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_landing-layout': {
-      id: '/_landing-layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof LandingLayoutImport
-      parentRoute: typeof rootRoute
-    }
     '/(auth)/sign-in': {
       id: '/(auth)/sign-in'
       path: '/sign-in'
@@ -126,19 +120,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof coreAuthenticatedLayoutImport
       parentRoute: typeof coreRoute
     }
-    '/_landing-layout/': {
-      id: '/_landing-layout/'
+    '/(core)/_landing-layout': {
+      id: '/(core)/_landing-layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof coreLandingLayoutImport
+      parentRoute: typeof coreImport
+    }
+    '/(core)/_landing-layout/': {
+      id: '/(core)/_landing-layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof LandingLayoutIndexImport
-      parentRoute: typeof LandingLayoutImport
-    }
-    '/(auth)/preview/$document-id': {
-      id: '/(auth)/preview/$document-id'
-      path: '/preview/$document-id'
-      fullPath: '/preview/$document-id'
-      preLoaderRoute: typeof authPreviewDocumentIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof coreLandingLayoutIndexImport
+      parentRoute: typeof coreLandingLayoutImport
     }
     '/(core)/_authenticated-layout/dashboard/': {
       id: '/(core)/_authenticated-layout/dashboard/'
@@ -146,6 +140,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof coreAuthenticatedLayoutDashboardIndexImport
       parentRoute: typeof coreAuthenticatedLayoutImport
+    }
+    '/(core)/(public)/preview/$document-id': {
+      id: '/(core)/(public)/preview/$document-id'
+      path: '/preview/$document-id'
+      fullPath: '/preview/$document-id'
+      preLoaderRoute: typeof corepublicPreviewDocumentIdImport
+      parentRoute: typeof coreImport
     }
     '/(core)/_authenticated-layout/dashboard/documents': {
       id: '/(core)/_authenticated-layout/dashboard/documents'
@@ -165,18 +166,6 @@ declare module '@tanstack/react-router' {
 }
 
 // Create and export the route tree
-
-interface LandingLayoutRouteChildren {
-  LandingLayoutIndexRoute: typeof LandingLayoutIndexRoute
-}
-
-const LandingLayoutRouteChildren: LandingLayoutRouteChildren = {
-  LandingLayoutIndexRoute: LandingLayoutIndexRoute,
-}
-
-const LandingLayoutRouteWithChildren = LandingLayoutRoute._addFileChildren(
-  LandingLayoutRouteChildren,
-)
 
 interface coreAuthenticatedLayoutRouteChildren {
   coreAuthenticatedLayoutDashboardIndexRoute: typeof coreAuthenticatedLayoutDashboardIndexRoute
@@ -199,23 +188,38 @@ const coreAuthenticatedLayoutRouteWithChildren =
     coreAuthenticatedLayoutRouteChildren,
   )
 
+interface coreLandingLayoutRouteChildren {
+  coreLandingLayoutIndexRoute: typeof coreLandingLayoutIndexRoute
+}
+
+const coreLandingLayoutRouteChildren: coreLandingLayoutRouteChildren = {
+  coreLandingLayoutIndexRoute: coreLandingLayoutIndexRoute,
+}
+
+const coreLandingLayoutRouteWithChildren =
+  coreLandingLayoutRoute._addFileChildren(coreLandingLayoutRouteChildren)
+
 interface coreRouteChildren {
   coreAuthenticatedLayoutRoute: typeof coreAuthenticatedLayoutRouteWithChildren
+  coreLandingLayoutRoute: typeof coreLandingLayoutRouteWithChildren
+  corepublicPreviewDocumentIdRoute: typeof corepublicPreviewDocumentIdRoute
 }
 
 const coreRouteChildren: coreRouteChildren = {
   coreAuthenticatedLayoutRoute: coreAuthenticatedLayoutRouteWithChildren,
+  coreLandingLayoutRoute: coreLandingLayoutRouteWithChildren,
+  corepublicPreviewDocumentIdRoute: corepublicPreviewDocumentIdRoute,
 }
 
 const coreRouteWithChildren = coreRoute._addFileChildren(coreRouteChildren)
 
 export interface FileRoutesByFullPath {
-  '': typeof LandingLayoutRouteWithChildren
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
-  '/': typeof LandingLayoutIndexRoute
-  '/preview/$document-id': typeof authPreviewDocumentIdRoute
+  '/': typeof coreLandingLayoutIndexRoute
+  '': typeof coreLandingLayoutRouteWithChildren
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
+  '/preview/$document-id': typeof corepublicPreviewDocumentIdRoute
   '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
   '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
@@ -223,23 +227,23 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
-  '/': typeof LandingLayoutIndexRoute
-  '/preview/$document-id': typeof authPreviewDocumentIdRoute
+  '/': typeof coreLandingLayoutIndexRoute
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
+  '/preview/$document-id': typeof corepublicPreviewDocumentIdRoute
   '/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
   '/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/_landing-layout': typeof LandingLayoutRouteWithChildren
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
   '/(core)': typeof coreRouteWithChildren
   '/(core)/_authenticated-layout': typeof coreAuthenticatedLayoutRouteWithChildren
-  '/_landing-layout/': typeof LandingLayoutIndexRoute
-  '/(auth)/preview/$document-id': typeof authPreviewDocumentIdRoute
+  '/(core)/_landing-layout': typeof coreLandingLayoutRouteWithChildren
+  '/(core)/_landing-layout/': typeof coreLandingLayoutIndexRoute
   '/(core)/_authenticated-layout/dashboard/': typeof coreAuthenticatedLayoutDashboardIndexRoute
+  '/(core)/(public)/preview/$document-id': typeof corepublicPreviewDocumentIdRoute
   '/(core)/_authenticated-layout/dashboard/documents': typeof coreAuthenticatedLayoutDashboardDocumentsRoute
   '/(core)/_authenticated-layout/dashboard/document/$document-id/edit': typeof coreAuthenticatedLayoutDashboardDocumentDocumentIdEditRoute
 }
@@ -247,12 +251,12 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | ''
     | '/sign-in'
     | '/sign-up'
     | '/'
-    | '/preview/$document-id'
+    | ''
     | '/dashboard'
+    | '/preview/$document-id'
     | '/dashboard/documents'
     | '/dashboard/document/$document-id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -260,39 +264,35 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/'
-    | '/preview/$document-id'
     | '/dashboard'
+    | '/preview/$document-id'
     | '/dashboard/documents'
     | '/dashboard/document/$document-id/edit'
   id:
     | '__root__'
-    | '/_landing-layout'
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
     | '/(core)'
     | '/(core)/_authenticated-layout'
-    | '/_landing-layout/'
-    | '/(auth)/preview/$document-id'
+    | '/(core)/_landing-layout'
+    | '/(core)/_landing-layout/'
     | '/(core)/_authenticated-layout/dashboard/'
+    | '/(core)/(public)/preview/$document-id'
     | '/(core)/_authenticated-layout/dashboard/documents'
     | '/(core)/_authenticated-layout/dashboard/document/$document-id/edit'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  LandingLayoutRoute: typeof LandingLayoutRouteWithChildren
   authSignInRoute: typeof authSignInRoute
   authSignUpRoute: typeof authSignUpRoute
   coreRoute: typeof coreRouteWithChildren
-  authPreviewDocumentIdRoute: typeof authPreviewDocumentIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  LandingLayoutRoute: LandingLayoutRouteWithChildren,
   authSignInRoute: authSignInRoute,
   authSignUpRoute: authSignUpRoute,
   coreRoute: coreRouteWithChildren,
-  authPreviewDocumentIdRoute: authPreviewDocumentIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -305,17 +305,9 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "~__root.tsx",
       "children": [
-        "/_landing-layout",
         "/(auth)/sign-in",
         "/(auth)/sign-up",
-        "/(core)",
-        "/(auth)/preview/$document-id"
-      ]
-    },
-    "/_landing-layout": {
-      "filePath": "~_landing-layout.tsx",
-      "children": [
-        "/_landing-layout/"
+        "/(core)"
       ]
     },
     "/(auth)/sign-in": {
@@ -327,7 +319,9 @@ export const routeTree = rootRoute
     "/(core)": {
       "filePath": "~(core)",
       "children": [
-        "/(core)/_authenticated-layout"
+        "/(core)/_authenticated-layout",
+        "/(core)/_landing-layout",
+        "/(core)/(public)/preview/$document-id"
       ]
     },
     "/(core)/_authenticated-layout": {
@@ -339,16 +333,24 @@ export const routeTree = rootRoute
         "/(core)/_authenticated-layout/dashboard/document/$document-id/edit"
       ]
     },
-    "/_landing-layout/": {
-      "filePath": "~_landing-layout.index.tsx",
-      "parent": "/_landing-layout"
+    "/(core)/_landing-layout": {
+      "filePath": "~(core)/~_landing-layout.tsx",
+      "parent": "/(core)",
+      "children": [
+        "/(core)/_landing-layout/"
+      ]
     },
-    "/(auth)/preview/$document-id": {
-      "filePath": "~(auth)/~preview.$document-id.tsx"
+    "/(core)/_landing-layout/": {
+      "filePath": "~(core)/~_landing-layout.index.tsx",
+      "parent": "/(core)/_landing-layout"
     },
     "/(core)/_authenticated-layout/dashboard/": {
       "filePath": "~(core)/~_authenticated-layout/~dashboard/~index.tsx",
       "parent": "/(core)/_authenticated-layout"
+    },
+    "/(core)/(public)/preview/$document-id": {
+      "filePath": "~(core)/~(public)/~preview.$document-id.tsx",
+      "parent": "/(core)"
     },
     "/(core)/_authenticated-layout/dashboard/documents": {
       "filePath": "~(core)/~_authenticated-layout/~dashboard/~documents.tsx",

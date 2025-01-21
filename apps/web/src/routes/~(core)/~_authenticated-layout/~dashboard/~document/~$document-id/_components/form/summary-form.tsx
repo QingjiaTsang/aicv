@@ -11,6 +11,7 @@ import { documentKeys } from "@/web/services/documents/queries"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { toast } from "sonner"
+import Editor from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/editor"
 
 type SummaryFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -85,16 +86,19 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
                   <FormControl>
                     <div className="flex gap-4">
                       <FileText className="size-4 mt-2 flex-shrink-0" />
-                      {/* TODO: add markdown editor and AI feature */}
-                      <Textarea
-                        {...field}
-                        placeholder="Example: I'm a full-stack developer with 5 years of experience, specializing in React and Node.js..."
+                      {/* TODO: add AI feature */}
+                      <Editor
                         value={field.value || ''}
-                        onChange={e => {
-                          field.onChange(e.target.value)
-                          handleSummaryChange(e.target.value)
+                        onChange={(value: string) => {
+                          console.log({
+                            value,
+                            cnt: value.length
+                          })
+                          field.onChange(value)
+                          handleSummaryChange(value)
                         }}
-                        className="min-h-[200px]"
+                        placeholder="Example: I'm a full-stack developer with 5 years of experience, specializing in React and Node.js..."
+                        className="[&_.ql-editor]:min-h-[350px]"
                       />
                     </div>
                   </FormControl>

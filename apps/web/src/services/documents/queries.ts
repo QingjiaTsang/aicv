@@ -49,6 +49,9 @@ export const documentQueryOptionsFn = (id: string, options?: DocumentQueryOption
         status: document.status as DocumentStatus
       };
     },
+    // Note: I'm using queryClient.setQueryData as global state management
+    // to update the cached data of the document to preview when the user's filling the resume form
+    staleTime: Infinity,
     ...options,
   });
 

@@ -1,6 +1,8 @@
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { format } from "date-fns"
+import { cn } from "@/web/lib/utils"
+import { QUILL_CONTENT_CLASSES } from "@/web/lib/constants"
 
 type ExperienceProps = {
   document: SelectDocumentWithRelationsSchema
@@ -53,14 +55,16 @@ function ExperienceItem({ experience, themeColor }: {
 
       {experience?.workSummary && (
         <div
-          className="text-sm leading-[1.6] break-words"
           dangerouslySetInnerHTML={{ __html: experience.workSummary }}
+          className={cn(
+            ...QUILL_CONTENT_CLASSES,
+            "text-sm leading-[1.6] break-all"
+          )}
         />
       )}
     </div>
   )
 }
-
 
 export function ExperienceSkeleton() {
   return (

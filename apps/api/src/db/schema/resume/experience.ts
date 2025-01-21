@@ -14,7 +14,8 @@ export const experience = sqliteTable("experience", {
   state: text("state", { length: 255 }),
   city: text("city", { length: 255 }),
   isCurrentlyEmployed: integer("is_currently_employed", { mode: "boolean" }).notNull().default(false),
-  workSummary: text("work_summary", { length: 2000 }),
+  // Note: since the editor is using Quill, the content would be much longer with html tags, so it has to be set to a large value
+  workSummary: text("work_summary", { length: 10000 }),
   startDate: integer("start_date", { mode: "timestamp_ms" }),
   endDate: integer("end_date", { mode: "timestamp_ms" }),
 });

@@ -1,4 +1,6 @@
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
+import { QUILL_CONTENT_CLASSES } from "@/web/lib/constants"
+import { cn } from "@/web/lib/utils"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { format } from "date-fns"
 
@@ -50,8 +52,11 @@ function EducationItem({ education, themeColor }: {
 
       {education?.description && (
         <div
-          className="text-sm leading-[1.6] break-words"
           dangerouslySetInnerHTML={{ __html: education.description }}
+          className={cn(
+            ...QUILL_CONTENT_CLASSES,
+            "text-sm leading-[1.6] break-all"
+          )}
         />
       )}
     </div>
