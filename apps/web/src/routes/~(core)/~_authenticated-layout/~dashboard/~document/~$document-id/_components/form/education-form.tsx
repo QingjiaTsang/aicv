@@ -300,10 +300,6 @@ export default function EducationForm({ document, className }: EducationFormProp
                         <Editor
                           value={field.value || ''}
                           onChange={(value: string) => {
-                            console.log({
-                              value,
-                              cnt: value.length
-                            })
                             field.onChange(value)
                             handleFieldChange(index, 'description', value)
                           }}

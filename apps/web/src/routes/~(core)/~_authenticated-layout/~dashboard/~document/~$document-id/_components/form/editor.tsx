@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from "react"
-import Quill from "quill"
+import Quill, { Delta } from "quill"
 import { cn } from "@/web/lib/utils"
 
 import "quill/dist/quill.snow.css"
@@ -59,13 +59,9 @@ export default function Editor({
   })
 
   useEffect(() => {
-    if (quillRef.current) {
-      quillRef.current.enable(!readOnly)
+    if (!containerRef.current) {
+      return
     }
-  }, [readOnly])
-
-  useEffect(() => {
-    if (!containerRef.current) return
 
     const container = containerRef.current
     const editorContainer = container.appendChild(
@@ -101,6 +97,8 @@ export default function Editor({
       }
     })
 
+    quillRef.current = quill
+
     // Bind custom undo/redo handlers to the custom buttons defined in toolbar
     const toolbar = quill.getModule('toolbar') as any;
     toolbar.addHandler('undo', undoChange.bind(quill));
@@ -121,10 +119,6 @@ export default function Editor({
       quill.root.innerHTML = valueRef.current
     }
 
-    if (quillRef.current) {
-      quillRef.current = quill
-    }
-
     // Listen for content changes
     quill.on('text-change', () => {
       onChangeRef.current?.(quill.root.innerHTML)
@@ -137,6 +131,12 @@ export default function Editor({
       container.innerHTML = ''
     }
   }, [])
+
+  useEffect(() => {
+    if (quillRef.current) {
+      quillRef.current.enable(!readOnly)
+    }
+  }, [readOnly])
 
   return (
     <div

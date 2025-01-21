@@ -15,6 +15,7 @@ import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutati
 import { Checkbox } from "@/web/components/shadcn-ui/checkbox"
 import { toast } from "sonner"
 import Editor from "./editor"
+import { Delta } from "quill"
 
 type ExperienceFormProps = {
   document: SelectDocumentWithRelationsSchema

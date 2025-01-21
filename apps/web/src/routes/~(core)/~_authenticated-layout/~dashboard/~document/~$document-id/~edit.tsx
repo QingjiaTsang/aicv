@@ -20,7 +20,6 @@ function RouteComponent() {
   const { data: document } = useSuspenseQuery(documentQueryOptionsFn(params["document-id"]));
 
   // TODO: add user customizable section with editor that can output formatted text
-  // TODO: add react-dnd to allow user to drag and drop sections to reorder
   return (
     <div className="h-full w-full flex flex-col container mx-auto max-w-6xl">
       <DocumentHeader document={document} />

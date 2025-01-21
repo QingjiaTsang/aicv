@@ -90,10 +90,6 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
                       <Editor
                         value={field.value || ''}
                         onChange={(value: string) => {
-                          console.log({
-                            value,
-                            cnt: value.length
-                          })
                           field.onChange(value)
                           handleSummaryChange(value)
                         }}

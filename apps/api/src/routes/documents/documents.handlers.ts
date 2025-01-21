@@ -185,11 +185,6 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
   const { type, data } = c.req.valid("json");
   const authUser = c.get("authUser");
 
-  console.log("update logger", {
-    type,
-    data,
-  });
-
   const document = await db.query.documents.findFirst({
     where: (documents, { eq }) =>
       and(eq(documents.id, String(id)), eq(documents.userId, authUser.user!.id)),
