@@ -29,9 +29,21 @@ export default function createApp() {
     )
     .use("/*", async (c, next) => {
       const publicRoutes = ["/api/public/"];
-      // Handle custom authentication routes
       const customAuthRoutes = ["/api/auth/signup", "/api/auth/verify", "/api/auth/credentials/signin"];
-      if (customAuthRoutes.includes(c.req.path) || publicRoutes.some(route => c.req.path.startsWith(route))) {
+
+      // For public routes, try to get auth info but it's not required
+      if (publicRoutes.some(route => c.req.path.startsWith(route))) {
+        try {
+          return await verifyAuth()(c, next);
+        }
+        catch {
+          // If verification fails, continue processing request without auth info
+          return next();
+        }
+      }
+
+      // Handle custom authentication routes
+      if (customAuthRoutes.includes(c.req.path)) {
         return next();
       }
 
@@ -39,6 +51,7 @@ export default function createApp() {
       if (c.req.path.startsWith("/api/auth")) {
         return authHandler()(c, next);
       }
+
       return verifyAuth()(c, next);
     })
     .notFound(notFound)

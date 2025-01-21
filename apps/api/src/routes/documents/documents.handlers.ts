@@ -1,6 +1,6 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
@@ -312,14 +312,21 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
 
 export const publicPreview: AppRouteHandler<PublicPreviewRoute> = async (c) => {
   const db = createDb(c.env);
-
   const { id } = c.req.valid("param");
+  const authUser = c.get("authUser");
 
   const document = await db
     .query
     .documents
     .findFirst({
-      where: (documents, { eq }) => and(eq(documents.id, id), eq(documents.status, DOCUMENT_STATUS.PUBLIC)),
+      where: (documents, { eq }) =>
+        and(
+          eq(documents.id, id),
+          or(
+            eq(documents.status, DOCUMENT_STATUS.PUBLIC),
+            eq(documents.userId, authUser?.user?.id ?? ""),
+          ),
+        ),
       with: {
         education: true,
         experience: true,
