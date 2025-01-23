@@ -1,8 +1,10 @@
 import { type SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema";
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 import { useState } from 'react'
-import { DraggableSection, type ResumeSectionConfig } from '@/web/components/draggable-section'
+import { DndProvider } from 'react-dnd-multi-backend'
+import { DraggableSection } from '@/web/components/draggable-section'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { TouchBackend } from 'react-dnd-touch-backend'
+import { MouseTransition, TouchTransition } from 'react-dnd-multi-backend'
 
 import PersonalInfo from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/personal-info";
 import Summary from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/summary";
@@ -10,8 +12,40 @@ import Experience from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~
 import Education from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/education";
 import Skills from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/skills";
 
+
+
+type ResumeSection = 'personalInfo' | 'summary' | 'experience' | 'education' | 'skills'
+
+type ResumeSectionConfig = {
+  id: ResumeSection
+  title: string
+  order: number
+}
+
 type ResumePreviewProps = {
   document: SelectDocumentWithRelationsSchema
+}
+
+const customHTML5toTouch = {
+  backends: [
+    {
+      id: 'html5',
+      backend: HTML5Backend,
+      transition: MouseTransition,
+      preview: true
+    },
+    {
+      id: 'touch',
+      backend: TouchBackend,
+      options: {
+        // Prevent mis-clicks on mobile devices
+        delayTouchStart: 150,
+        enableMouseEvents: true
+      },
+      preview: true,
+      transition: TouchTransition
+    }
+  ]
 }
 
 export default function ResumePreview({ document }: ResumePreviewProps) {
@@ -24,7 +58,7 @@ export default function ResumePreview({ document }: ResumePreviewProps) {
   const sectionComponents = {
     experience: <Experience document={document} />,
     education: <Education document={document} />,
-    skills: <Skills document={document} />
+    skills: <Skills document={document} />,
   }
 
   const handleMove = (dragIndex: number, hoverIndex: number) => {
@@ -46,23 +80,25 @@ export default function ResumePreview({ document }: ResumePreviewProps) {
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <>
+    <DndProvider options={customHTML5toTouch}>
+      <div>
         {/* Fixed top sections */}
         <PersonalInfo document={document} />
         <Summary document={document} />
+
 
         {/* Draggable sections */}
         {sections.map((section, index) => (
           <DraggableSection
             key={section.id}
+            type={"RESUME_SECTION"}
             index={index}
             onMove={handleMove}
           >
             {getSectionComponent(section.id)}
           </DraggableSection>
         ))}
-      </>
+      </div>
     </DndProvider>
   )
 }

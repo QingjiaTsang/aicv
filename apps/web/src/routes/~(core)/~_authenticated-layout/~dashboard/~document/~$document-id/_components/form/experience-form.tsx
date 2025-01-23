@@ -1,4 +1,5 @@
 import { SelectDocumentWithRelationsSchema, UpdateExperienceSchema, updateExperienceSchema } from "@aicv-app/api/schema"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/web/components/shadcn-ui/button"
@@ -15,7 +16,7 @@ import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutati
 import { Checkbox } from "@/web/components/shadcn-ui/checkbox"
 import { toast } from "sonner"
 import Editor from "./editor"
-import { Delta } from "quill"
+import { useSortableItems } from "@/web/hooks/use-sortable-items"
 
 type ExperienceFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -27,6 +28,8 @@ type FormValues = {
 }
 
 export default function ExperienceForm({ document, className }: ExperienceFormProps) {
+  const { didSortFlag } = useSortableItems(document.id, 'experience')
+
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
       experiences: updateExperienceSchema
@@ -120,6 +123,14 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
     })
   }
 
+  // Note: after experiences order changed by drag and drop in the resume preview section, update the form order accordingly
+  useEffect(() => {
+    const latestDocument = queryClient.getQueryData(documentKeys.LIST_DOCUMENT(document.id)) as SelectDocumentWithRelationsSchema
+    form.reset({
+      experiences: latestDocument?.experience as UpdateExperienceSchema
+    })
+  }, [didSortFlag])
+
   return (
     <Form {...form}>
       <form
@@ -139,9 +150,9 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
           </CardHeader>
 
           <div className="space-y-8">
-            {form.watch('experiences')?.map((_, index) => (
+            {form.watch('experiences')?.map((exp, index) => (
               <div
-                key={index}
+                key={exp?.id}
                 className={cn(
                   "relative space-y-6 p-6 border rounded-lg",
                   "hover:border-primary/30 dark:hover:border-primary/40",
@@ -350,6 +361,8 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                       <FormControl>
                         {/* TODO: add AI feature */}
                         <Editor
+                          // When the experience order changes, ensure the editor is re-rendered
+                          key={`experience-${index}-${exp?.id}`}
                           value={field.value || ''}
                           onChange={(value: string) => {
                             field.onChange(value)

@@ -1,11 +1,11 @@
 import { SelectDocumentWithRelationsSchema, UpdateEducationSchema, updateEducationSchema } from "@aicv-app/api/schema"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/web/components/shadcn-ui/button"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/web/components/shadcn-ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/web/components/shadcn-ui/form"
 import { Input } from "@/web/components/shadcn-ui/input"
-import { Textarea } from "@/web/components/shadcn-ui/textarea"
 import { GraduationCap, CalendarIcon, Plus, Trash2 } from "lucide-react"
 import queryClient from "@/web/lib/query-client"
 import { documentKeys } from "@/web/services/documents/queries"
@@ -15,6 +15,7 @@ import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { toast } from "sonner"
 import Editor from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/editor"
+import { useSortableItems } from "@/web/hooks/use-sortable-items"
 
 
 type EducationFormProps = {
@@ -27,6 +28,8 @@ type FormValues = {
 }
 
 export default function EducationForm({ document, className }: EducationFormProps) {
+  const { didSortFlag } = useSortableItems(document.id, 'education')
+
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
       education: updateEducationSchema
@@ -118,6 +121,14 @@ export default function EducationForm({ document, className }: EducationFormProp
     })
   }
 
+  // Note: after education order changed by drag and drop in the resume preview section, update the form order accordingly
+  useEffect(() => {
+    const latestDocument = queryClient.getQueryData(documentKeys.LIST_DOCUMENT(document.id)) as SelectDocumentWithRelationsSchema
+    form.reset({
+      education: latestDocument?.education as UpdateEducationSchema
+    })
+  }, [didSortFlag])
+
   return (
     <Form {...form}>
       <form
@@ -137,9 +148,9 @@ export default function EducationForm({ document, className }: EducationFormProp
           </CardHeader>
 
           <div className="space-y-8">
-            {form.watch('education')?.map((_, index) => (
+            {form.watch('education')?.map((edu, index) => (
               <div
-                key={index}
+                key={edu.id}
                 className={cn(
                   "relative space-y-6 p-6 rounded-lg border bg-card",
                   "hover:border-primary/30 dark:hover:border-primary/50",
@@ -298,6 +309,7 @@ export default function EducationForm({ document, className }: EducationFormProp
                       </FormLabel>
                       <FormControl>
                         <Editor
+                          key={`education-${index}-${edu.id}`}
                           value={field.value || ''}
                           onChange={(value: string) => {
                             field.onChange(value)

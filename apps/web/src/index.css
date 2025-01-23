@@ -81,3 +81,48 @@ body {
     display: initial;
   }
 }
+
+@layer components {
+  .ql-content {
+    @apply text-sm leading-[1.6] break-all;
+    
+    /* 文本对齐方式：居中、居右、两端对齐 */
+    .ql-align-center { @apply text-center; }
+    .ql-align-right { @apply text-right; }
+    .ql-align-justify { @apply text-justify; }
+    
+    /* 段落间距 */
+    p { @apply my-1; }
+    
+    /* 文本缩进：每级缩进增加 1rem (16px) */
+    .ql-indent-1 { @apply pl-4; }
+    .ql-indent-2 { @apply pl-8; }
+    .ql-indent-3 { @apply pl-12; }
+    .ql-indent-4 { @apply pl-16; }
+    .ql-indent-5 { @apply pl-20; }
+    .ql-indent-6 { @apply pl-24; }
+    .ql-indent-7 { @apply pl-28; }
+    .ql-indent-8 { @apply pl-32; }
+    .ql-indent-9 { @apply pl-36; }
+    
+    /* ul, ol列表样式：项目符号和缩进 */
+    .ql-list-bullet { @apply list-disc ml-4 my-1; }
+    ul { @apply list-disc ml-4; }
+    ol > li[data-list='bullet'] { @apply list-disc ml-4; }
+    ol > li[data-list='ordered'] { @apply list-decimal ml-4; }
+    
+    /* 文本修饰：粗体、斜体、下划线、删除线 */
+    strong { @apply font-bold; }
+    em { @apply italic; }
+    u { @apply underline; }
+    s { @apply line-through; }
+    
+    /* 标题层级样式：大小、粗细和间距 */
+    h1 { @apply text-2xl font-bold my-2; }
+    h2 { @apply text-xl font-bold my-2; }
+    h3 { @apply text-lg font-bold my-2; }
+    h4 { @apply text-base font-bold my-2; }
+    h5 { @apply text-sm font-bold my-2; }
+    h6 { @apply text-xs font-bold my-2; }
+  }
+}

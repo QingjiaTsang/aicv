@@ -1,8 +1,8 @@
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
-import { QUILL_CONTENT_CLASSES } from "@/web/lib/constants"
-import { cn } from "@/web/lib/utils"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
+import { DraggableSection } from '@/web/components/draggable-section'
 import { format } from "date-fns"
+import { useSortableItems } from '@/web/hooks/use-sortable-items'
 
 
 type EducationProps = {
@@ -10,6 +10,8 @@ type EducationProps = {
 }
 
 export default function Education({ document }: EducationProps) {
+  const { handleMove } = useSortableItems(document.id, 'education')
+
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
@@ -18,8 +20,19 @@ export default function Education({ document }: EducationProps) {
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
       <div className="flex flex-col gap-4 w-full">
-        {document.education?.map((edu) => (
-          <EducationItem key={edu?.id} education={edu} themeColor={document.themeColor} />
+        {document.education.map((edu, index) => (
+          <DraggableSection
+            key={edu?.id}
+            type="EDUCATION_ITEM"
+            index={index}
+            onMove={handleMove}
+          >
+            <EducationItem
+              key={edu?.id}
+              education={edu}
+              themeColor={document.themeColor}
+            />
+          </DraggableSection>
         ))}
       </div>
     </div>
@@ -31,6 +44,7 @@ function EducationItem({ education, themeColor }: {
   themeColor: string
 }) {
   return (
+
     <div className="w-full flex flex-col gap-2">
       <div className="flex flex-col gap-1">
         <div className="flex justify-between">
@@ -53,10 +67,7 @@ function EducationItem({ education, themeColor }: {
       {education?.description && (
         <div
           dangerouslySetInnerHTML={{ __html: education.description }}
-          className={cn(
-            ...QUILL_CONTENT_CLASSES,
-            "text-sm leading-[1.6] break-all"
-          )}
+          className="ql-content"
         />
       )}
     </div>

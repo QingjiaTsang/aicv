@@ -1,35 +1,33 @@
 import { useDrag, useDrop } from 'react-dnd'
 import { cn } from '@/web/lib/utils'
 
-export type ResumeSection = 'personalInfo' | 'summary' | 'experience' | 'education' | 'skills'
-
-export type ResumeSectionConfig = {
-  id: ResumeSection
-  title: string
-  order: number
-}
-
 type DraggableSectionProps = {
+  type: string
   index: number
   children: React.ReactNode
   onMove: (dragIndex: number, hoverIndex: number) => void
 }
 
-export function DraggableSection({ index, children, onMove }: DraggableSectionProps) {
+export function DraggableSection({ type, index, children, onMove }: DraggableSectionProps) {
   const [{ isDragging }, dragRef] = useDrag({
-    type: 'RESUME_SECTION',
+    type,
     item: { index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    // end: (item: { index: number }) => {
+    //   console.log('end', item.index, index)
+    // },
   })
 
   const [{ isOver }, dropRef] = useDrop({
-    accept: 'RESUME_SECTION',
-    hover: (item: { index: number }) => {
+    accept: type,
+    // hover: (item: { index: number }) => {
+    //   console.log('hover', item.index, index)
+    // },
+    drop: (item: { index: number }) => {
       if (item.index !== index) {
         onMove(item.index, index)
-        item.index = index
       }
     },
     collect: (monitor) => ({

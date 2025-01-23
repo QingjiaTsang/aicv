@@ -121,9 +121,9 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
           </CardHeader>
 
           <div className="space-y-8">
-            {form.watch('skills')?.map((_, index) => (
+            {form.watch('skills')?.map((skill, index) => (
               <div
-                key={index}
+                key={skill.id}
                 className={cn(
                   "relative p-7 border rounded-lg",
                   "hover:border-primary/30 dark:hover:border-primary/40",
