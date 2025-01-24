@@ -61,7 +61,7 @@ async function handleOneToManyUpdate<T extends { id?: string }>({
   transformData,
 }: HandleOneToManyUpdateParams<T>) {
   const results = await Promise.all(
-    items.map(async (item) => {
+    items.map(async (item, _, array) => {
       const data = transformData ? transformData(item) : item;
       // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
       if (item.id) {
@@ -74,7 +74,12 @@ async function handleOneToManyUpdate<T extends { id?: string }>({
       }
       const [inserted] = await db
         .insert(table)
-        .values({ ...data, documentId })
+        .values({
+          ...data,
+          documentId,
+          // Placed at the end of the list by default
+          displayOrder: array.length,
+        })
         .returning();
       return inserted;
     }),
@@ -129,8 +134,12 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const document = await db.query.documents.findFirst({
     where: (documents, { eq }) => and(eq(documents.id, String(id)), eq(documents.userId, authUser.user!.id)),
     with: {
-      education: true,
-      experience: true,
+      experience: {
+        orderBy: (experience, { asc }) => [asc(experience.displayOrder)],
+      },
+      education: {
+        orderBy: (education, { asc }) => [asc(education.displayOrder)],
+      },
       skills: true,
       personalInfo: true,
     },

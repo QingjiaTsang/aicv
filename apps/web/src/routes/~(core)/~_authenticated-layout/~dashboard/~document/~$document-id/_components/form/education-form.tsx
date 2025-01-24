@@ -55,12 +55,24 @@ export default function EducationForm({ document, className }: EducationFormProp
   })
 
   const onSubmit = () => {
-    const formData = form.getValues()
+    const formData = form.getValues('education')
+
+    const education = formData.map(edu => {
+      // Remove the to-be-inserted id as it's not the real id in the db for the existed record and it needs to be inserted instead of updated
+      if (edu?.id?.startsWith('to-be-inserted')) {
+        return {
+          ...edu,
+          id: undefined
+        }
+      }
+
+      return edu
+    })
 
     updateDocumentByTypeMutation({
       id: document.id,
       document: {
-        data: formData.education,
+        data: education,
         type: 'education'
       }
     })
@@ -69,11 +81,12 @@ export default function EducationForm({ document, className }: EducationFormProp
   const handleAddEducation = () => {
     const education = form.getValues('education')
     form.setValue('education', [...education, {
-      id: crypto.randomUUID(),
+      id: `to-be-inserted-${crypto.randomUUID()}`,
       universityName: '',
       degree: '',
       major: '',
       description: '',
+      displayOrder: education.length,
       startDate: Date.now(),
       endDate: Date.now()
     }])

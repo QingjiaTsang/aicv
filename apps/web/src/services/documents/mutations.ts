@@ -1,7 +1,8 @@
 import type { UseMutationOptions } from "@tanstack/react-query";
 import type { InsertDocumentSchema, UpdateDocumentDataSchema } from "@aicv-app/api/schema";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import queryClient from "@/web/lib/query-client";
 
 import { documentsApi } from "./api";
 import { documentKeys } from "./queries";
@@ -25,7 +26,6 @@ type DeleteDocumentOptions = UseMutationOptions<
 >;
 
 export const useCreateDocumentMutation = (options?: CreateDocumentOptions) => {
-  const queryClient = useQueryClient();
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
 
   return useMutation({
@@ -41,7 +41,6 @@ export const useCreateDocumentMutation = (options?: CreateDocumentOptions) => {
 };
 
 export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions) => {
-  const queryClient = useQueryClient();
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
   return useMutation({
     mutationFn: documentsApi.updateDocument,
@@ -57,7 +56,6 @@ export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions)
 };
 
 export const useDeleteDocumentMutation = (options?: DeleteDocumentOptions) => {
-  const queryClient = useQueryClient();
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
   return useMutation({
     mutationFn: documentsApi.deleteDocument,

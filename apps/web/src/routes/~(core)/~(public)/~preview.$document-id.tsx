@@ -35,7 +35,7 @@ function RouteComponent() {
             )}
             style={{ borderTop: `12px solid ${document.themeColor}` }}
           >
-            <ResumePreview document={document} />
+            <ResumePreview document={document} isDraggable={false} />
           </div>
         </div>
       </div>

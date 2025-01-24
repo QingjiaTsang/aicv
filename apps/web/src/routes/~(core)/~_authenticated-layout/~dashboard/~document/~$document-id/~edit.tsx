@@ -45,7 +45,7 @@ function RouteComponent() {
             className={`flex-1 w-full p-10 shadow-lg border-t-[12px] dark:border`}
             style={{ borderTop: `12px solid ${document.themeColor}` }}
           >
-            <ResumePreview document={document} />
+            <ResumePreview document={document} isDraggable={true} />
           </div>
         </div >
       </div>

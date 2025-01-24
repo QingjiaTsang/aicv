@@ -1,16 +1,22 @@
+import queryClient from '@/web/lib/query-client'
+import { useUpdateDocumentByTypeMutation } from '@/web/services/documents/mutations'
 import { documentKeys } from '@/web/services/documents/queries'
-import { SelectDocumentWithRelationsSchema } from '@aicv-app/api/schema'
-import { useQueryClient } from '@tanstack/react-query'
+import { SelectDocumentWithRelationsSchema, UpdateEducationSchema, UpdateExperienceSchema } from '@aicv-app/api/schema'
 import { atom, useAtom } from 'jotai'
 
 type Field = 'experience' | 'education'
 
+type DataType = {
+  experience: UpdateExperienceSchema
+  education: UpdateEducationSchema
+}
+
 const didSortFlagAtom = atom(0)
 
 export function useSortableItems<T extends Field>(documentId: string, field: T) {
-  const queryClient = useQueryClient()
-
   const [didSortFlag, setDidSortFlag] = useAtom(didSortFlagAtom)
+
+  const { mutate: updateDocumentByTypeMutation } = useUpdateDocumentByTypeMutation()
 
   // dragIndex: the original index of the item being dragged
   // dropIndex: the index where the item is being dropped, the position where the item will be placed
@@ -21,10 +27,26 @@ export function useSortableItems<T extends Field>(documentId: string, field: T) 
         const fieldData = oldData[field]
         const newItems = [...fieldData]
         const draggedItem = newItems[dragIndex]
+        const dropItem = newItems[dropIndex]
+
+        // Swap displayOrder
+        const draggedDisplayOrder = draggedItem!.displayOrder
+        draggedItem!.displayOrder = dropItem!.displayOrder
+        dropItem!.displayOrder = draggedDisplayOrder
+
+        // Remove dragged item and insert it at the new position
         newItems.splice(dragIndex, 1)
         newItems.splice(dropIndex, 0, draggedItem)
 
         setDidSortFlag(prev => prev + 1)
+
+        updateDocumentByTypeMutation({
+          id: documentId,
+          document: {
+            data: newItems as any,
+            type: field
+          }
+        })
 
         return {
           ...oldData,
@@ -38,4 +60,4 @@ export function useSortableItems<T extends Field>(documentId: string, field: T) 
     didSortFlag,
     handleMove,
   }
-} 
+}

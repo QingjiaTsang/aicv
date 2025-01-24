@@ -1,16 +1,21 @@
+import { useMemo } from "react"
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { DraggableSection } from '@/web/components/draggable-section'
 import { format } from "date-fns"
 import { useSortableItems } from '@/web/hooks/use-sortable-items'
 
-
 type EducationProps = {
   document: SelectDocumentWithRelationsSchema
+  isDraggable?: boolean
 }
 
-export default function Education({ document }: EducationProps) {
+export default function Education({ document, isDraggable = false }: EducationProps) {
   const { handleMove } = useSortableItems(document.id, 'education')
+
+  const sortedEducation = useMemo(() => {
+    return document.education.sort((a, b) => (a?.displayOrder || 0) - (b?.displayOrder || 0))
+  }, [document.education])
 
   return (
     <div className="flex flex-col items-center my-8">
@@ -20,19 +25,27 @@ export default function Education({ document }: EducationProps) {
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
       <div className="flex flex-col gap-4 w-full">
-        {document.education.map((edu, index) => (
-          <DraggableSection
-            key={edu?.id}
-            type="EDUCATION_ITEM"
-            index={index}
-            onMove={handleMove}
-          >
+        {sortedEducation?.map((edu, index) => (
+          isDraggable ? (
+            <DraggableSection
+              key={edu?.id}
+              type="EDUCATION_ITEM"
+              index={index}
+              onMove={handleMove}
+            >
+              <EducationItem
+                key={edu?.id}
+                education={edu}
+                themeColor={document.themeColor}
+              />
+            </DraggableSection>
+          ) : (
             <EducationItem
               key={edu?.id}
               education={edu}
               themeColor={document.themeColor}
             />
-          </DraggableSection>
+          )
         ))}
       </div>
     </div>

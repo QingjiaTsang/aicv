@@ -42,6 +42,8 @@ export function DraggableSection({ type, index, children, onMove }: DraggableSec
       }}
       className={cn(
         'transition-all duration-200',
+        'cursor-grab active:cursor-grabbing',
+        'hover:scale-[1.01]',
         isDragging && 'opacity-50',
         isOver && 'border-2 border-dashed border-primary'
       )}

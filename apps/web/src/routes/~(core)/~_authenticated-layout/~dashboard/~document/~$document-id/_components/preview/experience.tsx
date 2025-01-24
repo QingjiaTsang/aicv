@@ -1,16 +1,21 @@
+import { useMemo } from "react"
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { DraggableSection } from '@/web/components/draggable-section'
 import { format } from "date-fns"
-import { cn } from "@/web/lib/utils"
 import { useSortableItems } from '@/web/hooks/use-sortable-items'
 
 type ExperienceProps = {
   document: SelectDocumentWithRelationsSchema
+  isDraggable?: boolean
 }
 
-export default function Experience({ document }: ExperienceProps) {
+export default function Experience({ document, isDraggable = false }: ExperienceProps) {
   const { handleMove } = useSortableItems(document.id, 'experience')
+
+  const sortedExperience = useMemo(() => {
+    return document.experience.sort((a, b) => (a?.displayOrder || 0) - (b?.displayOrder || 0))
+  }, [document.experience])
 
   return (
     <div className="flex flex-col items-center my-8">
@@ -20,19 +25,27 @@ export default function Experience({ document }: ExperienceProps) {
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
       <div className="flex flex-col gap-4 w-full">
-        {document.experience?.map((exp, index) => (
-          <DraggableSection
-            key={exp?.id}
-            type="EXPERIENCE_ITEM"
-            index={index}
-            onMove={handleMove}
-          >
+        {sortedExperience?.map((exp, index) => (
+          isDraggable ? (
+            <DraggableSection
+              key={exp?.id}
+              type="EXPERIENCE_ITEM"
+              index={index}
+              onMove={handleMove}
+            >
+              <ExperienceItem
+                key={exp?.id}
+                experience={exp}
+                themeColor={document.themeColor}
+              />
+            </DraggableSection>
+          ) : (
             <ExperienceItem
               key={exp?.id}
               experience={exp}
               themeColor={document.themeColor}
             />
-          </DraggableSection>
+          )
         ))}
       </div>
     </div>

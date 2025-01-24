@@ -55,12 +55,24 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
   })
 
   const onSubmit = () => {
-    const formData = form.getValues()
+    const formData = form.getValues('experiences')
+
+    const experiences = formData.map(exp => {
+      // Remove the to-be-inserted id as it's not the real id in the db for the existed record and it needs to be inserted instead of updated
+      if (exp?.id?.startsWith('to-be-inserted')) {
+        return {
+          ...exp,
+          id: undefined
+        }
+      }
+
+      return exp
+    })
 
     updateDocumentByTypeMutation({
       id: document.id,
       document: {
-        data: formData.experiences,
+        data: experiences,
         type: 'experience'
       }
     })
@@ -69,13 +81,14 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
   const handleAddExperience = () => {
     const experiences = form.getValues('experiences')
     form.setValue('experiences', [...experiences, {
-      id: crypto.randomUUID(),
+      id: `to-be-inserted-${crypto.randomUUID()}`,
       title: '',
       companyName: '',
       state: '',
       city: '',
       isCurrentlyEmployed: false,
       workSummary: '',
+      displayOrder: experiences.length,
       startDate: Date.now(),
       endDate: Date.now()
     }])

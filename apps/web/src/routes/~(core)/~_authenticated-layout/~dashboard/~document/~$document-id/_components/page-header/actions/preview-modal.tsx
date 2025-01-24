@@ -19,7 +19,7 @@ type PreviewModalProps = {
   onModalChange: (open: boolean) => void
 }
 
-export function PreviewModal({ document, children, isModalOpen, onModalChange, }: PreviewModalProps) {
+export function PreviewModal({ document, children, isModalOpen, onModalChange }: PreviewModalProps) {
   const isArchived = document.status === 'archived'
 
   return (
@@ -47,7 +47,7 @@ export function PreviewModal({ document, children, isModalOpen, onModalChange, }
         </CredenzaHeader>
 
         <CredenzaBody className="overflow-y-auto">
-          <div className="p-1 md:p-4" >
+          <div className="p-1 md:p-4">
             <div
               className={cn(
                 "p-10 shadow-lg border-t-[12px] dark:border",
@@ -55,7 +55,7 @@ export function PreviewModal({ document, children, isModalOpen, onModalChange, }
               )}
               style={{ borderTop: `12px solid ${document.themeColor}` }}
             >
-              <ResumePreview document={document} />
+              <ResumePreview document={document} isDraggable={false} />
             </div>
           </div>
         </CredenzaBody>

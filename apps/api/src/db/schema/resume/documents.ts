@@ -16,6 +16,16 @@ export const DOCUMENT_STATUS = {
 } as const;
 export type DocumentStatus = typeof DOCUMENT_STATUS[keyof typeof DOCUMENT_STATUS];
 
+export const SORTABLE_SECTIONS = [
+  // "personalInfo",
+  // "summary",
+  "experience",
+  "education",
+  "skills",
+] as const;
+export type SortableSectionType = typeof SORTABLE_SECTIONS[number];
+export const DEFAULT_SECTION_ORDER = SORTABLE_SECTIONS.join(",");
+
 export const documents = sqliteTable("document", {
   // Note: can't use baseFields to replace id, createdAt and updatedAt because it's not good for type inference here
   id: text()
@@ -37,6 +47,10 @@ export const documents = sqliteTable("document", {
     .notNull()
     .$type<DocumentStatus>()
     .default(DOCUMENT_STATUS.PRIVATE),
+  sectionOrder: text("section_order")
+    .notNull()
+    .$type<string>()
+    .default(DEFAULT_SECTION_ORDER),
   createdAt: integer({ mode: "timestamp_ms" })
     .notNull()
     .$default(() => new Date()),
@@ -78,6 +92,18 @@ export const insertDocumentSchema = createInsertSchema(documents, {
   thumbnail: z.string().url("Please enter a valid URL address").optional(),
   currentPosition: z.number().int().min(1).default(1).optional(),
   status: z.enum([DOCUMENT_STATUS.PRIVATE, DOCUMENT_STATUS.PUBLIC, DOCUMENT_STATUS.ARCHIVED]).default(DOCUMENT_STATUS.PRIVATE).optional(),
+  sectionOrder: z
+    .string()
+    .refine(
+      (sections) => {
+        const sectionsArray = sections.split(",").filter(Boolean);
+        return sectionsArray.every(section => SORTABLE_SECTIONS.includes(section as SortableSectionType));
+      },
+      () => ({
+        message: `Each section must be one of: ${SORTABLE_SECTIONS.join(", ")}`,
+      }),
+    )
+    .optional(),
 }).omit({
   id: true,
   createdAt: true,
@@ -93,6 +119,8 @@ export const selectDocumentSchema = createSelectSchema(documents).extend({
     DOCUMENT_STATUS.PUBLIC,
     DOCUMENT_STATUS.ARCHIVED,
   ]),
+  sectionOrder: z.array(z.enum(SORTABLE_SECTIONS))
+    .transform(val => val.join(",")),
 });
 export type SelectDocumentSchema = z.infer<typeof selectDocumentSchema>;
 
@@ -129,6 +157,7 @@ export const selectExperienceSchema = z.object({
   city: z.string().max(255, "City name cannot exceed 255 characters").nullable(),
   isCurrentlyEmployed: z.boolean().default(false),
   workSummary: z.string().max(2000, "Work summary cannot exceed 2000 characters").nullable(),
+  displayOrder: z.number().int().min(0).default(0),
   startDate: z.number().nullable(),
   endDate: z.number().nullable(),
   createdAt: z.string(),
@@ -150,6 +179,7 @@ export const selectEducationSchema = z.object({
   description: z.string()
     .max(1000, "Description cannot exceed 1000 characters")
     .nullable(),
+  displayOrder: z.number().int().min(0).default(0),
   startDate: z.number().nullable(),
   endDate: z.number().nullable(),
   createdAt: z.string(),

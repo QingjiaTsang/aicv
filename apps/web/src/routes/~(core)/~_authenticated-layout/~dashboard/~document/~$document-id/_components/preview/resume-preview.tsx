@@ -1,5 +1,5 @@
 import { type SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema";
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { DndProvider } from 'react-dnd-multi-backend'
 import { DraggableSection } from '@/web/components/draggable-section'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -11,19 +11,15 @@ import Summary from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~doc
 import Experience from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/experience";
 import Education from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/education";
 import Skills from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/skills";
+import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations";
 
 
 
-type ResumeSection = 'personalInfo' | 'summary' | 'experience' | 'education' | 'skills'
-
-type ResumeSectionConfig = {
-  id: ResumeSection
-  title: string
-  order: number
-}
+type SortableResumeSection = 'experience' | 'education' | 'skills'
 
 type ResumePreviewProps = {
   document: SelectDocumentWithRelationsSchema
+  isDraggable?: boolean
 }
 
 const customHTML5toTouch = {
@@ -48,16 +44,22 @@ const customHTML5toTouch = {
   ]
 }
 
-export default function ResumePreview({ document }: ResumePreviewProps) {
-  const [sections, setSections] = useState<ResumeSectionConfig[]>([
-    { id: 'experience', title: 'Experience', order: 0 },
-    { id: 'education', title: 'Education', order: 1 },
-    { id: 'skills', title: 'Skills', order: 2 },
-  ])
+export default function ResumePreview({ document, isDraggable = false }: ResumePreviewProps) {
+  const { mutate: updateDocumentByTypeMutation } = useUpdateDocumentByTypeMutation()
+
+  const sections = useMemo(() => {
+    const sectionOrder = document.sectionOrder
+    const sections = sectionOrder.split(',')
+
+    return sections.map((section, index) => ({
+      id: section as SortableResumeSection,
+      order: index,
+    }))
+  }, [document.sectionOrder])
 
   const sectionComponents = {
-    experience: <Experience document={document} />,
-    education: <Education document={document} />,
+    experience: <Experience document={document} isDraggable={isDraggable} />,
+    education: <Education document={document} isDraggable={isDraggable} />,
     skills: <Skills document={document} />,
   }
 
@@ -72,11 +74,19 @@ export default function ResumePreview({ document }: ResumePreviewProps) {
       section.order = index
     })
 
-    setSections(newSections)
+    updateDocumentByTypeMutation({
+      id: document.id,
+      document: {
+        type: "document",
+        data: {
+          sectionOrder: newSections.map(section => section.id).join(","),
+        },
+      }
+    })
   }
 
-  const getSectionComponent = (sectionId: string) => {
-    return sectionComponents[sectionId as keyof typeof sectionComponents] || null
+  const getSectionComponent = (sectionId: keyof typeof sectionComponents) => {
+    return sectionComponents[sectionId] || null
   }
 
   return (
@@ -87,8 +97,8 @@ export default function ResumePreview({ document }: ResumePreviewProps) {
         <Summary document={document} />
 
 
-        {/* Draggable sections */}
-        {sections.map((section, index) => (
+        {/* Sortable sections */}
+        {isDraggable ? sections.map((section, index) => (
           <DraggableSection
             key={section.id}
             type={"RESUME_SECTION"}
@@ -97,6 +107,10 @@ export default function ResumePreview({ document }: ResumePreviewProps) {
           >
             {getSectionComponent(section.id)}
           </DraggableSection>
+        )) : sections.map((section) => (
+          <div key={section.id}>
+            {getSectionComponent(section.id)}
+          </div>
         ))}
       </div>
     </DndProvider>
