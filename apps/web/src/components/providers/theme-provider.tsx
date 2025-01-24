@@ -35,6 +35,13 @@ export function ThemeProvider({
 
     root.classList.remove("light", "dark")
 
+    // In preview page, we always use light theme
+    const isPreviewPage = window.location.pathname.startsWith('/preview/')
+    if (isPreviewPage) {
+      root.classList.add("light")
+      return
+    }
+
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
