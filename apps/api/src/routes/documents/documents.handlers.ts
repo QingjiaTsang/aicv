@@ -15,7 +15,7 @@ import { experience } from "@/api/db/schema/resume/experience";
 import { personalInfo } from "@/api/db/schema/resume/personal-info";
 import { skills } from "@/api/db/schema/resume/skills";
 
-import type { CreateRoute, GetOneRoute, ListRoute, PublicPreviewRoute, RemoveRoute, UpdateRoute } from "./documents.routes";
+import type { CreateRoute, GetOneRoute, ListRoute, PublicPreviewRoute, RemoveAllRoute, RemoveRoute, UpdateRoute } from "./documents.routes";
 
 type HandleDocumentUpdateParams = {
   db: DrizzleD1Database<typeof schema>;
@@ -313,6 +313,17 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
 
   return c.body(null, HttpStatusCodes.NO_CONTENT);
 };
+
+
+export const removeAll: AppRouteHandler<RemoveAllRoute> = async (c) => {
+  const db = createDb(c.env);
+  const authUser = c.get("authUser");
+
+  await db.delete(documents).where(eq(documents.userId, authUser.user!.id));
+
+  return c.body(null, HttpStatusCodes.NO_CONTENT);
+};
+
 
 export const publicPreview: AppRouteHandler<PublicPreviewRoute> = async (c) => {
   const db = createDb(c.env);

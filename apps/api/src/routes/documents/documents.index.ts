@@ -9,6 +9,7 @@ const router = createRouter()
   .openapi(routes.create, handlers.create)
   .openapi(routes.update, handlers.update)
   .openapi(routes.remove, handlers.remove)
+  .openapi(routes.removeAll, handlers.removeAll)
   .openapi(routes.publicPreview, handlers.publicPreview);
 
 export default router;

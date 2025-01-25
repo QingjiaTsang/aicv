@@ -25,6 +25,12 @@ type DeleteDocumentOptions = UseMutationOptions<
   string
 >;
 
+type DeleteAllDocumentsOptions = UseMutationOptions<
+  void,
+  Error,
+  void
+>;
+
 export const useCreateDocumentMutation = (options?: CreateDocumentOptions) => {
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
 
@@ -59,6 +65,23 @@ export const useDeleteDocumentMutation = (options?: DeleteDocumentOptions) => {
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
   return useMutation({
     mutationFn: documentsApi.deleteDocument,
+    onSuccess: async (...args) => {
+      await queryClient.invalidateQueries({
+        queryKey: documentKeys.LIST_DOCUMENTS,
+      });
+      await userOnSuccess?.(...args);
+    },
+    ...restOptions,
+  });
+};
+
+export const useDeleteAllDocumentsMutation = (options?: DeleteAllDocumentsOptions) => {
+  const { onSuccess: userOnSuccess, ...restOptions } = options || {};
+  return useMutation({
+    mutationFn: async () => {
+      await documentsApi.deleteAll();
+      return;
+    },
     onSuccess: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: documentKeys.LIST_DOCUMENTS,

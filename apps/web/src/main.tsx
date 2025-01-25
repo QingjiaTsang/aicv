@@ -12,7 +12,6 @@ import queryClient from "@/web/lib/query-client";
 
 import App from "./app";
 
-
 // TODO: add i18n to support Chinese
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

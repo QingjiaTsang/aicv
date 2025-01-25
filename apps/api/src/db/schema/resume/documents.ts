@@ -119,8 +119,7 @@ export const selectDocumentSchema = createSelectSchema(documents).extend({
     DOCUMENT_STATUS.PUBLIC,
     DOCUMENT_STATUS.ARCHIVED,
   ]),
-  sectionOrder: z.array(z.enum(SORTABLE_SECTIONS))
-    .transform(val => val.join(",")),
+  sectionOrder: z.string(),
 });
 export type SelectDocumentSchema = z.infer<typeof selectDocumentSchema>;
 

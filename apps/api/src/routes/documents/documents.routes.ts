@@ -88,6 +88,17 @@ export const remove = createRoute({
   },
 });
 
+
+export const removeAll = createRoute({
+  tags,
+  method: "delete",
+  path: "/documents",
+  responses: {
+    [HttpStatusCodes.NO_CONTENT]: { description: "All documents deleted" },
+  },
+});
+
+
 export const publicPreview = createRoute({
   tags: ["Public", "Documents"],
   method: "get",
@@ -106,4 +117,5 @@ export type CreateRoute = typeof create;
 export type GetOneRoute = typeof getOne;
 export type UpdateRoute = typeof update;
 export type RemoveRoute = typeof remove;
+export type RemoveAllRoute = typeof removeAll;
 export type PublicPreviewRoute = typeof publicPreview;

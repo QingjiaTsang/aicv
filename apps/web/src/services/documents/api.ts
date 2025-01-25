@@ -81,6 +81,10 @@ export const documentsApi = {
     }
   },
 
+  deleteAll: async () => {
+    await apiClient.api.documents.$delete();
+  },
+
   publicPreview: async (id: string) => {
     const response = await apiClient.api.public.documents[":id"].$get({
       param: { id },
