@@ -46,7 +46,7 @@ export const Route = createFileRoute("/(auth)/sign-in")({
     const session = await getSession();
     if (session?.user) {
       throw redirect({
-        to: search?.callbackUrl || "/",
+        to: search?.callbackUrl || "/dashboard",
       });
     }
   },
@@ -69,7 +69,7 @@ function SigninPage() {
     error: credentialSigninError,
   } = useCredentialSigninMutation({
     onSuccess: () => {
-      window.location.href = callbackUrl || "/";
+      window.location.href = callbackUrl || "/dashboard";
     },
   });
 

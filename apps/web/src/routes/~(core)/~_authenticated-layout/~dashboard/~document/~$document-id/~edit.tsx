@@ -19,7 +19,7 @@ function RouteComponent() {
   const params = useParams({ from: Route.id });
   const { data: document } = useSuspenseQuery(documentQueryOptionsFn(params["document-id"]));
 
-  // TODO: add user customizable section with editor that can output formatted text
+  // TODO: (lowest priority) add user customizable section with editor that can output formatted text
   return (
     <div className="h-full w-full flex flex-col container mx-auto max-w-6xl">
       <DocumentHeader document={document} />

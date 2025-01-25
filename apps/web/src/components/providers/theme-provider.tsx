@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState, useCallback } from "react"
 
 type Theme = "dark" | "light" | "system"
 
@@ -30,6 +30,25 @@ export function ThemeProvider({
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   )
 
+  const handleThemeChange = useCallback((newTheme: Theme) => {
+    // Check if browser supports View Transitions API
+    if (document.startViewTransition) {
+      document.documentElement.classList.add('theme-changing')
+
+      const transition = document.startViewTransition(() => {
+        localStorage.setItem(storageKey, newTheme)
+        setTheme(newTheme)
+      })
+
+      transition.finished.then(() => {
+        document.documentElement.classList.remove('theme-changing')
+      })
+    } else {
+      localStorage.setItem(storageKey, newTheme)
+      setTheme(newTheme)
+    }
+  }, [storageKey])
+
   useEffect(() => {
     const root = window.document.documentElement
 
@@ -57,10 +76,7 @@ export function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
-    },
+    setTheme: handleThemeChange,
   }
 
   return (
