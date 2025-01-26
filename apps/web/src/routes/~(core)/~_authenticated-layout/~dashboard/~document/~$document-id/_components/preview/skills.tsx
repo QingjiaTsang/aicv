@@ -9,6 +9,19 @@ type SkillsProps = {
   isDraggable?: boolean
 }
 
+const PROFICIENCY_LABELS = {
+  0: 'Foundational',
+  1: 'Working',
+  2: 'Competent',
+  3: 'Proficient',
+  4: 'Strong',
+  5: 'Expert',
+} as const
+
+const getProficiencyLabel = (rating: number) => {
+  return PROFICIENCY_LABELS[rating as keyof typeof PROFICIENCY_LABELS] ?? PROFICIENCY_LABELS[0]
+}
+
 export default function Skills({ document, isDraggable = false }: SkillsProps) {
   const { handleMove } = useSortableItems(document.id, 'skills')
 
@@ -65,9 +78,14 @@ function SkillItem({ skill, themeColor }: {
         <span className="text-sm font-medium truncate max-w-[70%]">
           {skill?.name || "Skill Name"}
         </span>
-        <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
-          {skill?.rating || 0}/5
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">
+            {getProficiencyLabel(skill?.rating || 0)}
+          </span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
+            {skill?.rating || 0}/5
+          </span>
+        </div>
       </div>
 
       <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
@@ -75,7 +93,7 @@ function SkillItem({ skill, themeColor }: {
           className="h-full transition-all duration-500 group-hover:opacity-90 rounded-full"
           style={{
             width: `${((skill?.rating || 0) / 5) * 100}%`,
-            backgroundColor: themeColor,
+            background: `linear-gradient(90deg, ${themeColor}80, ${themeColor})`,
             boxShadow: `0 1px 2px ${themeColor}40`
           }}
         />
@@ -105,3 +123,4 @@ export function SkillsSkeleton() {
     </div>
   )
 }
+
