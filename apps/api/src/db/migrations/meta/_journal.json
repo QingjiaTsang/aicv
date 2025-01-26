@@ -85,6 +85,13 @@
       "when": 1737879352995,
       "tag": "0011_curious_sugar_man",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1737894472814,
+      "tag": "0012_keen_titanium_man",
+      "breakpoints": true
     }
   ]
 }

@@ -51,13 +51,13 @@ export const documents = sqliteTable("document", {
     .notNull()
     .$type<string>()
     .default(DEFAULT_SECTION_ORDER),
-  createdAt: integer({ mode: "timestamp_ms" })
+  createdAt: text("created_at")
     .notNull()
-    .$default(() => new Date()),
-  updatedAt: integer({ mode: "timestamp_ms" })
+    .$default(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
     .notNull()
-    .$default(() => new Date())
-    .$onUpdate(() => new Date()),
+    .$default(() => new Date().toISOString())
+    .$onUpdate(() => new Date().toISOString()),
 }, table => ([
   index("user_id_idx").on(table.userId),
   index("user_created_at_idx").on(table.userId, table.createdAt),
@@ -113,8 +113,8 @@ export const insertDocumentSchema = createInsertSchema(documents, {
 export type InsertDocumentSchema = z.infer<typeof insertDocumentSchema>;
 
 export const selectDocumentSchema = createSelectSchema(documents).extend({
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
   status: z.enum([
     DOCUMENT_STATUS.PRIVATE,
     DOCUMENT_STATUS.PUBLIC,
@@ -145,8 +145,8 @@ export const selectPersonalInfoSchema = z.object({
   city: z.string().max(255, "City name cannot exceed 255 characters").nullable(),
   phone: z.string().min(11, "Phone number cannot exceed 11 digits").nullable(),
   email: z.string().email("Please enter a valid email address").max(255, "Email address cannot exceed 255 characters").nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 export const selectExperienceSchema = z.object({
   id: z.string(),
@@ -158,10 +158,10 @@ export const selectExperienceSchema = z.object({
   isCurrentlyEmployed: z.boolean().default(false),
   workSummary: z.string().max(2000, "Work summary cannot exceed 2000 characters").nullable(),
   displayOrder: z.number().int().min(0).default(0),
-  startDate: z.number().nullable(),
-  endDate: z.number().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  startDate: z.string().date().nullable(),
+  endDate: z.string().date().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 export type SelectExperienceSchema = z.infer<typeof selectExperienceSchema>;
 export const selectEducationSchema = z.object({
@@ -180,10 +180,10 @@ export const selectEducationSchema = z.object({
     .max(1000, "Description cannot exceed 1000 characters")
     .nullable(),
   displayOrder: z.number().int().min(0).default(0),
-  startDate: z.number().nullable(),
-  endDate: z.number().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  startDate: z.string().date().nullable(),
+  endDate: z.string().date().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 export const selectSkillsSchema = z.object({
   id: z.string(),
@@ -197,8 +197,8 @@ export const selectSkillsSchema = z.object({
     .max(5, "Rating cannot exceed 5")
     .default(0),
   displayOrder: z.number().int().min(0).default(0),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
 export const selectDocumentWithRelationsSchema = selectDocumentSchema.extend({
@@ -221,9 +221,22 @@ export type UpdatePersonalInfoSchema = z.infer<typeof updatePersonalInfoSchema>;
 export const updateExperienceSchema = selectExperienceSchema
   .omit(omitConfig)
   .required()
-  .extend({ id: z.string().optional() })
+  .extend({ id: z.string().optional(), endDate: z.string().nullable() })
   .superRefine((data, ctx) => {
-    if (data.endDate && data.startDate && data.endDate < data.startDate) {
+    if (data.isCurrentlyEmployed) {
+      return;
+    }
+
+    if (!data.endDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date is required when not currently employed",
+        path: ["endDate"],
+      });
+      return;
+    }
+
+    if (data.endDate && data.startDate && new Date(data.endDate) < new Date(data.startDate)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "End date cannot be earlier than the start date",
@@ -239,7 +252,7 @@ export const updateEducationSchema = selectEducationSchema
   .required()
   .extend({ id: z.string().optional() })
   .superRefine((data, ctx) => {
-    if (data.endDate && data.startDate && data.endDate < data.startDate) {
+    if (data.endDate && data.startDate && new Date(data.endDate) < new Date(data.startDate)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "End date cannot be earlier than the start date",

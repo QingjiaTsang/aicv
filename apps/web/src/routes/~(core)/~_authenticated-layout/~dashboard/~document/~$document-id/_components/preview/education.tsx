@@ -66,9 +66,9 @@ function EducationItem({ education, themeColor }: {
           </div>
 
           <div className="text-sm">
-            {education?.startDate ? format(education.startDate, "MMM yyyy") : "Start Date"}
+            {education?.startDate ?? "Start Date"}
             {" - "}
-            {education?.endDate ? format(education.endDate, "MMM yyyy") : "End Date"}
+            {education?.endDate ?? "End Date"}
           </div>
         </div>
 

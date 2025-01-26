@@ -35,11 +35,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
       experiences: updateExperienceSchema
     })),
     defaultValues: {
-      experiences: document.experience?.map(exp => ({
-        ...exp,
-        startDate: exp?.startDate ? new Date(exp.startDate).getTime() : null,
-        endDate: exp?.endDate ? new Date(exp.endDate).getTime() : null,
-      })) || []
+      experiences: document.experience.filter((exp) => exp !== null)
     }
   })
 
@@ -89,8 +85,8 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
       isCurrentlyEmployed: false,
       workSummary: '',
       displayOrder: experiences.length,
-      startDate: Date.now(),
-      endDate: Date.now()
+      startDate: '',
+      endDate: ''
     }])
   }
 
@@ -114,17 +110,12 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
 
   const handleFieldChange = (index: number, field: keyof UpdateExperienceSchema[0], value: string | number | boolean) => {
     const experiences = [...form.getValues('experiences')]
-    if (field === 'startDate' || field === 'endDate') {
-      experiences[index] = {
-        ...experiences[index],
-        [field]: value && typeof value !== 'boolean' ? new Date(value).getTime() : null
-      }
-    } else {
-      experiences[index] = {
-        ...experiences[index],
-        [field]: value
-      }
+
+    experiences[index] = {
+      ...experiences[index],
+      [field]: value
     }
+
     form.setValue('experiences', experiences)
 
     // Update preview
@@ -165,8 +156,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
           <div className="space-y-8">
             {form.watch('experiences')?.map((exp, index) => (
               <div
-                // Note: in order to ensure the order alignment, use index as key instead of exp?.id
-                key={index}
+                key={`experience-${index}-${exp?.id}`}
                 className={cn(
                   "relative space-y-6 p-6 border rounded-lg",
                   "hover:border-primary/30 dark:hover:border-primary/40",
@@ -302,9 +292,9 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                             <Input
                               {...field}
                               type="date"
-                              value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                              value={field.value ?? ''}
                               onChange={e => {
-                                const date = new Date(e.target.value).getTime()
+                                const date = e.target.value
                                 field.onChange(date)
                                 handleFieldChange(index, 'startDate', date)
                               }}
@@ -329,9 +319,9 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                               {...field}
                               type="date"
                               disabled={form.watch(`experiences.${index}.isCurrentlyEmployed`)}
-                              value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                              value={field.value ?? ''}
                               onChange={e => {
-                                const date = new Date(e.target.value).getTime()
+                                const date = e.target.value
                                 field.onChange(date)
                                 handleFieldChange(index, 'endDate', date)
                               }}

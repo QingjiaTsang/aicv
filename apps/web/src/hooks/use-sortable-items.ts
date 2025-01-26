@@ -11,11 +11,12 @@ type Field = 'experience' | 'education' | 'skills'
 //   education: UpdateEducationSchema
 // }
 
-const didSortFlagAtom = atom(0)
+export const didSortFlagAtom = atom(0)
+
 
 export function useSortableItems<T extends Field>(documentId: string, field: T) {
   const [didSortFlag, setDidSortFlag] = useAtom(didSortFlagAtom)
-
+  
   const { mutate: updateDocumentByTypeMutation } = useUpdateDocumentByTypeMutation()
 
   // dragIndex: the original index of the item being dragged

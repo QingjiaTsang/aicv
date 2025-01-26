@@ -1,5 +1,7 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
+import { format } from "date-fns";
+
 import { hashPassword } from "../routes/auth/lib/auth-utils";
 import * as schema from "./schema";
 
@@ -14,7 +16,7 @@ const defaultUsers = [
   {
     name: "管理员",
     email: "admin@example.com",
-    password: "admin123",
+    password: "password123",
     emailVerified: new Date(),
     image: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
   },
@@ -47,8 +49,8 @@ const defaultExperience = [
     city: "广州市",
     isCurrentlyEmployed: true,
     workSummary: "负责公司核心产品的前端开发",
-    startDate: new Date("2020-01-01"),
-    endDate: new Date(),
+    startDate: format(new Date("2020-01-01"), "yyyy-MM-dd"),
+    endDate: format(new Date(), "yyyy-MM-dd"),
   },
   {
     title: "全栈工程师",
@@ -57,8 +59,8 @@ const defaultExperience = [
     city: "广州市",
     isCurrentlyEmployed: false,
     workSummary: "全栈开发,负责产品从0到1的构建",
-    startDate: new Date("2018-01-01"),
-    endDate: new Date("2019-12-31"),
+    startDate: format(new Date("2018-01-01"), "yyyy-MM-dd"),
+    endDate: format(new Date("2019-12-31"), "yyyy-MM-dd"),
   },
 ] as const;
 
@@ -67,8 +69,8 @@ const defaultEducation = [
     universityName: "某大学",
     degree: "计算机科学与技术",
     major: "计算机科学",
-    startDate: new Date("2014-09-01"),
-    endDate: new Date("2018-07-01"),
+    startDate: format(new Date("2014-09-01"), "yyyy-MM-dd"),
+    endDate: format(new Date("2018-07-01"), "yyyy-MM-dd"),
     description: "主修计算机科学与技术,参与多个创新项目",
   },
 ] as const;
@@ -82,16 +84,26 @@ const defaultSkills = [
 ] as const;
 
 export async function seed(db: DrizzleD1Database<typeof schema>) {
-  // 插入用户
+  // upsert用户
   for (const user of defaultUsers) {
     const hashedPassword = await hashPassword(user.password);
-    await db.insert(schema.users).values({
-      name: user.name,
-      email: user.email,
-      password: hashedPassword,
-      emailVerified: user.emailVerified,
-      image: user.image,
-    });
+    await db.insert(schema.users)
+      .values({
+        name: user.name,
+        email: user.email,
+        password: hashedPassword,
+        emailVerified: user.emailVerified,
+        image: user.image,
+      })
+      .onConflictDoUpdate({
+        target: schema.users.email,
+        set: {
+          name: user.name,
+          password: hashedPassword,
+          emailVerified: user.emailVerified,
+          image: user.image,
+        },
+      });
   }
 
   // 获取测试用户

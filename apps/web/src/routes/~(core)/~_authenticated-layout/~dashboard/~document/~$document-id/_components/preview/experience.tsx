@@ -65,9 +65,9 @@ export function ExperienceItem({ experience, themeColor }: {
           </div>
 
           <div className="text-sm">
-            {experience?.startDate ? format(experience.startDate, "MMM yyyy") : "Start Date"}
+            {experience?.startDate ?? "Start Date"}
             {" - "}
-            {experience?.isCurrentlyEmployed ? "Present" : experience?.endDate ? format(experience.endDate, "MMM yyyy") : "End Date"}
+            {experience?.isCurrentlyEmployed ? "Present" : experience?.endDate ?? "End Date"}
           </div>
         </div>
 

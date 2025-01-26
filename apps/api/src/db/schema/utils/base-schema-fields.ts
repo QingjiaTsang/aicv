@@ -1,16 +1,16 @@
-import { integer, text } from "drizzle-orm/sqlite-core";
+import { text } from "drizzle-orm/sqlite-core";
 
 export const baseFields = {
   id: text()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  createdAt: integer({ mode: "timestamp_ms" })
+  createdAt: text("created_at")
     .notNull()
-    .$default(() => new Date()),
-  updatedAt: integer({ mode: "timestamp_ms" })
+    .$default(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
     .notNull()
-    .$default(() => new Date())
-    .$onUpdate(() => new Date()),
+    .$default(() => new Date().toISOString())
+    .$onUpdate(() => new Date().toISOString()),
 };
 
 export const baseFieldsOmitConfig = {

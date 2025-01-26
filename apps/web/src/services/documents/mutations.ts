@@ -7,6 +7,9 @@ import queryClient from "@/web/lib/query-client";
 import { documentsApi } from "./api";
 import { documentKeys } from "./queries";
 
+import { didSortFlagAtom } from "@/web/hooks/use-sortable-items";
+import { useAtom } from "jotai";
+
 type CreateDocumentOptions = UseMutationOptions<
   Awaited<ReturnType<typeof documentsApi.createDocument>>,
   Error,
@@ -55,6 +58,8 @@ export const useCreateDocumentMutation = (options?: CreateDocumentOptions) => {
 export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions) => {
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
 
+  const [_, setDidSortFlag] = useAtom(didSortFlagAtom)
+
   return useMutation({
     mutationFn: documentsApi.updateDocument,
     onSuccess: async (...args) => {
@@ -76,6 +81,8 @@ export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions)
           skills,
         }
       });
+
+      setDidSortFlag(prev => prev + 1)
 
       await userOnSuccess?.(...args);
     },

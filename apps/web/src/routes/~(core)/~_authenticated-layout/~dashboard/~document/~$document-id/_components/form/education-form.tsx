@@ -35,11 +35,7 @@ export default function EducationForm({ document, className }: EducationFormProp
       education: updateEducationSchema
     })),
     defaultValues: {
-      education: document.education?.map(edu => ({
-        ...edu,
-        startDate: edu?.startDate ? new Date(edu.startDate).getTime() : null,
-        endDate: edu?.endDate ? new Date(edu.endDate).getTime() : null,
-      })) || []
+      education: document.education.filter((edu) => edu !== null)
     }
   })
 
@@ -87,8 +83,8 @@ export default function EducationForm({ document, className }: EducationFormProp
       major: '',
       description: '',
       displayOrder: education.length,
-      startDate: Date.now(),
-      endDate: Date.now()
+      startDate: '',
+      endDate: ''
     }])
   }
 
@@ -112,17 +108,12 @@ export default function EducationForm({ document, className }: EducationFormProp
 
   const handleFieldChange = (index: number, field: keyof UpdateEducationSchema[0], value: string | number) => {
     const education = [...form.getValues('education')]
-    if (field === 'startDate' || field === 'endDate') {
-      education[index] = {
-        ...education[index],
-        [field]: value ? new Date(value).getTime() : null
-      }
-    } else {
-      education[index] = {
-        ...education[index],
-        [field]: value
-      }
+
+    education[index] = {
+      ...education[index],
+      [field]: value
     }
+
     form.setValue('education', education)
 
     // Update preview
@@ -163,8 +154,7 @@ export default function EducationForm({ document, className }: EducationFormProp
           <div className="space-y-8">
             {form.watch('education')?.map((edu, index) => (
               <div
-                // Note: in order to ensure the order alignment, use index as key instead of edu?.id
-                key={index}
+                key={`education-${index}-${edu?.id}`}
                 className={cn(
                   "relative space-y-6 p-6 rounded-lg border bg-card",
                   "hover:border-primary/30 dark:hover:border-primary/50",
@@ -272,9 +262,9 @@ export default function EducationForm({ document, className }: EducationFormProp
                           <Input
                             {...field}
                             type="date"
-                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                            value={field.value ?? ''}
                             onChange={e => {
-                              const date = new Date(e.target.value).getTime()
+                              const date = e.target.value
                               field.onChange(date)
                               handleFieldChange(index, 'startDate', date)
                             }}
@@ -298,9 +288,9 @@ export default function EducationForm({ document, className }: EducationFormProp
                           <Input
                             {...field}
                             type="date"
-                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                            value={field.value ?? ''}
                             onChange={e => {
-                              const date = new Date(e.target.value).getTime()
+                              const date = e.target.value
                               field.onChange(date)
                               handleFieldChange(index, 'endDate', date)
                             }}

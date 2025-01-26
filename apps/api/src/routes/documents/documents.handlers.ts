@@ -51,7 +51,6 @@ type HandleOneToManyUpdateParams<T extends { id?: string }> = {
   table: typeof experience | typeof education | typeof skills;
   documentId: string;
   items: T[];
-  transformData?: (item: T) => any;
   getLatestDisplayOrder: () => Promise<number>;
 };
 async function handleOneToManyUpdate<T extends { id?: string }>({
@@ -59,7 +58,6 @@ async function handleOneToManyUpdate<T extends { id?: string }>({
   table,
   documentId,
   items,
-  transformData,
   getLatestDisplayOrder,
 }: HandleOneToManyUpdateParams<T>) {
   if (items.length === 0) {
@@ -69,12 +67,11 @@ async function handleOneToManyUpdate<T extends { id?: string }>({
 
   const results = await Promise.all(
     items.map(async (item, index) => {
-      const data = transformData ? transformData(item) : item;
       // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
       if (item.id) {
         const [updated] = await db
           .update(table)
-          .set({ ...data, documentId })
+          .set({ ...item, documentId })
           .where(eq(table.id, item.id))
           .returning();
         return updated;
@@ -82,7 +79,7 @@ async function handleOneToManyUpdate<T extends { id?: string }>({
       const [inserted] = await db
         .insert(table)
         .values({
-          ...data,
+          ...item,
           documentId,
           // Placed at the end of the list by default
           displayOrder: await getLatestDisplayOrder() + index + 1,
@@ -115,15 +112,8 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     db.select({ count: documents.id }).from(documents).then(result => result.length),
   ]);
 
-  // Convert Date objects to strings for API response
-  const formattedDocuments = documentsList.map(document => ({
-    ...document,
-    createdAt: document.createdAt?.toISOString() ?? null,
-    updatedAt: document.updatedAt?.toISOString() ?? null,
-  }));
-
   return c.json({
-    data: formattedDocuments,
+    data: documentsList,
     total,
     page,
     pageSize,
@@ -175,25 +165,7 @@ async function getDocumentWithRelations(
   if (!document)
     return null;
 
-  return {
-    ...document,
-    experience: document.experience.map(exp => ({
-      ...exp,
-      startDate: exp.startDate ? new Date(exp.startDate).getTime() : null,
-      endDate: exp.endDate ? new Date(exp.endDate).getTime() : null,
-      createdAt: exp.createdAt.toISOString(),
-      updatedAt: exp.updatedAt.toISOString(),
-    })),
-    education: document.education.map(edu => ({
-      ...edu,
-      startDate: edu.startDate ? new Date(edu.startDate).getTime() : null,
-      endDate: edu.endDate ? new Date(edu.endDate).getTime() : null,
-      createdAt: edu.createdAt.toISOString(),
-      updatedAt: edu.updatedAt.toISOString(),
-    })),
-    createdAt: document.createdAt.toISOString(),
-    updatedAt: document.updatedAt.toISOString(),
-  };
+  return document;
 }
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
@@ -268,11 +240,6 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
           table: experience,
           documentId: id,
           items: data as UpdateExperienceSchema,
-          transformData: item => ({
-            ...item,
-            startDate: item.startDate ? new Date(item.startDate) : null,
-            endDate: item.endDate ? new Date(item.endDate) : null,
-          }),
           getLatestDisplayOrder: async () => await db
             .query
             .experience
@@ -290,11 +257,6 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
           table: education,
           documentId: id,
           items: data as UpdateEducationSchema,
-          transformData: item => ({
-            ...item,
-            startDate: item.startDate ? new Date(item.startDate) : null,
-            endDate: item.endDate ? new Date(item.endDate) : null,
-          }),
           getLatestDisplayOrder: async () => await db
             .query
             .education

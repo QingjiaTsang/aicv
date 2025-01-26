@@ -17,8 +17,8 @@ export const experience = sqliteTable("experience", {
   // Note: since the editor is using Quill, the content would be much longer with html tags, so it has to be set to a large value
   workSummary: text("work_summary", { length: 10000 }),
   displayOrder: integer("display_order").notNull().default(0),
-  startDate: integer("start_date", { mode: "timestamp_ms" }),
-  endDate: integer("end_date", { mode: "timestamp_ms" }),
+  startDate: text("start_date"),
+  endDate: text("end_date"),
 });
 
 export const experienceRelations = relations(experience, ({ one }) => ({
