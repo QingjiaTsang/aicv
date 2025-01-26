@@ -41,7 +41,7 @@ export function DraggableSection({ type, index, children, onMove }: DraggableSec
         dragRef(dropRef(node))
       }}
       className={cn(
-        'transition-all duration-200',
+        'w-full transition-all duration-200',
         'cursor-grab active:cursor-grabbing',
         'hover:scale-[1.01]',
         isDragging && 'opacity-50',

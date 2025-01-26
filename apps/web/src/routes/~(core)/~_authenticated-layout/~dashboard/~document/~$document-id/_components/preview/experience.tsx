@@ -24,7 +24,7 @@ export default function Experience({ document, isDraggable = false }: Experience
       </div>
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
-      <div className="flex flex-col gap-4 w-full">
+      <div className="w-full flex flex-col gap-4">
         {sortedExperience?.map((exp, index) => (
           isDraggable ? (
             <DraggableSection
@@ -52,7 +52,7 @@ export default function Experience({ document, isDraggable = false }: Experience
   )
 }
 
-function ExperienceItem({ experience, themeColor }: {
+export function ExperienceItem({ experience, themeColor }: {
   experience: SelectDocumentWithRelationsSchema['experience'][0],
   themeColor: string
 }) {

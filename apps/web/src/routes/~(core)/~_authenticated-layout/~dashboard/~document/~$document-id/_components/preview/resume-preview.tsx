@@ -60,7 +60,7 @@ export default function ResumePreview({ document, isDraggable = false }: ResumeP
   const sectionComponents = {
     experience: <Experience document={document} isDraggable={isDraggable} />,
     education: <Education document={document} isDraggable={isDraggable} />,
-    skills: <Skills document={document} />,
+    skills: <Skills document={document} isDraggable={isDraggable} />,
   }
 
   const handleMove = (dragIndex: number, hoverIndex: number) => {

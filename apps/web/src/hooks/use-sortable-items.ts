@@ -4,12 +4,12 @@ import { documentKeys } from '@/web/services/documents/queries'
 import { SelectDocumentWithRelationsSchema, UpdateEducationSchema, UpdateExperienceSchema } from '@aicv-app/api/schema'
 import { atom, useAtom } from 'jotai'
 
-type Field = 'experience' | 'education'
+type Field = 'experience' | 'education' | 'skills'
 
-type DataType = {
-  experience: UpdateExperienceSchema
-  education: UpdateEducationSchema
-}
+// type DataType = {
+//   experience: UpdateExperienceSchema
+//   education: UpdateEducationSchema
+// }
 
 const didSortFlagAtom = atom(0)
 

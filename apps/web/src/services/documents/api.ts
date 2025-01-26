@@ -64,6 +64,7 @@ export const documentsApi = {
       const message = formatApiError(json);
       throw new Error(message);
     }
+    return response.json();
   },
 
   deleteDocument: async (id: string) => {

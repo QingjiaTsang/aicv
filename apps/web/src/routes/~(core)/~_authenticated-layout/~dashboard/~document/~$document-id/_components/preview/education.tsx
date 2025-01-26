@@ -24,7 +24,7 @@ export default function Education({ document, isDraggable = false }: EducationPr
       </div>
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
-      <div className="flex flex-col gap-4 w-full">
+      <div className="w-full flex flex-col gap-4">
         {sortedEducation?.map((edu, index) => (
           isDraggable ? (
             <DraggableSection

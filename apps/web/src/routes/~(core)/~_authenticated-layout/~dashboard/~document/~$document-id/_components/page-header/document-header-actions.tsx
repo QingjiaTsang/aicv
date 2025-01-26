@@ -20,6 +20,8 @@ import useConfirm from '@/web/hooks/useConfirm'
 import html2PDF from 'jspdf-html2canvas';
 import { format } from 'date-fns'
 import ShareLinkPopover from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/actions/share-link-popover'
+import { documentKeys } from '@/web/services/documents/queries'
+import queryClient from '@/web/lib/query-client'
 
 type DocumentActionsProps = {
   document: SelectDocumentWithRelationsSchema

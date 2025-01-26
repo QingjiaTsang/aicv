@@ -1,4 +1,5 @@
 import { SelectDocumentWithRelationsSchema, selectSkillsSchema, updateSkillsSchema, UpdateSkillsSchema } from "@aicv-app/api/schema"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/web/components/shadcn-ui/button"
@@ -13,6 +14,7 @@ import { z } from "zod"
 import { cn } from "@/web/lib/utils"
 import { toast } from "sonner"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
+import { useSortableItems } from "@/web/hooks/use-sortable-items"
 
 type SkillsFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -24,6 +26,8 @@ type FormValues = {
 }
 
 export default function SkillsForm({ document, className }: SkillsFormProps) {
+  const { didSortFlag } = useSortableItems(document.id, 'skills')
+
   const form = useForm<FormValues>({
     resolver: zodResolver(z.object({
       skills: updateSkillsSchema
@@ -49,10 +53,21 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
   const onSubmit = () => {
     const formData = form.getValues()
 
+    const skills = formData.skills.map(skill => {
+      if (skill?.id?.startsWith('to-be-inserted')) {
+        return {
+          ...skill,
+          id: undefined
+        }
+      }
+
+      return skill
+    })
+
     updateDocumentByTypeMutation({
       id: document.id,
       document: {
-        data: formData.skills,
+        data: skills,
         type: 'skills'
       }
     })
@@ -61,9 +76,10 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
   const handleAddSkill = () => {
     const skills = form.getValues('skills')
     form.setValue('skills', [...skills, {
-      id: crypto.randomUUID(),
+      id: `to-be-inserted-${crypto.randomUUID()}`,
       name: '',
       rating: 0,
+      displayOrder: skills.length,
     }])
   }
 
@@ -102,6 +118,14 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
     })
   }
 
+  useEffect(() => {
+    const latestDocument = queryClient.getQueryData(documentKeys.LIST_DOCUMENT(document.id)) as SelectDocumentWithRelationsSchema
+    console.log('skills', latestDocument.skills)
+    form.reset({
+      skills: latestDocument?.skills as UpdateSkillsSchema
+    })
+  }, [didSortFlag])
+
   return (
     <Form {...form}>
       <form
@@ -123,7 +147,8 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
           <div className="space-y-8">
             {form.watch('skills')?.map((skill, index) => (
               <div
-                key={skill.id}
+                // Note: in order to ensure the order alignment, use index as key instead of skill?.id
+                key={index}
                 className={cn(
                   "relative p-7 border rounded-lg",
                   "hover:border-primary/30 dark:hover:border-primary/40",
@@ -153,6 +178,7 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
                         <FormControl>
                           <Input
                             {...field}
+                            key={skill.id}
                             placeholder="e.g. React"
                             value={field.value || ''}
                             onChange={e => {
@@ -178,6 +204,7 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
                         <FormControl>
                           <Input
                             {...field}
+                            key={skill.id}
                             type="number"
                             min={0}
                             max={5}

@@ -11,6 +11,7 @@ export const skills = sqliteTable("skills", {
     .references(() => documents.id, { onDelete: "cascade" }),
   name: text("name"),
   rating: integer("rating").notNull().default(0),
+  displayOrder: integer("display_order").notNull().default(0),
 });
 
 export const skillsRelations = relations(skills, ({ one }) => ({

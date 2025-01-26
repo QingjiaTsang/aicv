@@ -1,5 +1,5 @@
 import type { UseMutationOptions } from "@tanstack/react-query";
-import type { InsertDocumentSchema, UpdateDocumentDataSchema } from "@aicv-app/api/schema";
+import type { InsertDocumentSchema, SelectDocumentWithRelationsSchema, UpdateDocumentDataSchema } from "@aicv-app/api/schema";
 
 import { useMutation } from "@tanstack/react-query";
 import queryClient from "@/web/lib/query-client";
@@ -14,9 +14,15 @@ type CreateDocumentOptions = UseMutationOptions<
 >;
 
 type UpdateDocumentOptions = UseMutationOptions<
-  void,
+  SelectDocumentWithRelationsSchema,
   Error,
-  { id: string; document: UpdateDocumentDataSchema }
+  {
+    id: string;
+    document: UpdateDocumentDataSchema;
+  },
+  {
+    previousData?: SelectDocumentWithRelationsSchema;
+  }
 >;
 
 type DeleteDocumentOptions = UseMutationOptions<
@@ -48,13 +54,29 @@ export const useCreateDocumentMutation = (options?: CreateDocumentOptions) => {
 
 export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions) => {
   const { onSuccess: userOnSuccess, ...restOptions } = options || {};
+
   return useMutation({
     mutationFn: documentsApi.updateDocument,
     onSuccess: async (...args) => {
       const { id } = args[1];
-      await queryClient.invalidateQueries({
-        queryKey: [...documentKeys.LIST_DOCUMENT(id)],
+      // await queryClient.invalidateQueries({
+      //   queryKey: [...documentKeys.LIST_DOCUMENT(id)],
+      // });
+      const { themeColor, status, sectionOrder, experience, education, skills } = args[0]
+
+      queryClient.setQueryData(documentKeys.LIST_DOCUMENT(id), (old: SelectDocumentWithRelationsSchema) => {
+        if (!old) return old;
+        return {
+          ...old,
+          themeColor,
+          status,
+          sectionOrder,
+          experience,
+          education,
+          skills,
+        }
       });
+
       await userOnSuccess?.(...args);
     },
     ...restOptions,

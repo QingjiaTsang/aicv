@@ -10,15 +10,10 @@ export const THEME_COLORS = [
     "#B2D300", // Vibrant Lime
     "#8E44AD", // Deep Violet
     "#FF4F81", // Hot Pink
-    "#2ECC71", // Light Jade
     "#3498DB", // Calm Sky Blue
     "#A3D550", // Neon Yellow-Green
     "#00BFFF", // Cool Azure
-    "#FF6F61", // Coral Orange
-    "#8E44AD", // Royal Blue
-    "#2ECC71", // Electric Green
     "#5B2C6F", // Indigo Purple
-    "#FF4F81", // Crimson Red
     "#2980B9", // Cobalt Blue
     "#E67E22", // Carrot Orange
     "#16A085", // Persian Green

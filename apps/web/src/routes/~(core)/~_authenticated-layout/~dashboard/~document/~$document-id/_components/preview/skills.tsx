@@ -1,11 +1,21 @@
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
+import { useMemo } from "react"
+import { DraggableSection } from "@/web/components/draggable-section"
+import { useSortableItems } from "@/web/hooks/use-sortable-items"
 
 type SkillsProps = {
   document: SelectDocumentWithRelationsSchema
+  isDraggable?: boolean
 }
 
-export default function Skills({ document }: SkillsProps) {
+export default function Skills({ document, isDraggable = false }: SkillsProps) {
+  const { handleMove } = useSortableItems(document.id, 'skills')
+
+  const sortedSkills = useMemo(() => {
+    return document.skills.sort((a, b) => (a?.displayOrder || 0) - (b?.displayOrder || 0))
+  }, [document.skills])
+
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
@@ -15,13 +25,33 @@ export default function Skills({ document }: SkillsProps) {
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
       <div className="w-full flex flex-wrap gap-4">
-        {document.skills?.map((skill) => (
-          <div key={skill?.id} className="w-[calc(50%-8px)]">
-            <SkillItem skill={skill} themeColor={document.themeColor} />
+        {sortedSkills?.map((skill, index) => (
+          <div className="w-[calc(50%-8px)]" key={skill?.id}>
+            {isDraggable ? (
+              <DraggableSection
+                key={skill?.id}
+                type="SKILL_ITEM"
+                index={index}
+                onMove={handleMove}
+              >
+
+                <SkillItem
+                  key={skill?.id}
+                  skill={skill}
+                  themeColor={document.themeColor}
+                />
+              </DraggableSection>
+            ) : (
+              <SkillItem
+                key={skill?.id}
+                skill={skill}
+                themeColor={document.themeColor}
+              />
+            )}
           </div>
         ))}
       </div>
-    </div>
+    </div >
   )
 }
 

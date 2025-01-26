@@ -52,6 +52,7 @@ type HandleOneToManyUpdateParams<T extends { id?: string }> = {
   documentId: string;
   items: T[];
   transformData?: (item: T) => any;
+  getLatestDisplayOrder: () => Promise<number>;
 };
 async function handleOneToManyUpdate<T extends { id?: string }>({
   db,
@@ -59,9 +60,15 @@ async function handleOneToManyUpdate<T extends { id?: string }>({
   documentId,
   items,
   transformData,
+  getLatestDisplayOrder,
 }: HandleOneToManyUpdateParams<T>) {
+  if (items.length === 0) {
+    const deleted = await db.delete(table).where(eq(table.documentId, documentId));
+    return deleted;
+  }
+
   const results = await Promise.all(
-    items.map(async (item, _, array) => {
+    items.map(async (item, index) => {
       const data = transformData ? transformData(item) : item;
       // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
       if (item.id) {
@@ -78,7 +85,7 @@ async function handleOneToManyUpdate<T extends { id?: string }>({
           ...data,
           documentId,
           // Placed at the end of the list by default
-          displayOrder: array.length,
+          displayOrder: await getLatestDisplayOrder() + index + 1,
         })
         .returning();
       return inserted;
@@ -124,15 +131,33 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
   });
 };
 
-export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
-  const db = createDb(c.env);
+type GetDocumentOptions = {
+  isPublicPreview?: boolean;
+  userId?: string;
+};
 
-  const { id } = c.req.valid("param");
+async function getDocumentWithRelations(
+  db: DrizzleD1Database<typeof schema>,
+  id: string,
+  options: GetDocumentOptions = {},
+) {
+  const { isPublicPreview = false, userId } = options;
 
-  const authUser = c.get("authUser");
+  const whereCondition = isPublicPreview
+    ? and(
+        eq(documents.id, id),
+        or(
+          eq(documents.status, DOCUMENT_STATUS.PUBLIC),
+          eq(documents.userId, userId ?? ""),
+        ),
+      )
+    : and(
+        eq(documents.id, id),
+        eq(documents.userId, userId ?? ""),
+      );
 
   const document = await db.query.documents.findFirst({
-    where: (documents, { eq }) => and(eq(documents.id, String(id)), eq(documents.userId, authUser.user!.id)),
+    where: () => whereCondition,
     with: {
       experience: {
         orderBy: (experience, { asc }) => [asc(experience.displayOrder)],
@@ -140,16 +165,17 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
       education: {
         orderBy: (education, { asc }) => [asc(education.displayOrder)],
       },
-      skills: true,
+      skills: {
+        orderBy: (skills, { asc }) => [asc(skills.displayOrder)],
+      },
       personalInfo: true,
     },
   });
 
-  if (!document) {
-    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
-  }
+  if (!document)
+    return null;
 
-  const formattedDocument = {
+  return {
     ...document,
     experience: document.experience.map(exp => ({
       ...exp,
@@ -168,8 +194,20 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     createdAt: document.createdAt.toISOString(),
     updatedAt: document.updatedAt.toISOString(),
   };
+}
 
-  return c.json(formattedDocument, HttpStatusCodes.OK);
+export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
+  const db = createDb(c.env);
+  const { id } = c.req.valid("param");
+  const authUser = c.get("authUser");
+
+  const document = await getDocumentWithRelations(db, id, { userId: authUser.user!.id });
+
+  if (!document) {
+    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  return c.json(document, HttpStatusCodes.OK);
 };
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
@@ -235,6 +273,14 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
             startDate: item.startDate ? new Date(item.startDate) : null,
             endDate: item.endDate ? new Date(item.endDate) : null,
           }),
+          getLatestDisplayOrder: async () => await db
+            .query
+            .experience
+            .findMany({
+              where: (experience, { eq }) => eq(experience.documentId, id),
+              orderBy: (experience, { desc }) => [desc(experience.displayOrder)],
+            })
+            .then(result => result[0]?.displayOrder ?? 0),
         });
         break;
 
@@ -249,6 +295,14 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
             startDate: item.startDate ? new Date(item.startDate) : null,
             endDate: item.endDate ? new Date(item.endDate) : null,
           }),
+          getLatestDisplayOrder: async () => await db
+            .query
+            .education
+            .findMany({
+              where: (education, { eq }) => eq(education.documentId, id),
+              orderBy: (education, { desc }) => [desc(education.displayOrder)],
+            })
+            .then(result => result[0]?.displayOrder ?? 0),
         });
         break;
 
@@ -258,6 +312,14 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
           table: skills,
           documentId: id,
           items: data as UpdateSkillsSchema,
+          getLatestDisplayOrder: async () => await db
+            .query
+            .skills
+            .findMany({
+              where: (skills, { eq }) => eq(skills.documentId, id),
+              orderBy: (skills, { desc }) => [desc(skills.displayOrder)],
+            })
+            .then(result => result[0]?.displayOrder ?? 0),
         });
         break;
     }
@@ -269,15 +331,14 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
       );
     }
 
-    const updatedDocument = await db.query.documents.findFirst({
-      where: (documents, { eq }) => eq(documents.id, id),
-      with: {
-        personalInfo: true,
-        experience: true,
-        education: true,
-        skills: true,
-      },
-    });
+    const updatedDocument = await getDocumentWithRelations(db, id, { userId: authUser.user!.id });
+
+    if (!updatedDocument) {
+      return c.json(
+        { message: HttpStatusPhrases.NOT_FOUND },
+        HttpStatusCodes.NOT_FOUND,
+      );
+    }
 
     return c.json(updatedDocument, HttpStatusCodes.OK);
   }
@@ -314,7 +375,6 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   return c.body(null, HttpStatusCodes.NO_CONTENT);
 };
 
-
 export const removeAll: AppRouteHandler<RemoveAllRoute> = async (c) => {
   const db = createDb(c.env);
   const authUser = c.get("authUser");
@@ -324,55 +384,19 @@ export const removeAll: AppRouteHandler<RemoveAllRoute> = async (c) => {
   return c.body(null, HttpStatusCodes.NO_CONTENT);
 };
 
-
 export const publicPreview: AppRouteHandler<PublicPreviewRoute> = async (c) => {
   const db = createDb(c.env);
   const { id } = c.req.valid("param");
   const authUser = c.get("authUser");
 
-  const document = await db
-    .query
-    .documents
-    .findFirst({
-      where: (documents, { eq }) =>
-        and(
-          eq(documents.id, id),
-          or(
-            eq(documents.status, DOCUMENT_STATUS.PUBLIC),
-            eq(documents.userId, authUser?.user?.id ?? ""),
-          ),
-        ),
-      with: {
-        education: true,
-        experience: true,
-        skills: true,
-        personalInfo: true,
-      },
-    });
+  const document = await getDocumentWithRelations(db, id, {
+    isPublicPreview: true,
+    userId: authUser?.user?.id,
+  });
 
   if (!document) {
     return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
   }
 
-  const formattedDocument = {
-    ...document,
-    experience: document.experience.map(exp => ({
-      ...exp,
-      startDate: exp.startDate ? new Date(exp.startDate).getTime() : null,
-      endDate: exp.endDate ? new Date(exp.endDate).getTime() : null,
-      createdAt: exp.createdAt.toISOString(),
-      updatedAt: exp.updatedAt.toISOString(),
-    })),
-    education: document.education.map(edu => ({
-      ...edu,
-      startDate: edu.startDate ? new Date(edu.startDate).getTime() : null,
-      endDate: edu.endDate ? new Date(edu.endDate).getTime() : null,
-      createdAt: edu.createdAt.toISOString(),
-      updatedAt: edu.updatedAt.toISOString(),
-    })),
-    createdAt: document.createdAt.toISOString(),
-    updatedAt: document.updatedAt.toISOString(),
-  };
-
-  return c.json(formattedDocument, HttpStatusCodes.OK);
+  return c.json(document, HttpStatusCodes.OK);
 };

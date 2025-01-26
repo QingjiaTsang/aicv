@@ -165,7 +165,8 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
           <div className="space-y-8">
             {form.watch('experiences')?.map((exp, index) => (
               <div
-                key={exp?.id}
+                // Note: in order to ensure the order alignment, use index as key instead of exp?.id
+                key={index}
                 className={cn(
                   "relative space-y-6 p-6 border rounded-lg",
                   "hover:border-primary/30 dark:hover:border-primary/40",

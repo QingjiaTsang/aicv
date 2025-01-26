@@ -42,7 +42,7 @@ export const documents = sqliteTable("document", {
   thumbnail: text("thumbnail"),
   currentPosition: integer("current_position")
     .notNull()
-    .default(1),
+    .default(0),
   status: text("status")
     .notNull()
     .$type<DocumentStatus>()
@@ -90,7 +90,8 @@ export const insertDocumentSchema = createInsertSchema(documents, {
     .default("#7c3aed")
     .optional(),
   thumbnail: z.string().url("Please enter a valid URL address").optional(),
-  currentPosition: z.number().int().min(1).default(1).optional(),
+  // TODO: show the next position in the form to continue editing
+  currentPosition: z.number().int().min(0).default(0).optional(),
   status: z.enum([DOCUMENT_STATUS.PRIVATE, DOCUMENT_STATUS.PUBLIC, DOCUMENT_STATUS.ARCHIVED]).default(DOCUMENT_STATUS.PRIVATE).optional(),
   sectionOrder: z
     .string()
@@ -195,6 +196,7 @@ export const selectSkillsSchema = z.object({
     .min(0, "Rating cannot be negative")
     .max(5, "Rating cannot exceed 5")
     .default(0),
+  displayOrder: z.number().int().min(0).default(0),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
