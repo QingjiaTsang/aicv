@@ -15,6 +15,8 @@
     "@aicv-app/api": "workspace:^",
     "@aicv-app/api-client": "workspace:^",
     "@aicv-app/eslint-config": "workspace:^",
+    "@aicv-app/ai-core": "workspace:^",
+    "ai": "^4.1.6",
     "@auth/core": "^0.37.4",
     "@hono/auth-js": "^1.0.15",
     "@hookform/resolvers": "^3.9.1",

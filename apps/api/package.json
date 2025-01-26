@@ -20,6 +20,7 @@
     "db:migrate:remote": "wrangler d1 migrations apply aicv-app --remote"
   },
   "dependencies": {
+    "@aicv-app/ai-core": "workspace:^",
     "@aicv-app/eslint-config": "workspace:^",
     "@auth/core": "^0.37.4",
     "@auth/drizzle-adapter": "^1.7.4",
@@ -30,6 +31,7 @@
     "@logtape/logtape": "^0.8.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@scalar/hono-api-reference": "^0.5.164",
+    "ai": "^4.1.6",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.38.3",

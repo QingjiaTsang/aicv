@@ -32,6 +32,9 @@ export default function ResumeForm({ document }: ResumeFormProps) {
     }))
   }
 
+  const isFirstForm = currentForm.index === 0
+  const isLastForm = currentForm.index === FORM_LABELS.length - 1
+
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-2 ml-auto mr-2 my-2">
@@ -39,7 +42,8 @@ export default function ResumeForm({ document }: ResumeFormProps) {
           variant="outline"
           size="sm"
           onClick={handlePreviousForm}
-          className="w-fit" disabled={currentForm.index === 0}
+          disabled={isFirstForm}
+          className="w-fit"
         >
           <ArrowLeftIcon className="size-4" />
           <span>Previous</span>
@@ -48,8 +52,8 @@ export default function ResumeForm({ document }: ResumeFormProps) {
           variant="outline"
           size="sm"
           onClick={handleNextForm}
+          disabled={isLastForm}
           className="w-fit"
-          disabled={currentForm.index === FORM_LABELS.length - 1}
         >
           <span>Next</span>
           <ArrowRightIcon className="size-4" />
