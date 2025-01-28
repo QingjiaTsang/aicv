@@ -7,7 +7,3 @@ export const aiSuggestionSchema = z.object({
   confidence: z.number().min(0.1).max(1),
 });
 export type AiSuggestion = z.infer<typeof aiSuggestionSchema>;
-
-export const aiResponseSchema = z.object({
-  suggestions: z.array(aiSuggestionSchema),
-});

@@ -335,9 +335,15 @@ importers:
       '@ai-sdk/deepseek':
         specifier: ^0.1.4
         version: 0.1.4(zod@3.24.1)
+      '@hono/zod-openapi':
+        specifier: ^0.18.3
+        version: 0.18.3(hono@4.6.13)(zod@3.24.1)
       ai:
         specifier: ^4.1.6
         version: 4.1.6(react@18.2.0)(zod@3.24.1)
+      hono:
+        specifier: ^4.6.13
+        version: 4.6.13
       zod:
         specifier: ^3.24.1
         version: 3.24.1

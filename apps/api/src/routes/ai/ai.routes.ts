@@ -13,10 +13,6 @@ const optimizeRequestSchema = z.object({
   currentContent: z.string().min(1, "Resume content cannot be empty"),
 });
 
-const optimizeResponseSchema = z.object({
-  suggestions: z.array(aiSuggestionSchema),
-});
-
 export const optimizeRoute = createRoute({
   method: "post",
   path: "/ai/optimize",
@@ -26,7 +22,14 @@ export const optimizeRoute = createRoute({
     body: jsonContent(optimizeRequestSchema, "Resume optimization request"),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(optimizeResponseSchema, "Optimization suggestions"),
+    [HttpStatusCodes.OK]: {
+      content: {
+        "text/event-stream": {
+          schema: aiSuggestionSchema,
+        },
+      },
+      description: "Resume optimization suggestions (streaming)",
+    },
     [HttpStatusCodes.BAD_REQUEST]: jsonContent(z.object({
       message: z.string(),
     }), "Request error"),
@@ -34,5 +37,5 @@ export const optimizeRoute = createRoute({
 });
 
 export type OptimizeRequest = z.infer<typeof optimizeRequestSchema>;
-export type OptimizeResponse = z.infer<typeof optimizeResponseSchema>;
+export type OptimizeStreamResponse = z.infer<typeof aiSuggestionSchema>;
 export type OptimizeContext = Context<AppEnv, "/ai/optimize">;

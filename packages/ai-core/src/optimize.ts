@@ -1,16 +1,15 @@
-import { generateObject } from "ai";
+import { streamObject } from "ai";
 
 import type { OptimizeContext } from "./types";
-import type { AiSuggestion } from "./utils";
 
 import { createAiClient, type DeepseekConfig } from "./client";
-import { aiResponseSchema } from "./utils";
+import { aiSuggestionSchema } from "./utils";
 
 export function createOptimizer(config: DeepseekConfig) {
   const aiClient = createAiClient(config);
 
   return {
-    async optimizeResume(context: OptimizeContext): Promise<AiSuggestion[]> {
+    async createOptimizeStream(context: OptimizeContext) {
       const { jobDescription, currentContent } = context;
 
       const systemPrompt = `
@@ -54,33 +53,12 @@ export function createOptimizer(config: DeepseekConfig) {
         { role: "user", content: userPrompt },
       ]);
 
-      try {
-        const response = await generateObject({
-          model: aiClient.model,
-          schema: aiResponseSchema,
-          prompt,
-        });
-
-        if (!response || !response.object) {
-          return [{
-            type: "summary",
-            content: "Sorry, there was an issue with AI analysis. Please try again later",
-            reason: "Response parsing failed",
-            confidence: 0.1,
-          }];
-        }
-
-        return response.object.suggestions;
-      }
-      catch (error) {
-        console.error("AI response generation failed:", error);
-        return [{
-          type: "summary",
-          content: "Sorry, there was an issue with AI analysis. Please try again later",
-          reason: "Response generation failed",
-          confidence: 0.1,
-        }];
-      }
+      return streamObject({
+        model: aiClient.model,
+        output: "array",
+        schema: aiSuggestionSchema,
+        prompt,
+      });
     },
   };
 }
