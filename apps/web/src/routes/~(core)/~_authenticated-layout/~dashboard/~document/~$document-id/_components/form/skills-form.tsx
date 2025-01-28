@@ -120,7 +120,6 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
 
   useEffect(() => {
     const latestDocument = queryClient.getQueryData(documentKeys.LIST_DOCUMENT(document.id)) as SelectDocumentWithRelationsSchema
-    console.log('skills', latestDocument.skills)
     form.reset({
       skills: latestDocument?.skills as UpdateSkillsSchema
     })

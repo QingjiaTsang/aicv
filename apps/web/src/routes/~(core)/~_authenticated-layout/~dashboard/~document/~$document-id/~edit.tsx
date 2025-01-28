@@ -7,6 +7,7 @@ import { DocumentHeader } from '@/web/routes/~(core)/~_authenticated-layout/~das
 import ResumeForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/resume-form";
 import ResumePreview from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/resume-preview";
 import { cn } from "@/web/lib/utils";
+import { NavigationButtons } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/navigation-buttons";
 
 export const Route = createFileRoute(
   "/(core)/_authenticated-layout/dashboard/document/$document-id/edit",
@@ -22,7 +23,7 @@ function RouteComponent() {
   // TODO: (lowest priority) add user customizable section with editor that can output formatted text
   return (
     <div className="h-full w-full flex flex-col container mx-auto max-w-6xl">
-      <DocumentHeader document={document} />
+      <DocumentHeader id="resume-form" document={document} />
 
       <div className="flex-1">
         <div className="p-4 flex md:flex-row flex-col gap-4">
@@ -49,6 +50,8 @@ function RouteComponent() {
           </div>
         </div >
       </div>
+
+      <NavigationButtons />
     </div>
   );
 }

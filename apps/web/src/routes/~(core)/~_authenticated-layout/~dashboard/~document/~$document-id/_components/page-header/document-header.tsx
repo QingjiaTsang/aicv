@@ -4,12 +4,14 @@ import { DocumentHeaderActions } from '@/web/routes/~(core)/~_authenticated-layo
 import { cn } from "@/web/lib/utils"
 
 type DocumentHeaderProps = {
+  id?: string
   document: SelectDocumentWithRelationsSchema
 }
 
-export function DocumentHeader({ document }: DocumentHeaderProps) {
+export function DocumentHeader({ id, document }: DocumentHeaderProps) {
   return (
     <div
+      id={id}
       className={cn(
         "h-16 flex items-center justify-between px-4",
         "border-b border-gray-200 dark:border-gray-800",
