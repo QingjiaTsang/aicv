@@ -3,7 +3,7 @@ import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { DraggableSection } from '@/web/components/draggable-section'
 import { format } from "date-fns"
-import { useSortableItems } from '@/web/hooks/use-sortable-items'
+import { useSortableItems } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items'
 
 type ExperienceProps = {
   document: SelectDocumentWithRelationsSchema

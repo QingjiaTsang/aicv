@@ -2,9 +2,10 @@ import { createOptimizer } from "@aicv-app/ai-core";
 import { stream } from "hono/streaming";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
-import type { OptimizeContext } from "./ai.routes";
+import type { AppRouteHandler } from "@/api/lib/types";
+import type { OptimizeRoute } from "@/api/routes/ai/ai.routes";
 
-export async function handleOptimize(c: OptimizeContext) {
+export const handleOptimize: AppRouteHandler<OptimizeRoute> = async (c) => {
   try {
     const optimizer = createOptimizer({
       env: {
@@ -12,7 +13,7 @@ export async function handleOptimize(c: OptimizeContext) {
       },
     });
 
-    const body = await c.req.json();
+    const body = c.req.valid("json");
     const { partialObjectStream } = await optimizer.createOptimizeStream({
       jobDescription: body.jobDescription,
       currentContent: body.currentContent,
@@ -44,4 +45,4 @@ export async function handleOptimize(c: OptimizeContext) {
       message: "AI optimization failed",
     }, HttpStatusCodes.BAD_REQUEST);
   }
-}
+};

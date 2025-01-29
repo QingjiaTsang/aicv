@@ -16,6 +16,7 @@ export type AppEnv = {
 
     ASSETS: Fetcher;
     DB: D1Database;
+    RESUME_THUMBNAIL_BUCKET: R2Bucket;
   };
 };
 

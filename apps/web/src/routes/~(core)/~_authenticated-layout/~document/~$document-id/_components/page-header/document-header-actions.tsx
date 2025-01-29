@@ -11,17 +11,15 @@ import {
 import { ThemeColorPicker } from './actions/theme-color-picker'
 import { DEFAULT_THEME_COLOR } from '@/web/lib/constants'
 import { useState } from 'react'
-import { PreviewModal } from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/actions/preview-modal'
+import { PreviewModal } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/preview-modal'
 import { useDeleteDocumentMutation, useUpdateDocumentByTypeMutation } from '@/web/services/documents/mutations'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import useConfirm from '@/web/hooks/useConfirm'
+import useConfirm from '@/web/hooks/use-confirm'
 
 import html2PDF from 'jspdf-html2canvas';
 import { format } from 'date-fns'
-import ShareLinkPopover from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/actions/share-link-popover'
-import { documentKeys } from '@/web/services/documents/queries'
-import queryClient from '@/web/lib/query-client'
+import ShareLinkPopover from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/share-link-popover'
 
 type DocumentActionsProps = {
   document: SelectDocumentWithRelationsSchema
@@ -50,7 +48,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
     message: "Are you sure you want to delete this resume?",
   }) as [() => JSX.Element, () => Promise<boolean>];
 
-  const handleThemeChange = (color: string) => {
+  const handleThemeChange = async (color: string) => {
     updateDocumentByType({
       id: document.id,
       document: {

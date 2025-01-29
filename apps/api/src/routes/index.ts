@@ -6,6 +6,7 @@ import { BASE_PATH } from "@/api/lib/constants";
 import ai from "@/api/routes/ai/ai.index";
 import auth from "@/api/routes/auth/auth.index";
 import documents from "@/api/routes/documents/documents.index";
+import file from "@/api/routes/file/file.index";
 import index from "@/api/routes/index.route";
 import seed from "@/api/routes/seed/seed.index";
 
@@ -15,7 +16,8 @@ export function registerRoutes(app: AppOpenAPI) {
     .route("/auth", auth)
     .route("/", seed)
     .route("/", documents)
-    .route("/", ai);
+    .route("/", ai)
+    .route("/", file);
 }
 
 // stand alone router type used for api client

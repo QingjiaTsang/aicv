@@ -10,7 +10,7 @@ import {
   CredenzaTrigger,
 } from "@/web/components/shadcn-ui/credenza"
 import { TooltipButton } from '@/web/components/tooltip-button'
-import ResumePreview from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/resume-preview'
+import ResumePreview from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/preview/resume-preview'
 
 type PreviewModalProps = {
   document: SelectDocumentWithRelationsSchema

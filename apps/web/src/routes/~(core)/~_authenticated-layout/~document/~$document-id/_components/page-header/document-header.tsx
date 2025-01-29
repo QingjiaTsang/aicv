@@ -1,6 +1,6 @@
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
-import { DocumentHeaderTitle } from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/document-header-title'
-import { DocumentHeaderActions } from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/document-header-actions'
+import { DocumentHeaderTitle } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/document-header-title'
+import { DocumentHeaderActions } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/document-header-actions'
 import { cn } from "@/web/lib/utils"
 
 type DocumentHeaderProps = {

@@ -13,6 +13,10 @@ database_name = "aicv-app"
 database_id = "c82d56ac-6281-4c4d-95ec-c34f1e265469"
 migrations_dir = "src/db/migrations"
 
+[[r2_buckets]]
+bucket_name = "resume-thumbnail"
+binding = "RESUME_THUMBNAIL_BUCKET"
+
 [vars]
 LOG_LEVEL = "debug"
 ENV = "production"

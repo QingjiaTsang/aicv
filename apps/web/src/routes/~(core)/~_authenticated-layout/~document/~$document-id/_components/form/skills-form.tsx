@@ -9,12 +9,12 @@ import { Input } from "@/web/components/shadcn-ui/input"
 import { Plus, Star, Trash2 } from "lucide-react"
 import queryClient from "@/web/lib/query-client"
 import { documentKeys } from "@/web/services/documents/queries"
-import useConfirm from "@/web/hooks/useConfirm"
+import useConfirm from "@/web/hooks/use-confirm"
 import { z } from "zod"
 import { cn } from "@/web/lib/utils"
 import { toast } from "sonner"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
-import { useSortableItems } from "@/web/hooks/use-sortable-items"
+import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
 
 type SkillsFormProps = {
   document: SelectDocumentWithRelationsSchema

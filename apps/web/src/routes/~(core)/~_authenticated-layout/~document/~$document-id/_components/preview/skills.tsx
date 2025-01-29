@@ -2,7 +2,7 @@ import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { useMemo } from "react"
 import { DraggableSection } from "@/web/components/draggable-section"
-import { useSortableItems } from "@/web/hooks/use-sortable-items"
+import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
 
 type SkillsProps = {
   document: SelectDocumentWithRelationsSchema

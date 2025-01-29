@@ -12,11 +12,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@aicv-app/ai-core": "workspace:^",
     "@aicv-app/api": "workspace:^",
     "@aicv-app/api-client": "workspace:^",
     "@aicv-app/eslint-config": "workspace:^",
-    "@aicv-app/ai-core": "workspace:^",
-    "ai": "^4.1.6",
     "@auth/core": "^0.37.4",
     "@hono/auth-js": "^1.0.15",
     "@hookform/resolvers": "^3.9.1",
@@ -31,6 +30,7 @@
     "@tanstack/react-query": "^5.62.7",
     "@tanstack/react-query-devtools": "^5.64.2",
     "@tanstack/react-router": "^1.90.0",
+    "ai": "^4.1.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -39,6 +39,7 @@
     "jotai": "^2.11.1",
     "jspdf-html2canvas": "^1.5.2",
     "lucide-react": "^0.469.0",
+    "modern-screenshot": "^4.5.5",
     "next-themes": "^0.4.4",
     "quill": "2.0.3",
     "rdndmb-html5-to-touch": "^8.1.2",

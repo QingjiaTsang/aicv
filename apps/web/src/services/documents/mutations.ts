@@ -7,8 +7,10 @@ import queryClient from "@/web/lib/query-client";
 import { documentsApi } from "./api";
 import { documentKeys } from "./queries";
 
-import { didSortFlagAtom } from "@/web/hooks/use-sortable-items";
+import { didSortFlagAtom } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items";
 import { useAtom } from "jotai";
+import { generateThumbnail } from "@/web/lib/generateThumbnail";
+import { useUploadFileMutation } from "@/web/services/file/mutations";
 
 type CreateDocumentOptions = UseMutationOptions<
   Awaited<ReturnType<typeof documentsApi.createDocument>>,

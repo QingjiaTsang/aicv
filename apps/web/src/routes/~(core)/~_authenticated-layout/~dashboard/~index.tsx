@@ -1,5 +1,5 @@
 import { SpinLoader } from "@/web/components/spin-loader";
-import useConfirm from "@/web/hooks/useConfirm";
+import useConfirm from "@/web/hooks/use-confirm";
 import queryClient from "@/web/lib/query-client";
 import { cn } from "@/web/lib/utils";
 import { DashboardHero } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/hero-section";

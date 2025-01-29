@@ -16,7 +16,7 @@ import {
 } from "@/web/components/shadcn-ui/credenza"
 import { TooltipButton } from '@/web/components/tooltip-button'
 import { Palette } from 'lucide-react'
-import CustomColorPicker from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/page-header/actions/custom-color-picker'
+import CustomColorPicker from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/custom-color-picker'
 import queryClient from '@/web/lib/query-client'
 import { SelectDocumentWithRelationsSchema } from '@aicv-app/api/schema'
 import { documentKeys } from '@/web/services/documents/queries'

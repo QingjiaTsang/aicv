@@ -10,7 +10,7 @@ import { documentKeys } from "@/web/services/documents/queries"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { toast } from "sonner"
-import Editor from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/editor"
+import Editor from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/editor"
 
 type SummaryFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -25,8 +25,7 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
     defaultValues: {
       ...basic,
       summary: document.summary || "",
-      // TODO: maybe no need for thumbnail for now
-      thumbnail: document.thumbnail || undefined,
+      thumbnail: document.thumbnail || "",
     }
   })
 

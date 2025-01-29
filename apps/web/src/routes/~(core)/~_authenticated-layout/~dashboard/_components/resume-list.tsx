@@ -15,6 +15,8 @@ import { SelectDocumentSchema } from "@aicv-app/api/schema";
 import { format } from "date-fns"
 import { Link, useRouter } from "@tanstack/react-router";
 import { getStatusIcon } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/utils/getStatusIcon";
+import { useState } from "react";
+import { ResumePreviewTooltip } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/resume-preview-tooltip";
 
 type ResumeListProps = {
   resumes: SelectDocumentSchema[];
@@ -53,80 +55,94 @@ type ResumeCardProps = {
   resume: SelectDocumentSchema;
   onDelete: () => void;
 };
-function ResumeCard({ resume, onDelete, }: ResumeCardProps) {
+function ResumeCard({ resume, onDelete }: ResumeCardProps) {
   const router = useRouter();
+
+  const [isHovered, setIsHovered] = useState(false)
 
   // Prefetch data when hovering over the card
   const handleMouseEnter = () => {
     router.preloadRoute({
-      to: "/dashboard/document/$document-id/edit",
+      to: "/document/$document-id/edit",
       params: { "document-id": resume.id }
     });
   };
 
   return (
-    <Card
-      onMouseEnter={handleMouseEnter}
-      className="w-full group relative overflow-hidden shadow-sm hover:scale-105 border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-primary/5 dark:hover:shadow-violet-400/5"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] to-purple-500/[0.08] dark:from-primary/[0.05] dark:to-purple-500/[0.05] group-hover:from-primary/[0.12] group-hover:to-purple-500/[0.12] transition-all duration-300" />
+    <div className="relative">
+      <ResumePreviewTooltip
+        imageUrl={resume.thumbnail}
+        isHovered={isHovered}
+      />
 
-      <div className="w-full relative p-6">
-        <div className="w-full flex items-start justify-between">
-          <div className="w-full flex items-center gap-3">
-            <div className="rounded-full bg-violet-100/80 dark:bg-violet-900/80 p-2 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
-              <FileText className="size-5 text-violet-600 dark:text-violet-300" />
-            </div>
-            <div>
-              <h3 className="truncate max-w-[195px] font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                Updated {format(resume.updatedAt, "MMM dd, yyyy HH:mm")}
-              </p>
-            </div>
-          </div>
+      <Card
+        onMouseEnter={() => {
+          handleMouseEnter()
+          setIsHovered(true)
+        }}
+        onMouseLeave={() => setIsHovered(false)}
+        className="w-full group relative overflow-hidden shadow-sm hover:scale-105 border-violet-200/20 dark:border-violet-700/30 hover:border-violet-300 dark:hover:border-violet-600/50 transition-all duration-300 bg-white/50 dark:bg-gray-950/50 hover:shadow-lg hover:shadow-primary/5 dark:hover:shadow-violet-400/5"
+      >
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-violet-100/50 dark:hover:bg-violet-900/50"
-              >
-                <MoreVertical className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Link
-                  to="/dashboard/document/$document-id/edit"
-                  params={{ "document-id": resume.id }}
-                  preload="intent"
-                  className="w-full flex items-center gap-2"
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] to-purple-500/[0.08] dark:from-primary/[0.05] dark:to-purple-500/[0.05] group-hover:from-primary/[0.12] group-hover:to-purple-500/[0.12] transition-all duration-300" />
+
+        <div className="w-full relative p-6">
+          <div className="w-full flex items-start justify-between">
+            <div className="w-full flex items-center gap-3">
+              <div className="rounded-full bg-violet-100/80 dark:bg-violet-900/80 p-2 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
+                <FileText className="size-5 text-violet-600 dark:text-violet-300" />
+              </div>
+              <div>
+                <h3 className="truncate max-w-[195px] font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                  Updated {format(resume.updatedAt, "MMM dd, yyyy HH:mm")}
+                </p>
+              </div>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-violet-100/50 dark:hover:bg-violet-900/50"
                 >
-                  <Pencil className="size-4" />
-                  <span>Edit</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onDelete} className="text-red-600 dark:text-red-400">
-                <div className="w-full flex items-center gap-2 cursor-pointer">
-                  <Trash2 className="size-4" />
-                  <span>Delete</span>
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                  <MoreVertical className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Link
+                    to="/document/$document-id/edit"
+                    params={{ "document-id": resume.id }}
+                    preload="intent"
+                    className="w-full flex items-center gap-2"
+                  >
+                    <Pencil className="size-4" />
+                    <span>Edit</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onDelete} className="text-red-600 dark:text-red-400">
+                  <div className="w-full flex items-center gap-2 cursor-pointer">
+                    <Trash2 className="size-4" />
+                    <span>Delete</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-        <div className="mt-4 flex items-center gap-2">
-          <div className="text-xs px-2 py-1 rounded-full bg-violet-100/80 dark:bg-violet-900/80 text-violet-700 dark:text-violet-300 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
-            <div className="flex items-center gap-1">
-              {getStatusIcon(resume.status)}
-              {resume.status}
+          <div className="mt-4 flex items-center gap-2">
+            <div className="text-xs px-2 py-1 rounded-full bg-violet-100/80 dark:bg-violet-900/80 text-violet-700 dark:text-violet-300 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
+              <div className="flex items-center gap-1">
+                {getStatusIcon(resume.status)}
+                {resume.status}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 }
 

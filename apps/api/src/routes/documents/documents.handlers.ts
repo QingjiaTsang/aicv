@@ -1,95 +1,37 @@
-import type { DrizzleD1Database } from "drizzle-orm/d1";
-
-import { and, eq, or } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
-import type * as schema from "@/api/db/schema";
-import type { UpdateBasicDocumentSchema, UpdateEducationSchema, UpdateExperienceSchema, UpdatePersonalInfoSchema, UpdateSkillsSchema } from "@/api/db/schema/resume/documents";
+import type {
+  UpdateBasicDocumentSchema,
+  UpdateEducationSchema,
+  UpdateExperienceSchema,
+  UpdatePersonalInfoSchema,
+  UpdateSkillsSchema,
+} from "@/api/db/schema/resume/documents";
 import type { AppRouteHandler } from "@/api/lib/types";
 
 import { createDb } from "@/api/db";
 import { DOCUMENT_STATUS, documents } from "@/api/db/schema/resume/documents";
 import { education } from "@/api/db/schema/resume/education";
 import { experience } from "@/api/db/schema/resume/experience";
-import { personalInfo } from "@/api/db/schema/resume/personal-info";
 import { skills } from "@/api/db/schema/resume/skills";
+import {
+  getDocumentWithRelations,
+  handleBasicDocumentUpdate,
+  handleOneToManyUpdate,
+  handlePersonalInfoUpdate,
+} from "@/api/routes/documents/utils";
 
-import type { CreateRoute, GetOneRoute, ListRoute, PublicPreviewRoute, RemoveAllRoute, RemoveRoute, UpdateRoute } from "./documents.routes";
-
-type HandleDocumentUpdateParams = {
-  db: DrizzleD1Database<typeof schema>;
-  id: string;
-  data: UpdateBasicDocumentSchema;
-};
-async function handleBasicDocumentUpdate({ db, id, data }: HandleDocumentUpdateParams) {
-  const [updated] = await db
-    .update(documents)
-    .set(data)
-    .where(eq(documents.id, id))
-    .returning();
-  return updated;
-}
-
-type HandlePersonalInfoUpdateParams = {
-  db: DrizzleD1Database<typeof schema>;
-  id: string;
-  data: UpdatePersonalInfoSchema;
-};
-async function handlePersonalInfoUpdate({ db, id, data }: HandlePersonalInfoUpdateParams) {
-  const [updated] = await db
-    .update(personalInfo)
-    .set(data)
-    .where(eq(personalInfo.documentId, id))
-    .returning();
-
-  return updated;
-}
-
-type HandleOneToManyUpdateParams<T extends { id?: string }> = {
-  db: DrizzleD1Database<typeof schema>;
-  table: typeof experience | typeof education | typeof skills;
-  documentId: string;
-  items: T[];
-  getLatestDisplayOrder: () => Promise<number>;
-};
-async function handleOneToManyUpdate<T extends { id?: string }>({
-  db,
-  table,
-  documentId,
-  items,
-  getLatestDisplayOrder,
-}: HandleOneToManyUpdateParams<T>) {
-  if (items.length === 0) {
-    const deleted = await db.delete(table).where(eq(table.documentId, documentId));
-    return deleted;
-  }
-
-  const results = await Promise.all(
-    items.map(async (item, index) => {
-      // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
-      if (item.id) {
-        const [updated] = await db
-          .update(table)
-          .set({ ...item, documentId })
-          .where(eq(table.id, item.id))
-          .returning();
-        return updated;
-      }
-      const [inserted] = await db
-        .insert(table)
-        .values({
-          ...item,
-          documentId,
-          // Placed at the end of the list by default
-          displayOrder: await getLatestDisplayOrder() + index + 1,
-        })
-        .returning();
-      return inserted;
-    }),
-  );
-  return results[results.length - 1];
-}
+import type {
+  CreateRoute,
+  GetOneRoute,
+  ListRoute,
+  PublicPreviewRoute,
+  RemoveAllRoute,
+  RemoveRoute,
+  UpdateRoute,
+} from "./documents.routes";
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
   const db = createDb(c.env);
@@ -120,53 +62,6 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     totalPages: Math.ceil(total / pageSize),
   });
 };
-
-type GetDocumentOptions = {
-  isPublicPreview?: boolean;
-  userId?: string;
-};
-
-async function getDocumentWithRelations(
-  db: DrizzleD1Database<typeof schema>,
-  id: string,
-  options: GetDocumentOptions = {},
-) {
-  const { isPublicPreview = false, userId } = options;
-
-  const whereCondition = isPublicPreview
-    ? and(
-        eq(documents.id, id),
-        or(
-          eq(documents.status, DOCUMENT_STATUS.PUBLIC),
-          eq(documents.userId, userId ?? ""),
-        ),
-      )
-    : and(
-        eq(documents.id, id),
-        eq(documents.userId, userId ?? ""),
-      );
-
-  const document = await db.query.documents.findFirst({
-    where: () => whereCondition,
-    with: {
-      experience: {
-        orderBy: (experience, { asc }) => [asc(experience.displayOrder)],
-      },
-      education: {
-        orderBy: (education, { asc }) => [asc(education.displayOrder)],
-      },
-      skills: {
-        orderBy: (skills, { asc }) => [asc(skills.displayOrder)],
-      },
-      personalInfo: true,
-    },
-  });
-
-  if (!document)
-    return null;
-
-  return document;
-}
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const db = createDb(c.env);

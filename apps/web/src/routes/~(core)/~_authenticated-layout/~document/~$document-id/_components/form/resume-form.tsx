@@ -1,9 +1,9 @@
 import { type SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema";
-import ExperienceForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/experience-form";
-import PersonalInfoForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/personal-info-form";
-import SkillsForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/skills-form";
-import SummaryForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/summary-form";
-import EducationForm from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/education-form";
+import ExperienceForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/experience-form";
+import PersonalInfoForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/personal-info-form";
+import SkillsForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/skills-form";
+import SummaryForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/summary-form";
+import EducationForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/education-form";
 import { useState } from "react";
 import { Button } from "@/web/components/shadcn-ui/button";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";

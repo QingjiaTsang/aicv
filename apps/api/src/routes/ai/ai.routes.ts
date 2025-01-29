@@ -6,12 +6,11 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { z } from "zod";
 
-import type { AppEnv } from "@/api/lib/types";
-
 const optimizeRequestSchema = z.object({
   jobDescription: jobDescriptionSchema,
   currentContent: z.string().min(1, "Resume content cannot be empty"),
 });
+export type OptimizeRequest = z.infer<typeof optimizeRequestSchema>;
 
 export const optimizeRoute = createRoute({
   method: "post",
@@ -36,6 +35,4 @@ export const optimizeRoute = createRoute({
   },
 });
 
-export type OptimizeRequest = z.infer<typeof optimizeRequestSchema>;
-export type OptimizeStreamResponse = z.infer<typeof aiSuggestionSchema>;
-export type OptimizeContext = Context<AppEnv, "/ai/optimize">;
+export type OptimizeRoute = typeof optimizeRoute;

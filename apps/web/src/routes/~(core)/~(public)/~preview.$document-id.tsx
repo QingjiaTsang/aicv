@@ -1,5 +1,5 @@
 import queryClient from '@/web/lib/query-client'
-import ResumePreview from '@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/preview/resume-preview'
+import ResumePreview from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/preview/resume-preview'
 import { publicDocumentQueryOptionsFn } from '@/web/services/documents/queries'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'

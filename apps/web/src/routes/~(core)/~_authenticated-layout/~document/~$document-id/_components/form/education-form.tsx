@@ -9,13 +9,13 @@ import { Input } from "@/web/components/shadcn-ui/input"
 import { GraduationCap, CalendarIcon, Plus, Trash2 } from "lucide-react"
 import queryClient from "@/web/lib/query-client"
 import { documentKeys } from "@/web/services/documents/queries"
-import useConfirm from "@/web/hooks/useConfirm"
+import useConfirm from "@/web/hooks/use-confirm"
 import { z } from "zod"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { toast } from "sonner"
-import Editor from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/~document/~$document-id/_components/form/editor"
-import { useSortableItems } from "@/web/hooks/use-sortable-items"
+import Editor from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/editor"
+import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
 
 
 type EducationFormProps = {
