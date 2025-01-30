@@ -7,8 +7,7 @@ import { baseFields } from "@/api/db/schema/utils/base-schema-fields";
 export const education = sqliteTable("education", {
   ...baseFields,
   documentId: text("document_id")
-    .notNull()
-    .references(() => documents.id, { onDelete: "cascade" }),
+    .notNull(),
   universityName: text("university_name", { length: 255 }),
   degree: text("degree", { length: 255 }),
   major: text("major", { length: 255 }),

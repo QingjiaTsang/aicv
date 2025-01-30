@@ -26,14 +26,14 @@ export const SORTABLE_SECTIONS = [
 export type SortableSectionType = typeof SORTABLE_SECTIONS[number];
 export const DEFAULT_SECTION_ORDER = SORTABLE_SECTIONS.join(",");
 
+// TODO: use logical foreign key
 export const documents = sqliteTable("document", {
   // Note: can't use baseFields to replace id, createdAt and updatedAt because it's not good for type inference here
   id: text()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .notNull(),
   title: text("title", { length: 255 }).notNull(),
   summary: text("summary", { length: 1000 }),
   themeColor: text("theme_color")

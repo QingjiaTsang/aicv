@@ -8,8 +8,7 @@ export const personalInfo = sqliteTable("personal_info", {
   ...baseFields,
   documentId: text("document_id")
     .notNull()
-    .unique()
-    .references(() => documents.id, { onDelete: "cascade" }),
+    .unique(),
   firstName: text("first_name", { length: 50 }),
   lastName: text("last_name", { length: 50 }),
   jobTitle: text("job_title", { length: 255 }),

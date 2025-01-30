@@ -7,8 +7,7 @@ import { baseFields } from "@/api/db/schema/utils/base-schema-fields";
 export const skills = sqliteTable("skills", {
   ...baseFields,
   documentId: text()
-    .notNull()
-    .references(() => documents.id, { onDelete: "cascade" }),
+    .notNull(),
   name: text("name"),
   rating: integer("rating").notNull().default(0),
   displayOrder: integer("display_order").notNull().default(0),
