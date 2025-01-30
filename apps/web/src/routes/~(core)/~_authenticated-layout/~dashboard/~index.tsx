@@ -10,6 +10,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { AnimatedNumber } from "@/web/components/animated-number";
 
 export const Route = createFileRoute(
   "/(core)/_authenticated-layout/dashboard/",
@@ -81,8 +82,18 @@ function DashboardPage() {
         <div className="container mx-auto w-full max-w-6xl px-6">
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                All Resumes
+              <h2 className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                <span>All Resumes</span>
+                <AnimatedNumber
+                  value={preloadedData.total}
+                  className={cn(
+                    "size-6 inline-flex items-center justify-center",
+                    "bg-gray-100/50 dark:bg-gray-800/30",
+                    "shadow-sm border border-gray-200/50 dark:border-gray-700/50",
+                    "rounded-md px-2",
+                    "text-sm font-medium text-gray-500 dark:text-gray-400"
+                  )}
+                />
               </h2>
               <button
                 onClick={handleDeleteAll}
