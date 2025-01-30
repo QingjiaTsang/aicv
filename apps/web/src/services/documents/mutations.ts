@@ -63,7 +63,9 @@ export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions)
   const [_, setDidSortFlag] = useAtom(didSortFlagAtom)
 
   return useMutation({
-    mutationFn: documentsApi.updateDocument,
+    mutationFn: ({ id, document }: { id: string, document: UpdateDocumentDataSchema }) => {
+      return documentsApi.updateDocument({ id, document })
+    },
     onSuccess: async (...args) => {
       const { id } = args[1];
       // await queryClient.invalidateQueries({

@@ -26,7 +26,6 @@ export const SORTABLE_SECTIONS = [
 export type SortableSectionType = typeof SORTABLE_SECTIONS[number];
 export const DEFAULT_SECTION_ORDER = SORTABLE_SECTIONS.join(",");
 
-// TODO: use logical foreign key
 export const documents = sqliteTable("document", {
   // Note: can't use baseFields to replace id, createdAt and updatedAt because it's not good for type inference here
   id: text()
@@ -90,7 +89,6 @@ export const insertDocumentSchema = createInsertSchema(documents, {
     .default("#7c3aed")
     .optional(),
   thumbnail: z.string().url("Please enter a valid URL address").optional(),
-  // TODO: show the next position in the form to continue editing
   currentPosition: z.number().int().min(0).default(0).optional(),
   status: z.enum([DOCUMENT_STATUS.PRIVATE, DOCUMENT_STATUS.PUBLIC, DOCUMENT_STATUS.ARCHIVED]).default(DOCUMENT_STATUS.PRIVATE).optional(),
   sectionOrder: z

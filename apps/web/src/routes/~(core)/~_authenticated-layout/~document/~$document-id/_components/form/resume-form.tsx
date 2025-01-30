@@ -4,36 +4,37 @@ import PersonalInfoForm from "@/web/routes/~(core)/~_authenticated-layout/~docum
 import SkillsForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/skills-form";
 import SummaryForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/summary-form";
 import EducationForm from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/education-form";
-import { useState } from "react";
 import { Button } from "@/web/components/shadcn-ui/button";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { FORM_LABELS } from "@/web/lib/constants";
+import { atom, useAtom } from "jotai";
+import { useEffect } from "react";
+
+export const currentFormPositionAtom = atom<number | null>(null)
 
 type ResumeFormProps = {
   document: SelectDocumentWithRelationsSchema
 }
 
 export default function ResumeForm({ document }: ResumeFormProps) {
-  const [currentForm, setCurrentForm] = useState<{
-    index: number
-  }>({
-    index: 0,
-  })
+  const [currentFormPosition, setCurrentFormPosition] = useAtom(currentFormPositionAtom)
 
   const handleNextForm = () => {
-    setCurrentForm((prev) => ({
-      index: prev.index + 1,
-    }))
+    setCurrentFormPosition((prev) => (prev === null ? 1 : prev + 1))
   }
 
   const handlePreviousForm = () => {
-    setCurrentForm((prev) => ({
-      index: prev.index - 1,
-    }))
+    setCurrentFormPosition((prev) => (prev === null ? 0 : prev - 1))
   }
 
-  const isFirstForm = currentForm.index === 0
-  const isLastForm = currentForm.index === FORM_LABELS.length - 1
+  const isFirstForm = currentFormPosition === 0
+  const isLastForm = currentFormPosition === FORM_LABELS.length - 1
+
+  useEffect(() => {
+    if (currentFormPosition === null) {
+      setCurrentFormPosition(document.currentPosition || 0)
+    }
+  }, [document.currentPosition])
 
   return (
     <div className="flex flex-col">
@@ -65,23 +66,23 @@ export default function ResumeForm({ document }: ResumeFormProps) {
       <div className="flex flex-col">
         <PersonalInfoForm
           document={document}
-          className={`${currentForm.index === 0 ? 'block' : 'hidden'}`}
+          className={`${currentFormPosition === 0 ? 'block' : 'hidden'}`}
         />
         <SummaryForm
           document={document}
-          className={`${currentForm.index === 1 ? 'block' : 'hidden'}`}
+          className={`${currentFormPosition === 1 ? 'block' : 'hidden'}`}
         />
         <ExperienceForm
           document={document}
-          className={`${currentForm.index === 2 ? 'block' : 'hidden'}`}
+          className={`${currentFormPosition === 2 ? 'block' : 'hidden'}`}
         />
         <EducationForm
           document={document}
-          className={`${currentForm.index === 3 ? 'block' : 'hidden'}`}
+          className={`${currentFormPosition === 3 ? 'block' : 'hidden'}`}
         />
         <SkillsForm
           document={document}
-          className={`${currentForm.index === 4 ? 'block' : 'hidden'}`}
+          className={`${currentFormPosition === 4 ? 'block' : 'hidden'}`}
         />
       </div>
     </div>
