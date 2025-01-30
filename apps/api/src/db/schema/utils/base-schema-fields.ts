@@ -1,9 +1,10 @@
 import { text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulid";
 
 export const baseFields = {
   id: text()
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => ulid()),
   createdAt: text("created_at")
     .notNull()
     .$default(() => new Date().toISOString()),

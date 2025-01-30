@@ -2,12 +2,13 @@ import type { AdapterAccountType } from "@auth/core/adapters";
 
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { ulid } from "ulid";
 import { z } from "zod";
 
 export const users = sqliteTable("user", {
   id: text()
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => ulid()),
   name: text(),
   email: text().unique(),
   password: text(),
@@ -132,5 +133,3 @@ export const verifyEmailSchema = verificationTokenSchema.pick({
   token: true,
 });
 export type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
-
-

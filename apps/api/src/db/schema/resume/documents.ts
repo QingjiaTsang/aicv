@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { ulid } from "ulid";
 import { z } from "zod";
 
 import { users } from "@/api/db/schema/auth/auth";
@@ -30,7 +31,7 @@ export const documents = sqliteTable("document", {
   // Note: can't use baseFields to replace id, createdAt and updatedAt because it's not good for type inference here
   id: text()
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => ulid()),
   userId: text("user_id")
     .notNull(),
   title: text("title", { length: 255 }).notNull(),

@@ -66,6 +66,9 @@ importers:
       stoker:
         specifier: ^1.4.2
         version: 1.4.2(@asteasolutions/zod-to-openapi@7.3.0)(@hono/zod-openapi@0.18.3)(hono@4.6.13)(openapi3-ts@4.4.0)
+      ulid:
+        specifier: ^2.3.0
+        version: 2.3.0
       worker-mailer:
         specifier: ^1.0.1
         version: 1.0.1
@@ -138,7 +141,7 @@ importers:
         version: link:../../packages/eslint-config
       '@auth/core':
         specifier: ^0.37.4
-        version: 0.37.4
+        version: 0.37.4(nodemailer@6.9.16)
       '@hono/auth-js':
         specifier: ^1.0.15
         version: 1.0.15(@auth/core@0.37.4)(hono@4.6.13)(react@18.2.0)
@@ -249,7 +252,7 @@ importers:
         version: 1.7.1(react-dom@18.2.0)(react@18.2.0)
       stoker:
         specifier: ^1.4.2
-        version: 1.4.2(@asteasolutions/zod-to-openapi@7.3.0)(hono@4.6.13)(openapi3-ts@4.4.0)
+        version: 1.4.2(@asteasolutions/zod-to-openapi@7.3.0)(@hono/zod-openapi@0.18.3)(hono@4.6.13)(openapi3-ts@4.4.0)
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -591,27 +594,6 @@ packages:
     dependencies:
       openapi3-ts: 4.4.0
       zod: 3.24.1
-    dev: false
-
-  /@auth/core@0.37.4:
-    resolution: {integrity: sha512-HOXJwXWXQRhbBDHlMU0K/6FT1v+wjtzdKhsNg0ZN7/gne6XPsIrjZ4daMcFnbq0Z/vsAbYBinQhhua0d77v7qw==}
-    peerDependencies:
-      '@simplewebauthn/browser': ^9.0.1
-      '@simplewebauthn/server': ^9.0.2
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      '@simplewebauthn/browser':
-        optional: true
-      '@simplewebauthn/server':
-        optional: true
-      nodemailer:
-        optional: true
-    dependencies:
-      '@panva/hkdf': 1.2.1
-      jose: 5.9.6
-      oauth4webapi: 3.1.4
-      preact: 10.24.3
-      preact-render-to-string: 6.5.11(preact@10.24.3)
     dev: false
 
   /@auth/core@0.37.4(nodemailer@6.9.16):
@@ -3580,7 +3562,7 @@ packages:
       hono: '>=3.*'
       react: ^18 || ^19 || ^19.0.0-rc
     dependencies:
-      '@auth/core': 0.37.4
+      '@auth/core': 0.37.4(nodemailer@6.9.16)
       hono: 4.6.13
       react: 18.2.0
     dev: false
@@ -9768,22 +9750,6 @@ packages:
       openapi3-ts: 4.4.0
     dev: false
 
-  /stoker@1.4.2(@asteasolutions/zod-to-openapi@7.3.0)(hono@4.6.13)(openapi3-ts@4.4.0):
-    resolution: {integrity: sha512-zna86ZzC3fnMOIkuO+1vRMfcRw7SpC/7yafRb0u8DwDVig2pPh6POVnGB7t2A5t/rMvyr7hE7tjXTPvW8bhJKg==}
-    peerDependencies:
-      '@asteasolutions/zod-to-openapi': ^7.0.0
-      '@hono/zod-openapi': '>=0.16.0'
-      hono: ^4.0.0
-      openapi3-ts: ^4.4.0
-    peerDependenciesMeta:
-      '@hono/zod-openapi':
-        optional: true
-    dependencies:
-      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.24.1)
-      hono: 4.6.13
-      openapi3-ts: 4.4.0
-    dev: false
-
   /stoppable@1.1.0:
     resolution: {integrity: sha512-KXDYZ9dszj6bzvnEMRYvxgeTHU74QBFL54XKtP3nyMuJ81CFYtABZ3bAzL2EdFUaEwJOBOgENyFj3R7oTzDyyw==}
     engines: {node: '>=4', npm: '>=6'}
@@ -10132,6 +10098,11 @@ packages:
   /ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
     dev: true
+
+  /ulid@2.3.0:
+    resolution: {integrity: sha512-keqHubrlpvT6G2wH0OEfSW4mquYRcbe/J8NMmveoQOjUqmo+hXtO+ORCpWhdbZ7k72UtY61BL7haGxW6enBnjw==}
+    hasBin: true
+    dev: false
 
   /undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
