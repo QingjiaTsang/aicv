@@ -30,12 +30,13 @@ function RouteComponent() {
   // TODO: (lowest priority) add user customizable section with editor that can output formatted text
   return (
     <div className="h-full w-full flex flex-col container mx-auto max-w-6xl">
-      <DocumentHeader id="resume-form" document={document} />
+      <DocumentHeader document={document} />
 
       <div className="flex-1">
         <div className="p-4 flex md:flex-row flex-col gap-4">
           {/* edit form */}
           <div
+            id="resume-form"
             className={cn(
               'flex-1 border-t-4 shadow-md rounded-md',
               'border-t-primary',

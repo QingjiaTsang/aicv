@@ -2,7 +2,7 @@ import type { CreateUserSchema } from "@aicv-app/api/schema";
 
 import { createUserSchema } from "@aicv-app/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
@@ -29,6 +29,7 @@ import { useSignupMutation } from "@/web/services/auth";
 import { CheckCircle2, Mail } from "lucide-react";
 import { getSession } from "@hono/auth-js/react";
 import { AuthBackground } from "@/web/components/auth-background";
+import LenisLink from "@/web/lenis-link";
 
 export const Route = createFileRoute("/(auth)/sign-up")({
   component: SignUpPage,
@@ -215,12 +216,12 @@ function SignUpPage() {
 
           <p className="text-muted-foreground dark:text-gray-400 mt-6 text-center text-sm">
             Already have an account?{" "}
-            <Link
+            <LenisLink
               to="/sign-in"
               className="text-primary dark:text-blue-400 underline-offset-4 hover:underline"
             >
               Sign in now
-            </Link>
+            </LenisLink>
           </p>
         </CardContent>
       </Card>

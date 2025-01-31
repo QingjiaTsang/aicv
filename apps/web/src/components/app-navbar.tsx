@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/web/components/shadcn-ui/dropdown-menu";
+import LenisLink from "@/web/lenis-link";
 
 const getInitials = (name: string | null | undefined) => {
   if (!name) return '?';
@@ -75,11 +76,11 @@ export default function AppNavbar() {
       <div className="container max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0">
-            <Link to="/dashboard">
+            <LenisLink to="/dashboard">
               <strong className="text-2xl md:text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-primary via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent hover:scale-110 transition-transform duration-200 cursor-pointer">
                 AICV
               </strong>
-            </Link>
+            </LenisLink>
           </div>
 
           <div className="flex items-center gap-3 md:gap-5">

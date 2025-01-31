@@ -1,20 +1,27 @@
 import { ArrowDown, ArrowUp } from "lucide-react"
 import { Button } from "@/web/components/shadcn-ui/button"
 import { cn } from "@/web/lib/utils"
+import { useLenis } from "lenis/react"
 
 type NavigationButtonsProps = {
   className?: string
 }
 
 export function NavigationButtons({ className }: NavigationButtonsProps) {
+  const lenis = useLenis()
+
   const scrollToForm = () => {
-    const formElement = document.querySelector('#resume-form')
-    formElement?.scrollIntoView({ behavior: 'smooth' })
+    lenis?.scrollTo('#resume-form', {
+      offset: -70,
+      duration: 1.5,
+    })
   }
 
   const scrollToPreview = () => {
-    const previewElement = document.querySelector('#resume-preview')
-    previewElement?.scrollIntoView({ behavior: 'smooth' })
+    lenis?.scrollTo('#resume-preview', {
+      offset: -70,
+      duration: 1.5,
+    })
   }
 
   return (
