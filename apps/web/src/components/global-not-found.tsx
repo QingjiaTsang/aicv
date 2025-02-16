@@ -3,7 +3,6 @@ import { Search } from "lucide-react";
 import { Button } from "@/web/components/shadcn-ui/button";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/web/lib/utils";
-import LenisLink from "@/web/lenis-link";
 
 type GlobalNotFoundProps = {
   className?: string;
@@ -47,9 +46,9 @@ export function GlobalNotFound({ className }: GlobalNotFoundProps) {
             asChild
             className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
           >
-            <LenisLink to="/dashboard">
+            <Link to="/dashboard">
               Back to Home
-            </LenisLink>
+            </Link>
           </Button>
         </div>
       </motion.div>

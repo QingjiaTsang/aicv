@@ -13,11 +13,10 @@ import { Skeleton } from "@/web/components/shadcn-ui/skeleton";
 import { SelectDocumentSchema } from "@aicv-app/api/schema";
 
 import { format } from "date-fns"
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, Link } from '@tanstack/react-router';
 import { getStatusIcon } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/utils/getStatusIcon";
 import { useState } from "react";
 import { ResumePreviewTooltip } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/resume-preview-tooltip";
-import LenisLink from "@/web/lenis-link";
 
 type ResumeListProps = {
   resumes: SelectDocumentSchema[];
@@ -113,14 +112,14 @@ function ResumeCard({ resume, onDelete }: ResumeCardProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
-                  <LenisLink
+                  <Link
                     to="/document/$document-id/edit"
                     params={{ "document-id": resume.id }}
                     className="w-full flex items-center gap-2"
                   >
                     <Pencil className="size-4" />
                     <span>Edit</span>
-                  </LenisLink>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onDelete} className="text-red-600 dark:text-red-400">
                   <div className="w-full flex items-center gap-2 cursor-pointer">

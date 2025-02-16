@@ -3,7 +3,7 @@ import type { CredentialsSigninSchema } from "@aicv-app/api/schema";
 import { credentialsSigninSchema } from "@aicv-app/api/schema";
 import { getSession } from "@hono/auth-js/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link } from '@tanstack/react-router';
 import { useForm } from "react-hook-form";
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
@@ -30,7 +30,6 @@ import {
   useGoogleSigninMutation,
 } from "@/web/services/auth";
 import { AuthBackground } from "@/web/components/auth-background";
-import LenisLink from "@/web/lenis-link";
 
 type SearchParams = {
   callbackUrl?: string;
@@ -225,12 +224,12 @@ function SigninPage() {
 
           <p className="text-muted-foreground dark:text-gray-400 mt-6 text-center text-sm">
             Don't have an account?
-            <LenisLink
+            <Link
               to="/sign-up"
               className="ml-1 text-primary dark:text-blue-400 underline-offset-4 hover:underline"
             >
               Sign up now
-            </LenisLink>
+            </Link>
           </p>
         </CardContent>
       </Card>
