@@ -11,6 +11,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
+  DrawerDescription
 } from "@/web/components/shadcn-ui/drawer"
 import { Resizable } from 'react-resizable';
 import { ChatContent } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/resume-optimizer-chatbox/chat-content'
@@ -95,7 +96,10 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
     status,
     input,
     handleInputChange,
-    handleSubmit
+    handleSubmit,
+    reload,
+    setMessages,
+    stop
   } = useChat({
     streamProtocol: 'text',
     api: '/api/ai/optimize/streamText',
@@ -147,14 +151,24 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
     }
   }, [append, isStreaming])
 
+  const handleNewChat = useCallback(() => {
+    setMessages([])
+    reload()
+  }, [setMessages, reload])
+
+  const handleStopStreaming = useCallback(() => {
+    stop()
+  }, [stop])
+
   if (!isOpen) return null
 
   if (!isDesktop) {
     return (
       <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DrawerContent className="h-[85vh]">
+        <DrawerContent  className="h-[85vh]">
           <DrawerHeader className="border-b">
             <DrawerTitle className="flex items-center gap-2">
+              <DrawerDescription className='hidden'>AI optimization for {document.title}</DrawerDescription>
               <Sparkles className="size-4 text-violet-500" />
               <span>AI Optimization</span>
             </DrawerTitle>
@@ -177,6 +191,8 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               handleInputChange={handleInputChange}
               handleSubmit={handleSubmit}
               handleAnalyzeResume={handleAnalyzeResume}
+              onNewChat={handleNewChat}
+              onStopStreaming={handleStopStreaming}
             />
           </div>
         </DrawerContent>
@@ -267,6 +283,8 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               handleInputChange={handleInputChange}
               handleSubmit={handleSubmit}
               handleAnalyzeResume={handleAnalyzeResume}
+              onNewChat={handleNewChat}
+              onStopStreaming={handleStopStreaming}
             />
           </div>
         )}

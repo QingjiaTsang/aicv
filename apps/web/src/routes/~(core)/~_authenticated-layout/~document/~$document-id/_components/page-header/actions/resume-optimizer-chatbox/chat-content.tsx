@@ -1,9 +1,11 @@
 import type { Message } from 'ai'
-import { Sparkles, Send } from 'lucide-react'
+import { useRef, useState, useCallback, useEffect } from 'react'
+import { Sparkles, Send, Plus, CircleStop, Bot } from 'lucide-react'
 import { cn } from '@/web/lib/utils'
 import { Button } from '@/web/components/shadcn-ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/web/components/shadcn-ui/avatar'
 import { MarkdownRenderer } from '@/web/components/markdown-renderer'
+import { useSession } from '@hono/auth-js/react'
 
 type ChatContentProps = {
   messages: Message[]
@@ -12,6 +14,8 @@ type ChatContentProps = {
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   handleSubmit: (e: React.FormEvent) => void
   handleAnalyzeResume: () => Promise<void>
+  onNewChat: () => void
+  onStopStreaming: () => void
 }
 
 export function ChatContent({ 
@@ -20,8 +24,44 @@ export function ChatContent({
   isStreaming,
   handleInputChange,
   handleSubmit,
-  handleAnalyzeResume 
+  handleAnalyzeResume,
+  onNewChat,
+  onStopStreaming
 }: ChatContentProps) {
+  const session = useSession();
+  const userAvatar = session.data?.user?.image || '/images/user-avatar.png'
+
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+  const [userScrolled, setUserScrolled] = useState(false)
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
+  const handleScroll = useCallback(() => {
+    if (!chatContainerRef.current) return
+
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current
+    const isScrolledToBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 10
+
+    setUserScrolled(!isScrolledToBottom)
+  }, [])
+
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current
+    if (chatContainer) {
+      chatContainer.addEventListener('scroll', handleScroll)
+      return () => chatContainer.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll])
+
+  useEffect(() => {
+    if (isStreaming && !userScrolled) {
+      scrollToBottom()
+    }
+  }, [messages, isStreaming, userScrolled, scrollToBottom])
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -31,9 +71,13 @@ export function ChatContent({
     }
   }
 
+
   return (
     <>
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 sm:gap-4">
+      <div 
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 sm:gap-4"
+      >
         {messages.map((message, i) => (
           <div
             key={i}
@@ -45,7 +89,7 @@ export function ChatContent({
           >
             <Avatar className="size-6 md:size-8 shrink-0">
               <AvatarImage 
-                src={message.role === 'assistant' ? '/ai-avatar.png' : '/user-avatar.png'} 
+                src={message.role === 'assistant' ? '/images/ai-avatar.png' : userAvatar} 
                 alt={message.role === 'assistant' ? 'AI' : 'Me'} 
               />
               <AvatarFallback>
@@ -64,6 +108,7 @@ export function ChatContent({
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       
       <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -76,6 +121,20 @@ export function ChatContent({
             >
               <Sparkles className="mr-2 size-4" />
               Analyze Resume
+            </Button>
+          )}
+           {messages.length > 0 && (
+            <Button
+              onClick={onNewChat}
+              disabled={isStreaming}
+              className={cn(
+                "w-full",
+                "bg-blue-500 hover:bg-blue-600 text-white",
+                "transition-colors duration-200"
+              )}
+            >
+              <Plus className="mr-2 size-4" />
+              New Chat
             </Button>
           )}
           
@@ -98,18 +157,30 @@ export function ChatContent({
               }}
             />
             <Button 
-              type="submit"
+              type="button"
               size="icon"
-              disabled={isStreaming || !input.trim()}
+              onClick={isStreaming ? onStopStreaming : handleSubmit}
+              disabled={!input.trim() && !isStreaming}
               className={cn(
                 "shrink-0 size-11 rounded-md",
-                "bg-violet-600 hover:bg-violet-700 text-white",
+                isStreaming 
+                  ? "bg-red-600 hover:bg-red-700 text-white"
+                  : "bg-violet-600 hover:bg-violet-700 text-white",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
                 "transition-all duration-200"
               )}
             >
-              <Send className="size-5" />
-              <span className="sr-only">Send message</span>
+              {isStreaming ? (
+                <>
+                  <CircleStop className="size-6" />
+                  <span className="sr-only">Stop streaming</span>
+                </>
+              ) : (
+                <>
+                  <Send className="size-5" />
+                  <span className="sr-only">Send message</span>
+                </>
+              )}
             </Button>
           </form>
         </div>
