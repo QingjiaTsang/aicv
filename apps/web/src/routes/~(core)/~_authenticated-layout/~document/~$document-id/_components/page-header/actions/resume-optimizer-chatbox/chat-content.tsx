@@ -6,6 +6,7 @@ import { Button } from '@/web/components/shadcn-ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/web/components/shadcn-ui/avatar'
 import { MarkdownRenderer } from '@/web/components/markdown-renderer'
 import { useSession } from '@hono/auth-js/react'
+import { useLenis } from 'lenis/react'
 
 type ChatContentProps = {
   messages: Message[]
@@ -48,6 +49,16 @@ export function ChatContent({
     setUserScrolled(!isScrolledToBottom)
   }, [])
 
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      if (!isStreaming && input.trim()) {
+        handleSubmit(e)
+      }
+    }
+  }
+
   useEffect(() => {
     const chatContainer = chatContainerRef.current
     if (chatContainer) {
@@ -61,16 +72,6 @@ export function ChatContent({
       scrollToBottom()
     }
   }, [messages, isStreaming, userScrolled, scrollToBottom])
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      if (!isStreaming && input.trim()) {
-        handleSubmit(e)
-      }
-    }
-  }
-
 
   return (
     <>

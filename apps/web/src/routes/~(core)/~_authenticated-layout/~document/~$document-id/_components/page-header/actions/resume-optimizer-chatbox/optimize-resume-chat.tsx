@@ -15,6 +15,7 @@ import {
 } from "@/web/components/shadcn-ui/drawer"
 import { Resizable } from 'react-resizable';
 import { ChatContent } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/resume-optimizer-chatbox/chat-content'
+import { useLenis } from 'lenis/react'
 
 type OptimizeResumeChatProps = {
   document: SelectDocumentWithRelationsSchema
@@ -23,72 +24,14 @@ type OptimizeResumeChatProps = {
 }
 
 export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResumeChatProps) {
+  const lenis = useLenis()
+
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [isMinimized, setIsMinimized] = useState(false)
   const [size, setSize] = useState({ width: 400, height: 600 })
   const [position, setPosition] = useState({ x: window.innerWidth - 420, y: window.innerHeight - 620 })
   const [isDragging, setIsDragging] = useState(false)
   const dragStartPos = useRef({ x: 0, y: 0 })
-
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setPosition(prev => {
-        const newX = Math.min(Math.max(20, prev.x), window.innerWidth - size.width - 20)
-        const newY = Math.min(Math.max(20, prev.y), window.innerHeight - size.height - 20)
-        return { x: newX, y: newY }
-      })
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [size])
-
-  const handleResize = (_e: React.SyntheticEvent, { size: newSize }: { size: { width: number; height: number } }) => {
-    const maxWidth = window.innerWidth - position.x - 20
-    const maxHeight = window.innerHeight - position.y - 20
-    
-    setSize({
-      width: Math.min(newSize.width, maxWidth),
-      height: Math.min(newSize.height, maxHeight)
-    })
-  }
-
-  const handleDragStart = (e: React.MouseEvent) => {
-    setIsDragging(true)
-    dragStartPos.current = {
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    }
-  }
-
-  const handleDrag = (e: MouseEvent) => {
-    if (!isDragging) return
-
-    const newX = e.clientX - dragStartPos.current.x
-    const newY = e.clientY - dragStartPos.current.y
-
-    // Keep within screen bounds
-    const boundedX = Math.min(Math.max(20, newX), window.innerWidth - size.width - 20)
-    const boundedY = Math.min(Math.max(20, newY), window.innerHeight - size.height - 20)
-
-    setPosition({ x: boundedX, y: boundedY })
-  }
-
-  const handleDragEnd = () => {
-    setIsDragging(false)
-  }
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleDrag)
-      window.addEventListener('mouseup', handleDragEnd)
-    }
-    return () => {
-      window.removeEventListener('mousemove', handleDrag)
-      window.removeEventListener('mouseup', handleDragEnd)
-    }
-  }, [isDragging])
 
   const { 
     messages, 
@@ -160,6 +103,67 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
     stop()
   }, [stop])
 
+  const handleResize = (_e: React.SyntheticEvent, { size: newSize }: { size: { width: number; height: number } }) => {
+    const maxWidth = window.innerWidth - position.x - 20
+    const maxHeight = window.innerHeight - position.y - 20
+    
+    setSize({
+      width: Math.min(newSize.width, maxWidth),
+      height: Math.min(newSize.height, maxHeight)
+    })
+  }
+
+  const handleDragStart = (e: React.MouseEvent) => {
+    setIsDragging(true)
+    dragStartPos.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    }
+  }
+
+  const handleDrag = (e: MouseEvent) => {
+    if (!isDragging) return
+
+    const newX = e.clientX - dragStartPos.current.x
+    const newY = e.clientY - dragStartPos.current.y
+
+    // Keep within screen bounds
+    const boundedX = Math.min(Math.max(20, newX), window.innerWidth - size.width - 20)
+    const boundedY = Math.min(Math.max(20, newY), window.innerHeight - size.height - 20)
+
+    setPosition({ x: boundedX, y: boundedY })
+  }
+
+  const handleDragEnd = () => {
+    setIsDragging(false)
+  }
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleDrag)
+      window.addEventListener('mouseup', handleDragEnd)
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleDrag)
+      window.removeEventListener('mouseup', handleDragEnd)
+    }
+  }, [isDragging])
+
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setPosition(prev => {
+        const newX = Math.min(Math.max(20, prev.x), window.innerWidth - size.width - 20)
+        const newY = Math.min(Math.max(20, prev.y), window.innerHeight - size.height - 20)
+        return { x: newX, y: newY }
+      })
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [size])
+
   if (!isOpen) return null
 
   if (!isDesktop) {
@@ -183,7 +187,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
             </Button>
           </DrawerHeader>
           
-          <div className="flex flex-col h-[calc(100%-4rem)]">
+          <div data-lenis-stop className="flex flex-col h-[calc(100%-4rem)]">
             <ChatContent 
               messages={messages}
               input={input}
@@ -275,7 +279,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
         </div>
 
         {!isMinimized && (
-          <div className="h-[calc(100%-3rem)] flex flex-col">
+          <div data-lenis-stop className="h-[calc(100%-3rem)] flex flex-col">
             <ChatContent 
               messages={messages}
               input={input}

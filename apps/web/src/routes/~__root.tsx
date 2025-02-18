@@ -30,7 +30,15 @@ function RootLayout() {
   return (
     <>
       <ScrollRestoration getKey={(location) => location.pathname} />
-      {/* <ReactLenis root> */}
+      <ReactLenis 
+        root
+        options={{
+          // Note: add `data-lenis-stop` to the elements that should not be applied with lenis especially for modal, drawer, etc.
+          prevent: (node) => {
+            return node.dataset.lenisStop === 'true'
+          }
+        }}
+      >
         <div className="min-h-dvh flex flex-col">
           {!isHideNav ? <AppNavbar /> : null}
           <main className="flex-1 pb-8">
@@ -38,7 +46,7 @@ function RootLayout() {
           </main>
           {/* <TanStackRouterDevtools /> */}
         </div>
-      {/* </ReactLenis> */}
+      </ReactLenis>
     </>
   );
 }
