@@ -1,24 +1,16 @@
-import type { Context } from "hono";
-
-import { aiSuggestionSchema, jobDescriptionSchema } from "@aicv-app/ai-core";
+import { aiSuggestionSchema, optimizeContextSchema } from "@aicv-app/ai-core";
 import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { z } from "zod";
 
-const optimizeRequestSchema = z.object({
-  jobDescription: jobDescriptionSchema,
-  currentContent: z.string().min(1, "Resume content cannot be empty"),
-});
-export type OptimizeRequest = z.infer<typeof optimizeRequestSchema>;
-
-export const optimizeRoute = createRoute({
+export const optimizeSreamObjectRoute = createRoute({
   method: "post",
-  path: "/ai/optimize",
+  path: "/ai/optimize/streamObject",
   tags: ["AI"],
   description: "Use AI to optimize resume content",
   request: {
-    body: jsonContent(optimizeRequestSchema, "Resume optimization request"),
+    body: jsonContent(optimizeContextSchema, "Resume optimization request"),
   },
   responses: {
     [HttpStatusCodes.OK]: {
@@ -35,4 +27,28 @@ export const optimizeRoute = createRoute({
   },
 });
 
-export type OptimizeRoute = typeof optimizeRoute;
+export const optimizeStreamTextRoute = createRoute({
+  method: "post",
+  path: "/ai/optimize/streamText",
+  tags: ["AI"],
+  description: "Use AI to optimize resume content",
+  request: {
+    body: jsonContent(optimizeContextSchema, "Resume optimization request"),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: {
+      content: {
+        "text/event-stream": {
+          schema: z.string(),
+        },
+      },
+      description: "Resume optimization suggestions (streaming)",
+    },
+    [HttpStatusCodes.BAD_REQUEST]: jsonContent(z.object({
+      message: z.string(),
+    }), "Request error"),
+  },
+});
+
+export type OptimizeStreamObjectRoute = typeof optimizeSreamObjectRoute;
+export type OptimizeStreamTextRoute = typeof optimizeStreamTextRoute;

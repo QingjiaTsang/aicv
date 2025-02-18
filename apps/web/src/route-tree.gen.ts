@@ -18,6 +18,7 @@ import { Route as coreAuthenticatedLayoutImport } from './routes/~(core)/~_authe
 import { Route as authSignUpImport } from './routes/~(auth)/~sign-up'
 import { Route as authSignInImport } from './routes/~(auth)/~sign-in'
 import { Route as coreLandingLayoutIndexImport } from './routes/~(core)/~_landing-layout.index'
+import { Route as corepublicTestImport } from './routes/~(core)/~(public)/~test'
 import { Route as corepublicPreviewDocumentIdImport } from './routes/~(core)/~(public)/~preview.$document-id'
 import { Route as coreAuthenticatedLayoutDashboardIndexImport } from './routes/~(core)/~_authenticated-layout/~dashboard/~index'
 import { Route as coreAuthenticatedLayoutDocumentDocumentIdEditImport } from './routes/~(core)/~_authenticated-layout/~document/~$document-id/~edit'
@@ -59,6 +60,12 @@ const coreLandingLayoutIndexRoute = coreLandingLayoutIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => coreLandingLayoutRoute,
+} as any)
+
+const corepublicTestRoute = corepublicTestImport.update({
+  id: '/(public)/test',
+  path: '/test',
+  getParentRoute: () => coreRoute,
 } as any)
 
 const corepublicPreviewDocumentIdRoute =
@@ -119,6 +126,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof coreLandingLayoutImport
+      parentRoute: typeof coreImport
+    }
+    '/(core)/(public)/test': {
+      id: '/(core)/(public)/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof corepublicTestImport
       parentRoute: typeof coreImport
     }
     '/(core)/_landing-layout/': {
@@ -186,12 +200,14 @@ const coreLandingLayoutRouteWithChildren =
 interface coreRouteChildren {
   coreAuthenticatedLayoutRoute: typeof coreAuthenticatedLayoutRouteWithChildren
   coreLandingLayoutRoute: typeof coreLandingLayoutRouteWithChildren
+  corepublicTestRoute: typeof corepublicTestRoute
   corepublicPreviewDocumentIdRoute: typeof corepublicPreviewDocumentIdRoute
 }
 
 const coreRouteChildren: coreRouteChildren = {
   coreAuthenticatedLayoutRoute: coreAuthenticatedLayoutRouteWithChildren,
   coreLandingLayoutRoute: coreLandingLayoutRouteWithChildren,
+  corepublicTestRoute: corepublicTestRoute,
   corepublicPreviewDocumentIdRoute: corepublicPreviewDocumentIdRoute,
 }
 
@@ -202,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof authSignUpRoute
   '/': typeof coreLandingLayoutIndexRoute
   '': typeof coreLandingLayoutRouteWithChildren
+  '/test': typeof corepublicTestRoute
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/preview/$document-id': typeof corepublicPreviewDocumentIdRoute
   '/document/$document-id/edit': typeof coreAuthenticatedLayoutDocumentDocumentIdEditRoute
@@ -211,6 +228,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
   '/': typeof coreLandingLayoutIndexRoute
+  '/test': typeof corepublicTestRoute
   '/dashboard': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/preview/$document-id': typeof corepublicPreviewDocumentIdRoute
   '/document/$document-id/edit': typeof coreAuthenticatedLayoutDocumentDocumentIdEditRoute
@@ -223,6 +241,7 @@ export interface FileRoutesById {
   '/(core)': typeof coreRouteWithChildren
   '/(core)/_authenticated-layout': typeof coreAuthenticatedLayoutRouteWithChildren
   '/(core)/_landing-layout': typeof coreLandingLayoutRouteWithChildren
+  '/(core)/(public)/test': typeof corepublicTestRoute
   '/(core)/_landing-layout/': typeof coreLandingLayoutIndexRoute
   '/(core)/_authenticated-layout/dashboard/': typeof coreAuthenticatedLayoutDashboardIndexRoute
   '/(core)/(public)/preview/$document-id': typeof corepublicPreviewDocumentIdRoute
@@ -236,6 +255,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/'
     | ''
+    | '/test'
     | '/dashboard'
     | '/preview/$document-id'
     | '/document/$document-id/edit'
@@ -244,6 +264,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/'
+    | '/test'
     | '/dashboard'
     | '/preview/$document-id'
     | '/document/$document-id/edit'
@@ -254,6 +275,7 @@ export interface FileRouteTypes {
     | '/(core)'
     | '/(core)/_authenticated-layout'
     | '/(core)/_landing-layout'
+    | '/(core)/(public)/test'
     | '/(core)/_landing-layout/'
     | '/(core)/_authenticated-layout/dashboard/'
     | '/(core)/(public)/preview/$document-id'
@@ -299,6 +321,7 @@ export const routeTree = rootRoute
       "children": [
         "/(core)/_authenticated-layout",
         "/(core)/_landing-layout",
+        "/(core)/(public)/test",
         "/(core)/(public)/preview/$document-id"
       ]
     },
@@ -316,6 +339,10 @@ export const routeTree = rootRoute
       "children": [
         "/(core)/_landing-layout/"
       ]
+    },
+    "/(core)/(public)/test": {
+      "filePath": "~(core)/~(public)/~test.tsx",
+      "parent": "/(core)"
     },
     "/(core)/_landing-layout/": {
       "filePath": "~(core)/~_landing-layout.index.tsx",

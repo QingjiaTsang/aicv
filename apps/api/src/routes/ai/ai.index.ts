@@ -4,6 +4,7 @@ import * as handlers from "./ai.handlers";
 import * as routes from "./ai.routes";
 
 const router = createRouter()
-  .openapi(routes.optimizeRoute, handlers.handleOptimize);
+  .openapi(routes.optimizeSreamObjectRoute, handlers.handleOptimize)
+  .openapi(routes.optimizeStreamTextRoute, handlers.handleOptimizeText);
 
 export default router;

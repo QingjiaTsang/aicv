@@ -1,4 +1,4 @@
-import { Palette, Eye, Download, Share2, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Palette, Eye, Download, Share2, MoreHorizontal, Trash2, Sparkles } from 'lucide-react'
 import { DocumentStatus, SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { TooltipButton } from '@/web/components/tooltip-button'
 import { Button } from "@/web/components/shadcn-ui/button"
@@ -20,6 +20,7 @@ import useConfirm from '@/web/hooks/use-confirm'
 import html2PDF from 'jspdf-html2canvas';
 import { format } from 'date-fns'
 import ShareLinkPopover from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/share-link-popover'
+import { OptimizeResumeAction } from './actions/optimize-resume-action'
 
 type DocumentActionsProps = {
   document: SelectDocumentWithRelationsSchema
@@ -31,6 +32,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
   const [isThemePickerOpen, setIsThemePickerOpen] = useState(false)
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
   const [isShareLinkModalOpen, setIsShareLinkModalOpen] = useState(false)
+  const [isOptimizeOpen, setIsOptimizeOpen] = useState(false)
 
   const { mutate: deleteDocument } = useDeleteDocumentMutation({
     onSuccess: () => {
@@ -155,6 +157,11 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
       <DeleteResumeConfirmDialog />
 
       <div className="hidden sm:flex items-center gap-2">
+        <OptimizeResumeAction 
+          document={document} 
+          isOpen={isOptimizeOpen}
+          onOpenChange={setIsOptimizeOpen}
+        />
         <ThemeColorPicker
           documentId={document.id}
           selectedColor={document.themeColor ?? DEFAULT_THEME_COLOR}
@@ -210,6 +217,11 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => setIsOptimizeOpen(true)}>
+            <Sparkles className="mr-2 size-4" />
+            <span>AI Optimization</span>
+          </DropdownMenuItem>
+
           <DropdownMenuItem
             onClick={() => setIsThemePickerOpen(true)}
             disabled={document.status === 'archived'}
@@ -237,6 +249,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
             <Trash2 className="mr-2 size-4" />
             <span>Delete</span>
           </DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
     </>

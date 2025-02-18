@@ -30,7 +30,7 @@ function RootLayout() {
   return (
     <>
       <ScrollRestoration getKey={(location) => location.pathname} />
-      <ReactLenis root>
+      {/* <ReactLenis root> */}
         <div className="min-h-dvh flex flex-col">
           {!isHideNav ? <AppNavbar /> : null}
           <main className="flex-1 pb-8">
@@ -38,7 +38,7 @@ function RootLayout() {
           </main>
           {/* <TanStackRouterDevtools /> */}
         </div>
-      </ReactLenis>
+      {/* </ReactLenis> */}
     </>
   );
 }

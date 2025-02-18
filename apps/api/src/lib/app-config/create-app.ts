@@ -37,7 +37,7 @@ export default function createApp() {
           return await verifyAuth()(c, next);
         }
         catch {
-          // If verification fails, continue processing request without auth info
+        // If verification fails, continue processing request without auth info
           return next();
         }
       }

@@ -156,3 +156,9 @@ body {
     mask-size: 2000vmax;
   }
 }
+
+/* For markdown-renderer content auto wrap */
+code {
+  white-space : pre-wrap !important;
+}
+

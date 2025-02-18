@@ -12,7 +12,7 @@ import queryClient from "@/web/lib/query-client";
 import App from "./app";
 
 import "./index.css";
-import 'lenis/dist/lenis.css'
+// import 'lenis/dist/lenis.css'
 
 // TODO: add i18n to support Chinese
 createRoot(document.getElementById("root")!).render(
