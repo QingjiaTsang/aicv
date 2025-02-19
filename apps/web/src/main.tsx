@@ -22,7 +22,7 @@ createRoot(document.getElementById("root")!).render(
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
           <App />
           <Toaster />
-          <ReactQueryDevtools initialIsOpen={false} />
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </ThemeProvider>
       </QueryClientProvider>
     </SessionProvider>

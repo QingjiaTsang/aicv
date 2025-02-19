@@ -59,13 +59,11 @@ export const documents = sqliteTable("document", {
     .$default(() => new Date().toISOString())
     .$onUpdate(() => new Date().toISOString()),
 }, table => ([
-  index("user_id_idx").on(table.userId),
-  index("user_created_at_idx").on(table.userId, table.createdAt),
   index("user_updated_at_idx").on(table.userId, table.updatedAt),
-  // TODO: for filtering
+  // For filtering in dashboard
   index("user_status_idx").on(table.userId, table.status),
-  // TODO: for searching
-  index("user_title_idx").on(table.userId, table.title),
+  // For searching in dashboard
+  index("user_title_summary_idx").on(table.userId, table.title, table.summary),
 ]));
 
 export const documentRelations = relations(documents, ({ one, many }) => ({
