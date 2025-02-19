@@ -1,8 +1,11 @@
-import { and, eq } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
+
+import { and, eq, like, or } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type {
+  DocumentStatus,
   UpdateBasicDocumentSchema,
   UpdateEducationSchema,
   UpdateExperienceSchema,
@@ -35,23 +38,45 @@ import type {
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
   const db = createDb(c.env);
+  const authUser = c.get("authUser");
 
   const page = Number(c.req.query("page") ?? 1);
   const pageSize = Number(c.req.query("pageSize") ?? 10);
+  const status = c.req.query("status") as DocumentStatus | undefined;
+  const search = c.req.query("search");
 
   const offset = (page - 1) * pageSize;
   const limit = pageSize;
 
-  const authUser = c.get("authUser");
+  const whereConditions = [eq(documents.userId, authUser.user!.id)];
+
+  if (status && Object.values(DOCUMENT_STATUS).includes(status)) {
+    whereConditions.push(eq(documents.status, status));
+  }
+
+  if (search) {
+    whereConditions.push(
+      or(
+        like(documents.title, `%${search}%`),
+        like(documents.summary ?? "", `%${search}%`),
+      ) as SQL<unknown>,
+    );
+  }
 
   const [documentsList, total] = await Promise.all([
     db.query.documents.findMany({
       limit,
       offset,
-      where: (documents, { eq }) => eq(documents.userId, authUser.user!.id),
+      with: {
+        experience: true,
+      },
+      where: (_, { and }) => and(...whereConditions),
       orderBy: (documents, { desc }) => [desc(documents.updatedAt)],
     }),
-    db.select({ count: documents.id }).from(documents).then(result => result.length),
+    db.select({ count: documents.id })
+      .from(documents)
+      .where(and(...whereConditions))
+      .then(result => result.length),
   ]);
 
   return c.json({

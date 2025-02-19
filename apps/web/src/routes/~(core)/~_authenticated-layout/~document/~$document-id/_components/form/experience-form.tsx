@@ -37,7 +37,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
     })),
     defaultValues: {
       experiences: document.experience.filter((exp) => exp !== null)
-    }
+    },
   })
 
   const [ConfirmDialog, confirm] = useConfirm({
@@ -131,6 +131,9 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
   // Note: after experiences order changed by drag and drop in the resume preview section, update the form order accordingly
   useEffect(() => {
     const latestDocument = queryClient.getQueryData(documentKeys.LIST_DOCUMENT(document.id)) as SelectDocumentWithRelationsSchema
+    console.log({
+      exp: latestDocument?.experience
+    })
     form.reset({
       experiences: latestDocument?.experience as UpdateExperienceSchema
     })

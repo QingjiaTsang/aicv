@@ -54,7 +54,7 @@ export async function handleOneToManyUpdate<T extends { id?: string }>({
   }
 
   const results = await Promise.all(
-    items.map(async (item, index) => {
+    items.map(async (item) => {
       // one-to-many relationship(experience/education/skills) upsert has to depend on the id field
       if (item.id) {
         const [updated] = await db
@@ -70,7 +70,7 @@ export async function handleOneToManyUpdate<T extends { id?: string }>({
           ...item,
           documentId,
           // Placed at the end of the list by default
-          displayOrder: await getLatestDisplayOrder() + index + 1,
+          displayOrder: await getLatestDisplayOrder() + 1,
         })
         .returning();
       return inserted;

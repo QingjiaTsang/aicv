@@ -18,7 +18,6 @@ function createInternalClient(config: DeepseekConfig) {
 
   const deepseekClient = createDeepSeek({
     apiKey: env.DEEPSEEK_API_KEY,
-    // TODO: come back to this
     // 硅基流动版本dpsk api
     baseURL: "https://api.siliconflow.cn/v1/",
     headers: {

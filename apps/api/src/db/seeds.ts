@@ -28,6 +28,9 @@ const defaultDocuments = [
     summary: "5年全栈开发经验",
     themeColor: "#7c3aed",
     status: "public" as const,
+    currentPosition: 0,
+    sectionOrder: "experience,education,skills",
+    thumbnail: null,
   },
 ] as const;
 
@@ -51,6 +54,7 @@ const defaultExperience = [
     workSummary: "负责公司核心产品的前端开发",
     startDate: format(new Date("2020-01-01"), "yyyy-MM-dd"),
     endDate: format(new Date(), "yyyy-MM-dd"),
+    displayOrder: 0,
   },
   {
     title: "全栈工程师",
@@ -61,6 +65,7 @@ const defaultExperience = [
     workSummary: "全栈开发,负责产品从0到1的构建",
     startDate: format(new Date("2018-01-01"), "yyyy-MM-dd"),
     endDate: format(new Date("2019-12-31"), "yyyy-MM-dd"),
+    displayOrder: 1,
   },
 ] as const;
 
@@ -72,15 +77,16 @@ const defaultEducation = [
     startDate: format(new Date("2014-09-01"), "yyyy-MM-dd"),
     endDate: format(new Date("2018-07-01"), "yyyy-MM-dd"),
     description: "主修计算机科学与技术,参与多个创新项目",
+    displayOrder: 0,
   },
 ] as const;
 
 const defaultSkills = [
-  { name: "JavaScript", rating: 5 },
-  { name: "TypeScript", rating: 4 },
-  { name: "React", rating: 5 },
-  { name: "Node.js", rating: 4 },
-  { name: "Python", rating: 3 },
+  { name: "JavaScript", rating: 5, displayOrder: 0 },
+  { name: "TypeScript", rating: 4, displayOrder: 1 },
+  { name: "React", rating: 5, displayOrder: 2 },
+  { name: "Node.js", rating: 4, displayOrder: 3 },
+  { name: "Python", rating: 3, displayOrder: 4 },
 ] as const;
 
 export async function seed(db: DrizzleD1Database<typeof schema>) {

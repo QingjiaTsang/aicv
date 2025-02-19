@@ -1,3 +1,4 @@
+import { DocumentStatus } from "@aicv-app/api/schema";
 import { SpinLoader } from "@/web/components/spin-loader";
 import useConfirm from "@/web/hooks/use-confirm";
 import queryClient from "@/web/lib/query-client";
@@ -7,20 +8,47 @@ import { ResumeList } from "@/web/routes/~(core)/~_authenticated-layout/~dashboa
 import { useCreateDocumentMutation, useDeleteAllDocumentsMutation, useDeleteDocumentMutation } from "@/web/services/documents/mutations";
 import { documentsQueryOptionsFn } from "@/web/services/documents/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AnimatedNumber } from "@/web/components/animated-number";
+import { DocumentFilters } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/document-filters";
 
-export const Route = createFileRoute(
-  "/(core)/_authenticated-layout/dashboard/",
-)({
+export const Route = createFileRoute('/(core)/_authenticated-layout/dashboard/')({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      status: search.status as DocumentStatus | undefined,
+      search: (search.search as string) || "",
+    };
+  },
+  loaderDeps: ({ search: { status, search } }) => ({
+    status,
+    search,
+  }),
+  loader: ({ deps: { status, search } }) => {
+    return queryClient.ensureQueryData(documentsQueryOptionsFn({ 
+      page: 1, 
+      pageSize: 100,
+      status,
+      search,
+    }));
+  },
   component: DashboardPage,
-  loader: () => queryClient.ensureQueryData(documentsQueryOptionsFn({ page: 1, pageSize: 100 })),
 });
 
 function DashboardPage() {
-  const { data: preloadedData, isPending: isPreloading } = useSuspenseQuery(documentsQueryOptionsFn({ page: 1, pageSize: 100 }));
+  const { status, search } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  
+  const { data: preloadedData, isPending: isPreloading } = useSuspenseQuery(
+    documentsQueryOptionsFn({ 
+      page: 1, 
+      pageSize: 100,
+      status,
+      search,
+    })
+  );
+  
   const { mutate: deleteDocument } = useDeleteDocumentMutation({
     onSuccess: () => {
       toast.success('Resume deleted')
@@ -69,6 +97,18 @@ function DashboardPage() {
     deleteAllDocuments();
   };
 
+  const handleStatusChange = (newStatus: DocumentStatus | undefined) => {
+    navigate({
+      search: (prev) => ({ ...prev, status: newStatus })
+    });
+  };
+
+  const handleSearchChange = (newSearch: string) => {
+    navigate({
+      search: (prev) => ({ ...prev, search: newSearch })
+    });
+  };
+
   return (
     <>
       <DeleteResumeConfirmDialog />
@@ -81,31 +121,40 @@ function DashboardPage() {
 
         <div className="container mx-auto w-full max-w-6xl px-6">
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                <span>All Resumes</span>
-                <AnimatedNumber
-                  value={preloadedData.total}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                  <span>All Resumes</span>
+                  <AnimatedNumber
+                    value={preloadedData.total}
+                    className={cn(
+                      "size-6 inline-flex items-center justify-center",
+                      "bg-gray-100/50 dark:bg-gray-800/30",
+                      "shadow-sm border border-gray-200/50 dark:border-gray-700/50",
+                      "rounded-md px-2",
+                      "text-sm font-medium text-gray-500 dark:text-gray-400"
+                    )}
+                  />
+                </h2>
+                <button
+                  onClick={handleDeleteAll}
+                  disabled={preloadedData.data.length === 0}
                   className={cn(
-                    "size-6 inline-flex items-center justify-center",
-                    "bg-gray-100/50 dark:bg-gray-800/30",
-                    "shadow-sm border border-gray-200/50 dark:border-gray-700/50",
-                    "rounded-md px-2",
-                    "text-sm font-medium text-gray-500 dark:text-gray-400"
+                    "flex items-center gap-2 text-sm text-destructive hover:text-destructive/80",
+                    preloadedData.data.length === 0 && "opacity-50 cursor-not-allowed hover:text-destructive"
                   )}
-                />
-              </h2>
-              <button
-                onClick={handleDeleteAll}
-                disabled={preloadedData.data.length === 0}
-                className={cn(
-                  "flex items-center gap-2 text-sm text-destructive hover:text-destructive/80",
-                  preloadedData.data.length === 0 && "opacity-50 cursor-not-allowed hover:text-destructive"
-                )}
-              >
-                <Trash2 className="size-4 md:size-6" />
-                <span>Delete All</span>
-              </button>
+                >
+                  <Trash2 className="size-4 md:size-6" />
+                  <span>Delete All</span>
+                </button>
+              </div>
+
+              <DocumentFilters
+                selectedStatus={status}
+                searchValue={search}
+                onStatusChange={handleStatusChange}
+                onSearchChange={handleSearchChange}
+              />
             </div>
 
             <ResumeList

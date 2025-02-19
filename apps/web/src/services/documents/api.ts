@@ -1,4 +1,4 @@
-import type { InsertDocumentSchema, UpdateDocumentDataSchema } from "@aicv-app/api/schema";
+import type { DocumentStatus, InsertDocumentSchema, UpdateDocumentDataSchema } from "@aicv-app/api/schema";
 
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
@@ -8,6 +8,8 @@ import formatApiError from "@/web/lib/format-api-error";
 export type ListDocumentsParams = {
   page?: number;
   pageSize?: number;
+  status?: DocumentStatus;
+  search?: string;
 };
 
 export const documentsApi = {
@@ -16,6 +18,8 @@ export const documentsApi = {
       query: {
         pageSize: params?.pageSize,
         page: params?.page,
+        status: params?.status,
+        search: params?.search,
       },
     });
 
