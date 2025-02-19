@@ -5,15 +5,19 @@ import type { OptimizeContext } from "./types";
 import { createAiClient, type DeepseekConfig } from "./client";
 import { aiSuggestionSchema } from "./utils";
 
-export function createOptimizer(config: DeepseekConfig) {
+export function createOptimizeObjectStream(config: DeepseekConfig) {
   const aiClient = createAiClient(config);
 
   return {
-    async createOptimizeStream(context: OptimizeContext) {
-      const { jobDescription, currentContent } = context;
+    async createOptimizeStream(_context: OptimizeContext) {
+      // const { sections } = context;
 
       const systemPrompt = `
           You are a professional resume optimization consultant. Analyze how well the resume content matches the target position and provide specific optimization suggestions and explanations.
+          
+          Firstly, you must ask the user to give you the target job description.
+          If the user doesn't provide, you should ask the user to provide, otherwise, don't answer anything.
+
           Please return suggestions in the following JSON format:
 
           type Suggestion = {
@@ -35,12 +39,6 @@ export function createOptimizer(config: DeepseekConfig) {
           5. The response language should be based on the user's input language`;
 
       const userPrompt = `
-          Target Job Description:
-          ${jobDescription.content}
-
-          Current Resume Content:
-          ${currentContent}
-
           Please analyze and provide optimization suggestions, focusing on:
           1. Match with target position
           2. Keyword usage
@@ -68,12 +66,20 @@ export function createOptimizeText(config: DeepseekConfig) {
 
   return {
     async createOptimizeTextStream(context: OptimizeContext) {
-      const { messages, jobDescription, currentContent, sections } = context;
+      const { messages, resumeContext } = context;
+
+      // Note: resume context only has to be one of sections and uploadedResume
+      const resumeContent = resumeContext.uploadedResume?.content
+        ? resumeContext.uploadedResume.content
+        : resumeContext.sections?.content;
 
       const systemMessage = {
         role: "system" as const,
         content: `
           You are a professional resume optimization consultant. Your role is to help users optimize their resumes through interactive chat.
+          
+          Firstly, you must ask the user to give you the target job description.
+          If the user doesn't provide, you should ask the user to provide, otherwise, don't answer anything.
           
           When analyzing the resume, consider:
           1. You MUST detect the language from user's input and resume content and respond in the SAME language
@@ -90,44 +96,15 @@ export function createOptimizeText(config: DeepseekConfig) {
           3. Use a friendly, supportive tone
           4. Base response language on user's input language
           5. Ask clarifying questions when needed
-          6. All your response should be based on the user's input language
-
-          Resume Context:
-          Job Description: ${jobDescription.content}
-          ${sections
-            ? `Resume Sections:
-          ${sections.map(section => `
-          ## ${section.type.toUpperCase()}
-          ${section.content}
-          `).join("\n")}`
-            : `Current Resume Content:
-          ${currentContent}`}
-
-          Please analyze and provide optimization suggestions, focusing on:
-          1. Match with target position
-          2. Keyword usage
-          3. Skills demonstration
-          4. Achievement descriptions
-          5. Professional terminology usage
-
-          For each section, provide specific suggestions on:
-          - Content improvement
-          - Keyword optimization
-          - Achievement highlighting
-          - Professional terminology
+          
+          Resume context:
+          ${resumeContent}
         `,
       };
 
-      const chatMessages = messages?.length
-        ? messages
-        : [{
-            role: "user" as const,
-            content: "Please analyze the current resume content and provide optimization suggestions.",
-          }];
-
       return streamText({
         model: aiClient.model,
-        messages: [systemMessage, ...chatMessages],
+        messages: [systemMessage, ...messages],
       });
     },
   };

@@ -21,14 +21,27 @@ export const messagePartSchema = z.object({
 export const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
   content: z.string(),
-  parts: z.array(messagePartSchema).optional(),
+  experimental_attachments: z.array(z.object({
+    name: z.string(),
+    contentType: z.string(),
+    url: z.string(),
+  })).optional(),
+  parts: z.array(z.object({
+    type: z.string(),
+    text: z.string(),
+  })).optional(),
 });
 
 export const optimizeContextSchema = z.object({
   id: z.string(),
   messages: z.array(messageSchema),
-  jobDescription: jobDescriptionSchema,
-  currentContent: z.string(),
-  sections: z.array(resumeSectionSchema).optional(),
+  resumeContext: z.object({
+    sections: z.object({
+      content: z.string(),
+    }).nullable(),
+    uploadedResume: z.object({
+      content: z.string(),
+    }).nullable(),
+  }),
 });
 export type OptimizeContext = z.infer<typeof optimizeContextSchema>;

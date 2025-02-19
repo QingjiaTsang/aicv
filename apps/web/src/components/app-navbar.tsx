@@ -16,7 +16,9 @@ import {
 } from "@/web/components/shadcn-ui/dropdown-menu";
 
 const getInitials = (name: string | null | undefined) => {
-  if (!name) return '?';
+  if (!name) {
+    return '?';
+  }
   return name.charAt(0).toUpperCase();
 };
 

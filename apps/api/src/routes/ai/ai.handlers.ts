@@ -1,13 +1,13 @@
-import { createOptimizer, createOptimizeText } from "@aicv-app/ai-core";
+import { createOptimizeObjectStream, createOptimizeText } from "@aicv-app/ai-core";
 import { stream as honoStream } from "hono/streaming";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
 import type { AppRouteHandler } from "@/api/lib/types";
 import type { OptimizeStreamObjectRoute, OptimizeStreamTextRoute } from "@/api/routes/ai/ai.routes";
 
-export const handleOptimize: AppRouteHandler<OptimizeStreamObjectRoute> = async (c) => {
+export const handleOptimizeObject: AppRouteHandler<OptimizeStreamObjectRoute> = async (c) => {
   try {
-    const optimizer = createOptimizer({
+    const optimizer = createOptimizeObjectStream({
       env: {
         DEEPSEEK_API_KEY: c.env.DEEPSEEK_API_KEY,
       },
@@ -17,8 +17,7 @@ export const handleOptimize: AppRouteHandler<OptimizeStreamObjectRoute> = async 
     const result = await optimizer.createOptimizeStream({
       id: body.id,
       messages: body.messages,
-      jobDescription: body.jobDescription,
-      currentContent: body.currentContent,
+      resumeContext: body.resumeContext,
     });
 
     return honoStream(c, async (stream) => {
@@ -53,7 +52,7 @@ export const handleOptimize: AppRouteHandler<OptimizeStreamObjectRoute> = async 
 export const handleOptimizeText: AppRouteHandler<OptimizeStreamTextRoute> = async (c) => {
   try {
     const body = c.req.valid("json");
-    
+
     const optimizer = createOptimizeText({
       env: {
         DEEPSEEK_API_KEY: c.env.DEEPSEEK_API_KEY,
@@ -63,9 +62,7 @@ export const handleOptimizeText: AppRouteHandler<OptimizeStreamTextRoute> = asyn
     const result = await optimizer.createOptimizeTextStream({
       id: body.id,
       messages: body.messages,
-      jobDescription: body.jobDescription,
-      currentContent: body.currentContent,
-      sections: body.sections,
+      resumeContext: body.resumeContext,
     });
 
     c.header("Content-Type", "text/event-stream");

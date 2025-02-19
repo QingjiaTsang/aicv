@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react'
 import { X, Sparkles, Minus } from 'lucide-react'
 import { cn } from '@/web/lib/utils'
 import { Button } from '@/web/components/shadcn-ui/button'
@@ -15,7 +15,6 @@ import {
 } from "@/web/components/shadcn-ui/drawer"
 import { Resizable } from 'react-resizable';
 import { ChatContent } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/resume-optimizer-chatbox/chat-content'
-import { useLenis } from 'lenis/react'
 
 type OptimizeResumeChatProps = {
   document: SelectDocumentWithRelationsSchema
@@ -24,14 +23,55 @@ type OptimizeResumeChatProps = {
 }
 
 export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResumeChatProps) {
-  const lenis = useLenis()
-
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [isMinimized, setIsMinimized] = useState(false)
   const [size, setSize] = useState({ width: 400, height: 600 })
   const [position, setPosition] = useState({ x: window.innerWidth - 420, y: window.innerHeight - 620 })
   const [isDragging, setIsDragging] = useState(false)
   const dragStartPos = useRef({ x: 0, y: 0 })
+
+  const resumeContent = useMemo(() => {
+    const sections = [
+      {
+        type: 'summary',
+        content: document.summary || ''
+      },
+      ...(document.experience?.filter((exp): exp is NonNullable<typeof exp> => exp !== null)
+        .map(exp => ({
+          type: 'experience' as const,
+          content: `${exp.companyName || ''} - ${exp.title || ''}\n${exp.workSummary || ''}`
+        })) || []),
+      ...(document.education?.filter((edu): edu is NonNullable<typeof edu> => edu !== null)
+        .map(edu => ({
+          type: 'education' as const,
+          content: `${edu.universityName || ''} - ${edu.major || ''}\n${edu.description || ''}`
+        })) || []),
+      ...(document.skills?.filter((skill): skill is NonNullable<typeof skill> => skill !== null)
+        .map(skill => ({
+          type: 'skills' as const,
+          content: `${skill.name || ''} (${skill.rating}/5)`
+        })) || [])
+    ];
+
+    const resumeContent = sections.map(section => `${section.type.toUpperCase()}: ${section.content}`).join('\n');
+
+    return resumeContent
+  }, [document])
+
+  const resumeContextRef = useRef<{
+    sections: {
+      content: string
+    } | null,
+    uploadedResume: {
+      content: string
+    } | null
+  }>({
+    sections: {
+      content: resumeContent
+    },
+    uploadedResume: null
+  })
+
 
   const { 
     messages, 
@@ -47,34 +87,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
     streamProtocol: 'text',
     api: '/api/ai/optimize/streamText',
     id: `resume-optimization-${document.id}`,
-    body: {
-      jobDescription: {
-        // TODO: Generate based on user input job description
-        content: document.title || '',
-      },
-      currentContent: document.summary || '',
-      sections: [
-        {
-          type: 'summary',
-          content: document.summary || ''
-        },
-        ...(document.experience?.filter((exp): exp is NonNullable<typeof exp> => exp !== null)
-          .map(exp => ({
-            type: 'experience' as const,
-            content: `${exp.companyName || ''} - ${exp.title || ''}\n${exp.workSummary || ''}`
-          })) || []),
-        ...(document.education?.filter((edu): edu is NonNullable<typeof edu> => edu !== null)
-          .map(edu => ({
-            type: 'education' as const,
-            content: `${edu.universityName || ''} - ${edu.major || ''}\n${edu.description || ''}`
-          })) || []),
-        ...(document.skills?.filter((skill): skill is NonNullable<typeof skill> => skill !== null)
-          .map(skill => ({
-            type: 'skills' as const,
-            content: `${skill.name || ''} (${skill.rating}/5)`
-          })) || [])
-      ]
-    },
+    body: { resumeContext: resumeContextRef.current },
     onError: (error) => {
       toast.error(`Optimization failed: ${error.message || 'Please try again later'}`)
     }
@@ -82,12 +95,21 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
   const isStreaming = status === 'streaming'
 
   const handleAnalyzeResume = useCallback(async () => {
-    if (isStreaming) return
-    
+    if (isStreaming) {
+      return
+    }
+
     try {
+      resumeContextRef.current = {
+        sections: {
+          content: resumeContent
+        },
+        uploadedResume: null
+      }
+
       await append({
         role: 'user',
-        content: 'Please analyze my current resume content and provide optimization suggestions.',
+        content: `Please analyze my current resume content and provide optimization suggestions.`,
       })
     } catch (error) {
       toast.error('Analysis failed, please try again')
@@ -97,11 +119,40 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
   const handleNewChat = useCallback(() => {
     setMessages([])
     reload()
+    // reset resume context
+    resumeContextRef.current = {
+      sections: {
+        content: resumeContent
+      },
+      uploadedResume: null
+    }
   }, [setMessages, reload])
 
   const handleStopStreaming = useCallback(() => {
     stop()
   }, [stop])
+
+  const handleUploadedResume = useCallback(async (fileTextContent: string) => {
+    if (isStreaming) {
+      return
+    }
+    
+    try {
+      resumeContextRef.current = {
+        sections: null,
+        uploadedResume: {
+          content: fileTextContent
+        }
+      }
+
+      await append({
+        role: 'user',
+        content: `This is my uploaded resume content, please analyze and provide optimization suggestions.`,
+      });
+    } catch (error) {
+      toast.error('Analysis failed, please try again')
+    }
+  }, [append, isStreaming])
 
   const handleResize = (_e: React.SyntheticEvent, { size: newSize }: { size: { width: number; height: number } }) => {
     const maxWidth = window.innerWidth - position.x - 20
@@ -122,7 +173,9 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
   }
 
   const handleDrag = (e: MouseEvent) => {
-    if (!isDragging) return
+    if (!isDragging) {
+      return
+    }
 
     const newX = e.clientX - dragStartPos.current.x
     const newY = e.clientY - dragStartPos.current.y
@@ -149,7 +202,6 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
     }
   }, [isDragging])
 
-
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
@@ -164,8 +216,11 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
     return () => window.removeEventListener('resize', handleResize)
   }, [size])
 
-  if (!isOpen) return null
+  if (!isOpen) {
+    return null
+  }
 
+  // Mobile version
   if (!isDesktop) {
     return (
       <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -197,6 +252,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               handleAnalyzeResume={handleAnalyzeResume}
               onNewChat={handleNewChat}
               onStopStreaming={handleStopStreaming}
+              handleUploadedResume={handleUploadedResume}
             />
           </div>
         </DrawerContent>
@@ -204,6 +260,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
     )
   }
 
+  // Desktop version
   return (
     <Resizable
       width={size.width}
@@ -289,6 +346,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               handleAnalyzeResume={handleAnalyzeResume}
               onNewChat={handleNewChat}
               onStopStreaming={handleStopStreaming}
+              handleUploadedResume={handleUploadedResume}
             />
           </div>
         )}

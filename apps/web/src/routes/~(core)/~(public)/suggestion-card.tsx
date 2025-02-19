@@ -27,8 +27,12 @@ const SUGGESTION_THEMES: Record<SuggestionLevel, SuggestionTheme> = {
 };
 
 const getSuggestionLevel = (confidence: number): SuggestionLevel => {
-  if (confidence >= 0.8) return 'Strongly Recommended';
-  if (confidence >= 0.5) return 'Recommended';
+  if (confidence >= 0.8) {
+    return 'Strongly Recommended';
+  }
+  if (confidence >= 0.5) {
+    return 'Recommended';
+  }
   return 'For Reference';
 };
 

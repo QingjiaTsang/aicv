@@ -4,7 +4,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { z } from "zod";
 
-export const optimizeSreamObjectRoute = createRoute({
+export const optimizeStreamObjectRoute = createRoute({
   method: "post",
   path: "/ai/optimize/streamObject",
   tags: ["AI"],
@@ -50,5 +50,5 @@ export const optimizeStreamTextRoute = createRoute({
   },
 });
 
-export type OptimizeStreamObjectRoute = typeof optimizeSreamObjectRoute;
+export type OptimizeStreamObjectRoute = typeof optimizeStreamObjectRoute;
 export type OptimizeStreamTextRoute = typeof optimizeStreamTextRoute;

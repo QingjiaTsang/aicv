@@ -74,7 +74,9 @@ export const useUpdateDocumentByTypeMutation = (options?: UpdateDocumentOptions)
       const { themeColor, status, sectionOrder, experience, education, skills } = args[0]
 
       queryClient.setQueryData(documentKeys.LIST_DOCUMENT(id), (old: SelectDocumentWithRelationsSchema) => {
-        if (!old) return old;
+        if (!old) {
+          return old;
+        }
         return {
           ...old,
           themeColor,

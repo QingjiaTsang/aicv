@@ -1,12 +1,13 @@
 import type { Message } from 'ai'
 import { useRef, useState, useCallback, useEffect } from 'react'
-import { Sparkles, Send, Plus, CircleStop, Bot } from 'lucide-react'
+import { Sparkles, Send, Plus, CircleStop } from 'lucide-react'
 import { cn } from '@/web/lib/utils'
 import { Button } from '@/web/components/shadcn-ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/web/components/shadcn-ui/avatar'
 import { MarkdownRenderer } from '@/web/components/markdown-renderer'
 import { useSession } from '@hono/auth-js/react'
-import { useLenis } from 'lenis/react'
+import { UploadResumeButton } from './resume-upload-button'
+
 
 type ChatContentProps = {
   messages: Message[]
@@ -17,6 +18,7 @@ type ChatContentProps = {
   handleAnalyzeResume: () => Promise<void>
   onNewChat: () => void
   onStopStreaming: () => void
+  handleUploadedResume: (fileTextContent: string) => Promise<void>
 }
 
 export function ChatContent({ 
@@ -27,7 +29,8 @@ export function ChatContent({
   handleSubmit,
   handleAnalyzeResume,
   onNewChat,
-  onStopStreaming
+  onStopStreaming,
+  handleUploadedResume
 }: ChatContentProps) {
   const session = useSession();
   const userAvatar = session.data?.user?.image || '/images/user-avatar.png'
@@ -41,7 +44,9 @@ export function ChatContent({
   }, [])
 
   const handleScroll = useCallback(() => {
-    if (!chatContainerRef.current) return
+    if (!chatContainerRef.current) {
+      return
+    }
 
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current
     const isScrolledToBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 10
@@ -115,14 +120,21 @@ export function ChatContent({
       <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="p-4 space-y-4">
           {messages.length === 0 && (
-            <Button
-              className="w-full bg-violet-600 hover:bg-violet-700 text-white"
-              onClick={handleAnalyzeResume}
-              disabled={isStreaming}
-            >
-              <Sparkles className="mr-2 size-4" />
-              Analyze Resume
-            </Button>
+            <div className="flex items-center justify-between gap-2">
+              <Button
+                className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                onClick={handleAnalyzeResume}
+                disabled={isStreaming}
+              >
+                <Sparkles className="size-4" />
+                Analyze Resume
+              </Button>
+              
+              <UploadResumeButton
+                onUploadSuccess={handleUploadedResume}
+                disabled={isStreaming}
+              />
+            </div>
           )}
            {messages.length > 0 && (
             <Button
