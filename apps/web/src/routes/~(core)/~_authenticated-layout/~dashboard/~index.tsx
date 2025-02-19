@@ -1,18 +1,19 @@
 import { DocumentStatus } from "@aicv-app/api/schema";
 import { SpinLoader } from "@/web/components/spin-loader";
 import useConfirm from "@/web/hooks/use-confirm";
-import queryClient from "@/web/lib/query-client";
 import { cn } from "@/web/lib/utils";
 import { DashboardHero } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/hero-section";
 import { ResumeList } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/resume-list";
 import { useCreateDocumentMutation, useDeleteAllDocumentsMutation, useDeleteDocumentMutation } from "@/web/services/documents/mutations";
-import { documentsQueryOptionsFn } from "@/web/services/documents/queries";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AnimatedNumber } from "@/web/components/animated-number";
 import { DocumentFilters } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/document-filters";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
+import { infiniteDocumentsQueryOptionsFn } from "@/web/services/documents/queries";
 
 export const Route = createFileRoute('/(core)/_authenticated-layout/dashboard/')({
   validateSearch: (search: Record<string, unknown>) => {
@@ -25,14 +26,6 @@ export const Route = createFileRoute('/(core)/_authenticated-layout/dashboard/')
     status,
     search,
   }),
-  loader: ({ deps: { status, search } }) => {
-    return queryClient.ensureQueryData(documentsQueryOptionsFn({ 
-      page: 1, 
-      pageSize: 100,
-      status,
-      search,
-    }));
-  },
   component: DashboardPage,
 });
 
@@ -40,15 +33,22 @@ function DashboardPage() {
   const { status, search } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   
-  const { data: preloadedData, isPending: isPreloading } = useSuspenseQuery(
-    documentsQueryOptionsFn({ 
-      page: 1, 
-      pageSize: 100,
-      status,
+  const { ref: loadMoreRef, inView } = useInView();
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status: queryStatus
+  } = useInfiniteQuery(
+    infiniteDocumentsQueryOptionsFn({ 
+      status, 
       search,
+      pageSize: 12
     })
   );
-  
+
   const { mutate: deleteDocument } = useDeleteDocumentMutation({
     onSuccess: () => {
       toast.success('Resume deleted')
@@ -109,6 +109,15 @@ function DashboardPage() {
     });
   };
 
+  const allResumes = data?.pages.flatMap(page => page.data) ?? [];
+  const totalResumes = data?.pages[0]?.total ?? 0;
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
+
   return (
     <>
       <DeleteResumeConfirmDialog />
@@ -117,7 +126,7 @@ function DashboardPage() {
       {isDeletingAllDocuments && <SpinLoader />}
 
       <div className="flex flex-col gap-8">
-        <DashboardHero isPending={isPreloading || isCreatingDocument} onCreate={handleCreate} />
+        <DashboardHero isPending={queryStatus === 'pending' || isCreatingDocument} onCreate={handleCreate} />
 
         <div className="container mx-auto w-full max-w-6xl px-6">
           <div className="space-y-6">
@@ -126,7 +135,7 @@ function DashboardPage() {
                 <h2 className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
                   <span>All Resumes</span>
                   <AnimatedNumber
-                    value={preloadedData.total}
+                    value={totalResumes}
                     className={cn(
                       "size-6 inline-flex items-center justify-center",
                       "bg-gray-100/50 dark:bg-gray-800/30",
@@ -138,10 +147,10 @@ function DashboardPage() {
                 </h2>
                 <button
                   onClick={handleDeleteAll}
-                  disabled={preloadedData.data.length === 0}
+                  disabled={allResumes.length === 0}
                   className={cn(
                     "flex items-center gap-2 text-sm text-destructive hover:text-destructive/80",
-                    preloadedData.data.length === 0 && "opacity-50 cursor-not-allowed hover:text-destructive"
+                    allResumes.length === 0 && "opacity-50 cursor-not-allowed hover:text-destructive"
                   )}
                 >
                   <Trash2 className="size-4 md:size-6" />
@@ -158,10 +167,21 @@ function DashboardPage() {
             </div>
 
             <ResumeList
-              isLoading={isPreloading}
-              resumes={preloadedData.data}
+              isLoading={queryStatus === 'pending'}
+              resumes={allResumes}
               onDelete={handleDelete}
             />
+
+            {hasNextPage && (
+              <div 
+                ref={loadMoreRef}
+                className="flex justify-center py-4"
+              >
+                {isFetchingNextPage && (
+                  <div className="animate-spin rounded-full size-6 border-2 border-violet-400 border-t-transparent" />
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
