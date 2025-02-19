@@ -11,6 +11,7 @@ import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { toast } from "sonner"
 import Editor from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/editor"
+import { SectionOptimizeButton } from "./section-optimize-button"
 
 type SummaryFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -69,13 +70,18 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
           <CardHeader className="p-0">
-            <CardTitle>Professional Summary</CardTitle>
-            <CardDescription>
-              Write a brief introduction about your professional background
-            </CardDescription>
+            <div className="flex flex-col gap-2">
+              <div>
+                <CardTitle>Professional Summary</CardTitle>
+                <CardDescription>
+                  Write a brief introduction about your professional background
+                </CardDescription>
+              </div>
+              <SectionOptimizeButton document={document} section="summary" className="w-24 self-end" />
+            </div>
           </CardHeader>
 
-          <div className="space-y-6 mt-6">
+          <div className="space-y-6 mt-4">
             <FormField
               control={form.control}
               name="summary"
@@ -84,7 +90,6 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
                   <FormControl>
                     <div className="flex gap-4">
                       <FileText className="size-4 mt-2 flex-shrink-0" />
-                      {/* TODO: add AI feature */}
                       <Editor
                         value={field.value || ''}
                         onChange={(value: string) => {

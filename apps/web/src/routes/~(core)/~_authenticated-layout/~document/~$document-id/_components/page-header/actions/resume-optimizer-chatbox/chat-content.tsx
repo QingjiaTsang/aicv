@@ -13,6 +13,7 @@ type ChatContentProps = {
   messages: Message[]
   input: string
   isStreaming: boolean
+  section: "summary" | "experience" | "all"
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   handleSubmit: (e: React.FormEvent) => void
   handleAnalyzeResume: () => Promise<void>
@@ -25,6 +26,7 @@ export function ChatContent({
   messages,
   input,
   isStreaming,
+  section,
   handleInputChange,
   handleSubmit,
   handleAnalyzeResume,
@@ -127,13 +129,17 @@ export function ChatContent({
                 disabled={isStreaming}
               >
                 <Sparkles className="size-4" />
-                Analyze Resume
+                {section === 'all' ? 'Analyze Resume' 
+                : section === 'summary' ? 'Optimize Summary'
+                : 'Optimize Experience'}
               </Button>
               
-              <UploadResumeButton
-                onUploadSuccess={handleUploadedResume}
-                disabled={isStreaming}
-              />
+              {section === 'all' && (
+                <UploadResumeButton
+                  onUploadSuccess={handleUploadedResume}
+                  disabled={isStreaming}
+                />
+              )}
             </div>
           )}
            {messages.length > 0 && (

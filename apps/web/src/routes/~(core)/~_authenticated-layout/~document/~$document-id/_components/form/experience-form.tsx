@@ -17,6 +17,7 @@ import { Checkbox } from "@/web/components/shadcn-ui/checkbox"
 import { toast } from "sonner"
 import Editor from "./editor"
 import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
+import { SectionOptimizeButton } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/section-optimize-button"
 
 type ExperienceFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -146,14 +147,19 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
         className={className}
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
-          <CardHeader className="p-0 mb-6">
-            <CardTitle>Work Experience</CardTitle>
-            <CardDescription>
-              Add your work experience to showcase your career progression
-            </CardDescription>
+          <CardHeader className="p-0">
+            <div className="flex flex-col gap-2">
+              <div>
+                <CardTitle>Work Experience</CardTitle>
+                <CardDescription>
+                  Add your work experience to showcase your career progression
+                </CardDescription>
+              </div>
+              <SectionOptimizeButton document={document} section="experience" className="w-24 self-end" />
+            </div>
           </CardHeader>
 
-          <div className="space-y-8">
+          <div className="space-y-6 mt-4">
             {form.watch('experiences')?.map((exp, index) => (
               <div
                 key={`experience-${index}-${exp?.id}`}
@@ -363,7 +369,6 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                         <span>Work Summary</span>
                       </FormLabel>
                       <FormControl>
-                        {/* TODO: add AI feature */}
                         <Editor
                           // When the experience order changes, ensure the editor is re-rendered
                           key={`experience-${index}-${exp?.id}`}

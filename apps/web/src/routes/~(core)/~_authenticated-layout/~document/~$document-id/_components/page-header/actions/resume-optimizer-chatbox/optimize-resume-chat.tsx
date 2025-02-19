@@ -18,11 +18,12 @@ import { ChatContent } from '@/web/routes/~(core)/~_authenticated-layout/~docume
 
 type OptimizeResumeChatProps = {
   document: SelectDocumentWithRelationsSchema
+  section: "summary" | "experience" | "all"
   isOpen: boolean
   onClose: () => void
 }
 
-export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResumeChatProps) {
+export function OptimizeResumeChat({ document, section, isOpen, onClose }: OptimizeResumeChatProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [isMinimized, setIsMinimized] = useState(false)
   const [size, setSize] = useState({ width: 400, height: 600 })
@@ -86,7 +87,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
   } = useChat({
     streamProtocol: 'text',
     api: '/api/ai/optimize/streamText',
-    id: `resume-optimization-${document.id}`,
+    id: `resume-optimization-${document.id}-${section}`,
     body: { resumeContext: resumeContextRef.current },
     onError: (error) => {
       toast.error(`Optimization failed: ${error.message || 'Please try again later'}`)
@@ -107,9 +108,15 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
         uploadedResume: null
       }
 
+      const promptMap = {
+        summary: `Please analyze my current resume summary and provide optimization suggestions.`,
+        experience: `Please analyze my current resume experience and provide optimization suggestions.`,
+        all: `Please analyze my current resume content and provide optimization suggestions.`
+      }
+
       await append({
         role: 'user',
-        content: `Please analyze my current resume content and provide optimization suggestions.`,
+        content: promptMap[section],
       })
     } catch (error) {
       toast.error('Analysis failed, please try again')
@@ -232,6 +239,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               <span>AI Optimization</span>
             </DrawerTitle>
             <Button
+              type="button"
               variant="ghost"
               size="icon"
               onClick={onClose}
@@ -247,6 +255,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               messages={messages}
               input={input}
               isStreaming={isStreaming}
+              section={section}
               handleInputChange={handleInputChange}
               handleSubmit={handleSubmit}
               handleAnalyzeResume={handleAnalyzeResume}
@@ -315,6 +324,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
           </div>
           <div className="flex items-center gap-1">
             <Button
+              type="button"
               variant="ghost"
               size="icon"
               onClick={() => setIsMinimized(!isMinimized)}
@@ -324,6 +334,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               <Minus className="size-4" />
             </Button>
             <Button
+              type="button"
               variant="ghost"
               size="icon"
               onClick={onClose}
@@ -341,6 +352,7 @@ export function OptimizeResumeChat({ document, isOpen, onClose }: OptimizeResume
               messages={messages}
               input={input}
               isStreaming={isStreaming}
+              section={section}
               handleInputChange={handleInputChange}
               handleSubmit={handleSubmit}
               handleAnalyzeResume={handleAnalyzeResume}

@@ -18,6 +18,7 @@ export function OptimizeResumeAction({ document, isOpen, onOpenChange }: Optimiz
     return (
       <OptimizeResumeChat
         document={document}
+        section="all"
         isOpen={isOpen}
         onClose={() => onOpenChange(false)}
       />
@@ -39,6 +40,7 @@ export function OptimizeResumeAction({ document, isOpen, onOpenChange }: Optimiz
 
       <OptimizeResumeChat
         document={document}
+        section="all"
         isOpen={isOpen}
         onClose={() => onOpenChange(false)}
       />
