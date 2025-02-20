@@ -765,7 +765,7 @@ i18n
     resources,
     fallbackLng: 'en',
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       // persist and retrieve language config in localStorage
       lookupLocalStorage: 'i18nextLng',
       caches: ['localStorage'],

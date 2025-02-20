@@ -26,7 +26,7 @@ function createInternalClient(config: DeepseekConfig) {
   });
 
   return {
-    // 硅基流动版本dpsk
+    // 硅基流动版本dpsk model
     model: deepseekClient("deepseek-ai/DeepSeek-V2.5"),
     // model: deepseekClient("deepseek-chat"),
     createPrompt(messages: Message[]) {
