@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 import { Button } from "@/web/components/shadcn-ui/button";
 import {
@@ -53,6 +54,7 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 });
 
 function SigninPage() {
+  const { t } = useTranslation();
   const { callbackUrl } = Route.useSearch();
 
   const form = useForm<CredentialsSigninSchema>({
@@ -101,11 +103,13 @@ function SigninPage() {
   const signinError = credentialSigninError || githubSigninError || googleSigninError;
 
   return (
-    <div className="flex h-full w-full px-4 items-center justify-center relative">
+    <div className="flex h-[calc(100dvh-64px)] w-full -mb-8 px-4 items-center justify-center relative">
       <AuthBackground />
       <Card className="w-full max-w-sm border-0 dark:border dark:border-violet-800/20 bg-white/80 dark:bg-gray-950/50 shadow-2xl dark:shadow-violet-900/5 backdrop-blur-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-center text-2xl dark:text-gray-200">Sign In</CardTitle>
+          <CardTitle className="text-center text-2xl dark:text-gray-200">
+            {t('auth.signIn.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {signinError && (
@@ -124,7 +128,7 @@ function SigninPage() {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="Email"
+                        placeholder={t('auth.signIn.form.email')}
                         className="bg-white/80 dark:bg-gray-900/50 border-violet-100 dark:border-violet-800/20 focus:border-violet-500 dark:focus:border-violet-500"
                         disabled={isSigningIn}
                         {...field}
@@ -143,7 +147,7 @@ function SigninPage() {
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Password"
+                        placeholder={t('auth.signIn.form.password')}
                         disabled={isSigningIn}
                         {...field}
                       />
@@ -164,10 +168,10 @@ function SigninPage() {
                 >
                   <span className="relative z-10 flex items-center justify-center">
                     {isSigningIn ? (
-                      "Powering up AI..."
+                      t('loading.processing')
                     ) : (
                       <>
-                        <span className="mr-2">Let AI Boost Your Career</span>
+                        <span className="mr-2">{t('auth.signIn.button.start')}</span>
                         <span className="group-hover:rotate-180 transition-transform duration-300">
                           ✨
                         </span>
@@ -185,7 +189,7 @@ function SigninPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background dark:bg-gray-950 text-muted-foreground dark:text-gray-400 px-2">
-                or
+                {t('common.or')}
               </span>
             </div>
           </div>
@@ -201,7 +205,7 @@ function SigninPage() {
               >
                 <FcGoogle className="mr-3 size-6 scale-125" />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                  {isSigningIn ? "Starting..." : "Continue with Google"}
+                  {isSigningIn ? t('loading.processing') : t('auth.signIn.button.google')}
                 </span>
               </Button>
             </motion.div>
@@ -216,19 +220,19 @@ function SigninPage() {
               >
                 <FaGithub className="mr-3 size-6 scale-125" />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                  {isSigningIn ? "Starting..." : "Continue with GitHub"}
+                  {isSigningIn ? t('loading.processing') : t('auth.signIn.button.github')}
                 </span>
               </Button>
             </motion.div>
           </div>
 
           <p className="text-muted-foreground dark:text-gray-400 mt-6 text-center text-sm">
-            Don't have an account?
+            {t('auth.signIn.noAccount')}
             <Link
               to="/sign-up"
               className="ml-1 text-primary dark:text-blue-400 underline-offset-4 hover:underline"
             >
-              Sign up now
+              {t('auth.signIn.signUpLink')}
             </Link>
           </p>
         </CardContent>

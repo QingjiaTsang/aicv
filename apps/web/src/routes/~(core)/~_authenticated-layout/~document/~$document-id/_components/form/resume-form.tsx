@@ -9,6 +9,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { FORM_LABELS } from "@/web/lib/constants";
 import { atom, useAtom } from "jotai";
 import { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 
 export const currentFormPositionAtom = atom<number | null>(null)
 
@@ -18,6 +19,7 @@ type ResumeFormProps = {
 
 export default function ResumeForm({ document }: ResumeFormProps) {
   const [currentFormPosition, setCurrentFormPosition] = useAtom(currentFormPositionAtom)
+  const { t } = useTranslation();
 
   const handleNextForm = () => {
     setCurrentFormPosition((prev) => (prev === null ? 1 : prev + 1))
@@ -47,7 +49,7 @@ export default function ResumeForm({ document }: ResumeFormProps) {
           className="w-fit"
         >
           <ArrowLeftIcon className="size-4" />
-          <span>Previous</span>
+          <span>{t('document.actions.previous')}</span>
         </Button>
         <Button
           variant="outline"
@@ -56,7 +58,7 @@ export default function ResumeForm({ document }: ResumeFormProps) {
           disabled={isLastForm}
           className="w-fit"
         >
-          <span>Next</span>
+          <span>{t('document.actions.next')}</span>
           <ArrowRightIcon className="size-4" />
         </Button>
       </div>

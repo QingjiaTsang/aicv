@@ -9,6 +9,7 @@ import {
   CredenzaTitle,
 } from "@/web/components/shadcn-ui/credenza";
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 type UseConfirmProps = {
   title: string;
@@ -19,6 +20,7 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
   } | null>(null);
+  const { t } = useTranslation();
 
   const confirm = () =>
     new Promise((resolve) => {
@@ -70,9 +72,11 @@ const useConfirm = ({ title, message }: UseConfirmProps) => {
 
         <CredenzaFooter className="flex justify-center gap-6 md:gap-2">
           <Button variant="outline" onClick={handleCancel}>
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button onClick={handleConfirm}>Confirm</Button>
+          <Button onClick={handleConfirm}>
+            {t('common.confirm')}
+          </Button>
         </CredenzaFooter>
       </CredenzaContent>
     </Credenza>

@@ -1,19 +1,29 @@
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
+import { useTranslation } from 'react-i18next'
 
 type SummaryProps = {
   document: SelectDocumentWithRelationsSchema
 }
 
 export default function Summary({ document }: SummaryProps) {
+  const { t } = useTranslation()
+
   return (
-    <div
-      dangerouslySetInnerHTML={{ __html: document.summary || "Enter a brief introduction of your professional background" }}
-      className="ql-content"
-    />
+    <>
+      {document.summary ? (
+        <div
+          dangerouslySetInnerHTML={{ __html: document.summary }}
+          className="ql-content"
+        />
+      ) : (
+        <div className="ql-content text-muted-foreground">
+          {t('document.form.placeholders.summary')}
+        </div>
+      )}
+    </>
   )
 }
-
 
 export function SummarySkeleton() {
   return (

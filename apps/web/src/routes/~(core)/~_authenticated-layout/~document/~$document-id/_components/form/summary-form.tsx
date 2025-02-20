@@ -12,6 +12,7 @@ import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutati
 import { toast } from "sonner"
 import Editor from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/editor"
 import { SectionOptimizeButton } from "./section-optimize-button"
+import { useTranslation } from 'react-i18next'
 
 type SummaryFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -19,6 +20,7 @@ type SummaryFormProps = {
 }
 
 export default function SummaryForm({ document, className }: SummaryFormProps) {
+  const { t } = useTranslation()
   const { personalInfo, experience, education, skills, ...basic } = document
 
   const form = useForm<UpdateBasicDocumentSchema>({
@@ -32,7 +34,7 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
 
   const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
     onSuccess: () => {
-      toast.success("Summary section updated")
+      toast.success(t('document.personalInfo.toast.updateSuccess'))
     }
   })
 
@@ -72,9 +74,9 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
           <CardHeader className="p-0">
             <div className="flex flex-col gap-2">
               <div>
-                <CardTitle>Professional Summary</CardTitle>
-                <CardDescription>
-                  Write a brief introduction about your professional background
+                <CardTitle>{t('resume.editor.sections.summary')}</CardTitle>
+                <CardDescription className="mt-1.5">
+                  {t('document.personalInfo.description')}
                 </CardDescription>
               </div>
               <SectionOptimizeButton document={document} section="summary" className="w-24 self-end" />
@@ -96,7 +98,7 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
                           field.onChange(value)
                           handleSummaryChange(value)
                         }}
-                        placeholder="Example: I'm a full-stack developer with 5 years of experience, specializing in React and Node.js..."
+                        placeholder={t('document.form.placeholders.summary')}
                         className="[&_.ql-editor]:min-h-[350px]"
                       />
                     </div>
@@ -118,7 +120,7 @@ export default function SummaryForm({ document, className }: SummaryFormProps) {
                 "transition-all duration-300"
               )}
             >
-              Save
+              {t('common.save')}
             </Button>
           </div>
         </Card>

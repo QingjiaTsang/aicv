@@ -4,6 +4,7 @@ import { OptimizeResumeChat } from './resume-optimizer-chatbox/optimize-resume-c
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { cn } from '@/web/lib/utils'
 import { useMediaQuery } from '@/web/hooks/use-media-query'
+import { useTranslation } from 'react-i18next'
 
 type OptimizeResumeActionProps = {
   document: SelectDocumentWithRelationsSchema
@@ -12,6 +13,7 @@ type OptimizeResumeActionProps = {
 }
 
 export function OptimizeResumeAction({ document, isOpen, onOpenChange }: OptimizeResumeActionProps) {
+  const { t } = useTranslation()
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   if (!isDesktop) {
@@ -28,7 +30,7 @@ export function OptimizeResumeAction({ document, isOpen, onOpenChange }: Optimiz
   return (
     <>
       <TooltipButton
-        tooltip="AI Optimization"
+        tooltip={t('optimize.button.tooltip')}
         onClick={() => onOpenChange(true)}
         className={cn(
           "hover:text-violet-500 dark:hover:text-violet-400",

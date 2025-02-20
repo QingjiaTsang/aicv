@@ -1,8 +1,9 @@
-import { ModeToggle } from "@/web/components/shadcn-ui/mode-toggle";
+import { ThemeModeToggle } from "@/web/components/shadcn-ui/theme-mode-toggle";
 import type { User } from "@auth/core/types";
 import { signOut, useSession } from "@hono/auth-js/react";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, LogOut, Settings, User as UserIcon } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/web/components/shadcn-ui/avatar";
 import {
@@ -14,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/web/components/shadcn-ui/dropdown-menu";
+import { LanguageSwitcher } from "@/web/components/language-switcher";
 
 const getInitials = (name: string | null | undefined) => {
   if (!name) {
@@ -23,6 +25,8 @@ const getInitials = (name: string | null | undefined) => {
 };
 
 function UserProfile({ user }: { user: User }) {
+  const { t } = useTranslation();
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -49,11 +53,11 @@ function UserProfile({ user }: { user: User }) {
         <DropdownMenuGroup>
           <DropdownMenuItem className="cursor-pointer">
             <UserIcon className="mr-2" />
-            <span>Profile</span>
+            <span>{t('auth.profile')}</span>
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer">
             <Settings className="mr-2" />
-            <span>Settings</span>
+            <span>{t('auth.settings')}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -62,7 +66,7 @@ function UserProfile({ user }: { user: User }) {
           onClick={() => signOut()}
         >
           <LogOut className="mr-2" />
-          <span>Sign Out</span>
+          <span>{t('auth.signOut')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -77,15 +81,16 @@ export default function AppNavbar() {
       <div className="container max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0">
-            <Link to="/dashboard">
+            <Link to="/dashboard" search={{ status: undefined, search: '' }}>
               <strong className="text-2xl md:text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-primary via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent hover:scale-110 transition-transform duration-200 cursor-pointer">
                 AICV
               </strong>
             </Link>
           </div>
 
-          <div className="flex items-center gap-3 md:gap-5">
-            <ModeToggle />
+          <div className="flex items-center gap-3 md:gap-4">
+            <ThemeModeToggle />
+            <LanguageSwitcher />
             {session.data?.user && <UserProfile user={session.data.user} />}
           </div>
         </div>

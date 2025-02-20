@@ -15,6 +15,7 @@ import {
 } from "@/web/components/shadcn-ui/drawer"
 import { Resizable } from 'react-resizable';
 import { ChatContent } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/page-header/actions/resume-optimizer-chatbox/chat-content'
+import { useTranslation } from 'react-i18next'
 
 type OptimizeResumeChatProps = {
   document: SelectDocumentWithRelationsSchema
@@ -30,6 +31,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
   const [position, setPosition] = useState({ x: window.innerWidth - 420, y: window.innerHeight - 620 })
   const [isDragging, setIsDragging] = useState(false)
   const dragStartPos = useRef({ x: 0, y: 0 })
+  const { t } = useTranslation()
 
   const resumeContent = useMemo(() => {
     const sections = [
@@ -90,7 +92,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
     id: `resume-optimization-${document.id}-${section}`,
     body: { resumeContext: resumeContextRef.current },
     onError: (error) => {
-      toast.error(`Optimization failed: ${error.message || 'Please try again later'}`)
+      toast.error(t('prompts.error.streaming'))
     }
   })
   const isStreaming = status === 'streaming'
@@ -109,9 +111,9 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
       }
 
       const promptMap = {
-        summary: `Please analyze my current resume summary and provide optimization suggestions.`,
-        experience: `Please analyze my current resume experience and provide optimization suggestions.`,
-        all: `Please analyze my current resume content and provide optimization suggestions.`
+        summary: t('prompts.analyze.summary'),
+        experience: t('prompts.analyze.experience'),
+        all: t('prompts.analyze.all')
       }
 
       await append({
@@ -119,7 +121,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
         content: promptMap[section],
       })
     } catch (error) {
-      toast.error('Analysis failed, please try again')
+      toast.error(t('prompts.error.analysis'))
     }
   }, [append, isStreaming])
 
@@ -154,10 +156,10 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
 
       await append({
         role: 'user',
-        content: `This is my uploaded resume content, please analyze and provide optimization suggestions.`,
+        content: t('upload.prompt'),
       });
     } catch (error) {
-      toast.error('Analysis failed, please try again')
+      toast.error(t('upload.error'))
     }
   }, [append, isStreaming])
 
@@ -234,9 +236,11 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
         <DrawerContent  className="h-[85vh]">
           <DrawerHeader className="border-b">
             <DrawerTitle className="flex items-center gap-2">
-              <DrawerDescription className='hidden'>AI optimization for {document.title}</DrawerDescription>
+              <DrawerDescription className='hidden'>
+                {t('drawer.description', { title: document.title })}
+              </DrawerDescription>
               <Sparkles className="size-4 text-violet-500" />
-              <span>AI Optimization</span>
+              <span>{t('drawer.title')}</span>
             </DrawerTitle>
             <Button
               type="button"
@@ -244,9 +248,10 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
               size="icon"
               onClick={onClose}
               className="absolute right-4 top-4 hover:text-violet-500"
+              aria-label={t('drawer.close')}
             >
               <X className="size-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{t('drawer.close')}</span>
             </Button>
           </DrawerHeader>
           
@@ -320,7 +325,14 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
         >
           <div className="flex items-center gap-2">
             <Sparkles className="size-4 text-violet-500" />
-            <h2 id="optimize-chat-title" className="text-sm font-medium">AI Optimization</h2>
+            <h2 id="optimize-chat-title" className="text-sm font-medium">
+              {section === 'all' 
+                ? t('section.optimize.title')
+                : section === 'summary'
+                  ? t('section.optimize.summary')
+                  : t('section.optimize.experience')
+              }
+            </h2>
           </div>
           <div className="flex items-center gap-1">
             <Button
@@ -329,7 +341,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
               size="icon"
               onClick={() => setIsMinimized(!isMinimized)}
               className="h-8 w-8 hover:text-violet-500"
-              aria-label={isMinimized ? "Expand window" : "Minimize window"}
+              aria-label={isMinimized ? t('drawer.expand') : t('drawer.minimize')}
             >
               <Minus className="size-4" />
             </Button>
@@ -339,7 +351,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
               size="icon"
               onClick={onClose}
               className="h-8 w-8 hover:text-violet-500"
-              aria-label="Close window"
+              aria-label={t('drawer.close')}
             >
               <X className="size-4" />
             </Button>

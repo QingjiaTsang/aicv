@@ -16,6 +16,7 @@ import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutati
 import { toast } from "sonner"
 import Editor from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/editor"
 import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
+import { useTranslation } from 'react-i18next'
 
 
 type EducationFormProps = {
@@ -28,6 +29,7 @@ type FormValues = {
 }
 
 export default function EducationForm({ document, className }: EducationFormProps) {
+  const { t } = useTranslation();
   const { didSortFlag } = useSortableItems(document.id, 'education')
 
   const form = useForm<FormValues>({
@@ -40,13 +42,13 @@ export default function EducationForm({ document, className }: EducationFormProp
   })
 
   const [ConfirmDialog, confirm] = useConfirm({
-    title: "Delete Education",
-    message: "Are you sure you want to delete this education entry?"
+    title: t('document.deleteConfirm.title'),
+    message: t('document.deleteConfirm.message')
   }) as [() => JSX.Element, () => Promise<boolean>]
 
   const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
     onSuccess: () => {
-      toast.success("Education section updated")
+      toast.success(t('document.personalInfo.toast.updateSuccess'))
     }
   })
 
@@ -145,9 +147,9 @@ export default function EducationForm({ document, className }: EducationFormProp
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
           <CardHeader className="p-0 mb-6">
-            <CardTitle>Education</CardTitle>
+            <CardTitle>{t('resume.editor.sections.education')}</CardTitle>
             <CardDescription>
-              Add your educational background and showcase your academic achievements
+              {t('document.form.placeholders.education')}
             </CardDescription>
           </CardHeader>
 
@@ -178,12 +180,12 @@ export default function EducationForm({ document, className }: EducationFormProp
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <GraduationCap className="size-4" />
-                        <span>University Name</span>
+                        <span>{t('document.education.universityName')}</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="e.g. Harvard University"
+                          placeholder={t('document.education.placeholders.universityName')}
                           value={field.value || ''}
                           onChange={e => {
                             field.onChange(e.target.value)
@@ -204,12 +206,12 @@ export default function EducationForm({ document, className }: EducationFormProp
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <GraduationCap className="size-4" />
-                          <span>Degree</span>
+                          <span>{t('document.education.degree')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g. Bachelor's Degree"
+                            placeholder={t('document.education.placeholders.degree')}
                             value={field.value || ''}
                             onChange={e => {
                               field.onChange(e.target.value)
@@ -229,12 +231,12 @@ export default function EducationForm({ document, className }: EducationFormProp
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <GraduationCap className="size-4" />
-                          <span>Major</span>
+                          <span>{t('document.education.major')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g. Computer Science"
+                            placeholder={t('document.education.placeholders.major')}
                             value={field.value || ''}
                             onChange={e => {
                               field.onChange(e.target.value)
@@ -256,7 +258,7 @@ export default function EducationForm({ document, className }: EducationFormProp
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <CalendarIcon className="size-4" />
-                          <span>Start Date</span>
+                          <span>{t('document.form.startDate')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -282,7 +284,7 @@ export default function EducationForm({ document, className }: EducationFormProp
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <CalendarIcon className="size-4" />
-                          <span>End Date</span>
+                          <span>{t('document.form.endDate')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -309,7 +311,7 @@ export default function EducationForm({ document, className }: EducationFormProp
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <GraduationCap className="size-4" />
-                        <span>Academic Experience</span>
+                        <span>{t('document.education.academicExperience')}</span>
                       </FormLabel>
                       <FormControl>
                         <Editor
@@ -319,7 +321,7 @@ export default function EducationForm({ document, className }: EducationFormProp
                             field.onChange(value)
                             handleFieldChange(index, 'description', value)
                           }}
-                          placeholder="Describe your key academic achievements, awards, projects participated in..."
+                          placeholder={t('document.form.placeholders.education')}
                           className="[&_.ql-editor]:min-h-[120px]"
                         />
                       </FormControl>
@@ -339,7 +341,7 @@ export default function EducationForm({ document, className }: EducationFormProp
               className="gap-2"
             >
               <Plus className="size-4" />
-              Add Education
+              {t('document.actions.addEducation')}
             </Button>
 
             <Button
@@ -352,7 +354,7 @@ export default function EducationForm({ document, className }: EducationFormProp
                 "transition-all duration-300"
               )}
             >
-              Save
+              {t('common.save')}
             </Button>
           </div>
         </Card>

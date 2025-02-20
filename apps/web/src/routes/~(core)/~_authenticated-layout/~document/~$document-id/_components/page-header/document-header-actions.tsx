@@ -16,6 +16,7 @@ import { useDeleteDocumentMutation, useUpdateDocumentByTypeMutation } from '@/we
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import useConfirm from '@/web/hooks/use-confirm'
+import { useTranslation } from 'react-i18next'
 
 import html2PDF from 'jspdf-html2canvas';
 import { format } from 'date-fns'
@@ -28,26 +29,34 @@ type DocumentActionsProps = {
 
 export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const [isThemePickerOpen, setIsThemePickerOpen] = useState(false)
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
   const [isShareLinkModalOpen, setIsShareLinkModalOpen] = useState(false)
   const [isOptimizeOpen, setIsOptimizeOpen] = useState(false)
 
-  const { mutate: deleteDocument } = useDeleteDocumentMutation({
-    onSuccess: () => {
-      navigate({ to: '/dashboard' })
-      toast.success('Resume deleted')
+  const { mutateAsync: deleteDocument } = useDeleteDocumentMutation({
+    onSuccess: async () => {
+      await navigate({ 
+        to: "/dashboard", 
+        search: { 
+          status: undefined, 
+          search: "" 
+        },
+        replace: true
+      })
+      toast.success(t('document.toast.deleteSuccess'))
     },
     onError: () => {
-      toast.error("Failed to delete resume")
+      toast.error(t('document.toast.deleteError'))
     }
   })
   const { mutate: updateDocumentByType, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation()
 
   const [DeleteResumeConfirmDialog, confirmDeleteResume] = useConfirm({
-    title: "Delete Resume",
-    message: "Are you sure you want to delete this resume?",
+    title: t('document.deleteConfirm.title'),
+    message: t('document.deleteConfirm.message'),
   }) as [() => JSX.Element, () => Promise<boolean>];
 
   const handleThemeChange = async (color: string) => {
@@ -61,10 +70,10 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
       }
     }, {
       onSuccess: () => {
-        toast.success('Theme color updated')
+        toast.success(t('document.toast.themeUpdateSuccess'))
       },
       onError: () => {
-        toast.error("Failed to update theme color")
+        toast.error(t('document.toast.themeUpdateError'))
       }
     })
   }
@@ -74,7 +83,12 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
     if (!confirmed) {
       return;
     }
-    deleteDocument(document.id)
+    
+    try {
+      await deleteDocument(document.id)
+    } catch (error) {
+      console.error('删除文档失败:', error)
+    }
   }
 
   const handleDownload = async () => {
@@ -124,7 +138,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
       });
     } catch (error) {
       console.error('Failed to generate PDF:', error);
-      toast.error('Failed to generate PDF. Please try again.');
+      toast.error(t('document.toast.pdfError'));
     } finally {
       // Restore original theme
       if (originalTheme === 'dark') {
@@ -144,10 +158,10 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
       }
     }, {
       onSuccess: () => {
-        toast.success('Document status updated')
+        toast.success(t('document.toast.statusUpdateSuccess'))
       },
       onError: () => {
-        toast.error("Failed to update document status")
+        toast.error(t('document.toast.statusUpdateError'))
       }
     })
   }
@@ -180,7 +194,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
         </PreviewModal>
 
         <TooltipButton
-          tooltip="Download"
+          tooltip={t('document.tooltips.download')}
           onClick={handleDownload}
           className="hover:text-green-600 dark:hover:text-green-400"
         >
@@ -188,7 +202,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
         </TooltipButton>
 
         <TooltipButton
-          tooltip="Delete"
+          tooltip={t('document.tooltips.delete')}
           onClick={handleDelete}
           className="hover:text-red-600 dark:hover:text-red-400"
         >
@@ -219,7 +233,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => setIsOptimizeOpen(true)}>
             <Sparkles className="mr-2 size-4" />
-            <span>AI Optimization</span>
+            <span>{t('document.actions.aiOptimization')}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -227,27 +241,27 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
             disabled={document.status === 'archived'}
           >
             <Palette className="mr-2 size-4" />
-            <span>Change Theme</span>
+            <span>{t('document.actions.changeTheme')}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setIsPreviewModalOpen(true)}>
             <Eye className="mr-2 size-4" />
-            <span>Preview</span>
+            <span>{t('document.actions.preview')}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setIsShareLinkModalOpen(true)}>
             <Share2 className="mr-2 size-4" />
-            <span>Share</span>
+            <span>{t('document.actions.share')}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={handleDownload}>
             <Download className="mr-2 size-4" />
-            <span>Download</span>
+            <span>{t('document.actions.download')}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={handleDelete}>
             <Trash2 className="mr-2 size-4" />
-            <span>Delete</span>
+            <span>{t('document.actions.delete')}</span>
           </DropdownMenuItem>
 
         </DropdownMenuContent>

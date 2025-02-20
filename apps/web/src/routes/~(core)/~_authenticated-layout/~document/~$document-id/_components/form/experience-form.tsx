@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import Editor from "./editor"
 import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
 import { SectionOptimizeButton } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/section-optimize-button"
+import { useTranslation } from 'react-i18next';
 
 type ExperienceFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -29,6 +30,7 @@ type FormValues = {
 }
 
 export default function ExperienceForm({ document, className }: ExperienceFormProps) {
+  const { t } = useTranslation();
   const { didSortFlag } = useSortableItems(document.id, 'experience')
 
   const form = useForm<FormValues>({
@@ -41,13 +43,13 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
   })
 
   const [ConfirmDialog, confirm] = useConfirm({
-    title: "Delete Experience",
-    message: "Are you sure you want to delete this experience?"
+    title: t('document.deleteConfirm.title'),
+    message: t('document.deleteConfirm.message')
   }) as [() => JSX.Element, () => Promise<boolean>]
 
   const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
     onSuccess: () => {
-      toast.success("Experience section updated")
+      toast.success(t('document.personalInfo.toast.updateSuccess'))
     }
   })
 
@@ -131,9 +133,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
   // Note: after experiences order changed by drag and drop in the resume preview section, update the form order accordingly
   useEffect(() => {
     const latestDocument = queryClient.getQueryData(documentKeys.LIST_DOCUMENT(document.id)) as SelectDocumentWithRelationsSchema
-    console.log({
-      exp: latestDocument?.experience
-    })
+
     form.reset({
       experiences: latestDocument?.experience as UpdateExperienceSchema
     })
@@ -153,9 +153,9 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
           <CardHeader className="p-0">
             <div className="flex flex-col gap-2">
               <div>
-                <CardTitle>Work Experience</CardTitle>
-                <CardDescription>
-                  Add your work experience to showcase your career progression
+                <CardTitle>{t('resume.editor.sections.experience')}</CardTitle>
+                <CardDescription className="mt-1.5">
+                  {t('document.form.placeholders.experience')}
                 </CardDescription>
               </div>
               <SectionOptimizeButton document={document} section="experience" className="w-24 self-end" />
@@ -190,12 +190,12 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <Briefcase className="size-4" />
-                          <span>Position</span>
+                          <span>{t('document.personalInfo.jobTitle')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g. Senior Frontend Engineer"
+                            placeholder={t('document.personalInfo.placeholders.jobTitle')}
                             value={field.value || ''}
                             onChange={e => {
                               field.onChange(e.target.value)
@@ -215,12 +215,12 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <Briefcase className="size-4" />
-                          <span>Company</span>
+                          <span>{t('resume.editor.sections.company')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g. Ant Group"
+                            placeholder={t('document.form.placeholders.company')}
                             value={field.value || ''}
                             onChange={e => {
                               field.onChange(e.target.value)
@@ -242,12 +242,12 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <MapPin className="size-4" />
-                          <span>State</span>
+                          <span>{t('document.personalInfo.state')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g. California"
+                            placeholder={t('document.personalInfo.placeholders.state')}
                             value={field.value || ''}
                             onChange={e => {
                               field.onChange(e.target.value)
@@ -267,12 +267,12 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <MapPin className="size-4" />
-                          <span>City</span>
+                          <span>{t('document.personalInfo.city')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="e.g. San Francisco"
+                            placeholder={t('document.personalInfo.placeholders.city')}
                             value={field.value || ''}
                             onChange={e => {
                               field.onChange(e.target.value)
@@ -295,7 +295,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <CalendarIcon className="size-4" />
-                            <span>Start Date</span>
+                            <span>{t('document.form.startDate')}</span>
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -321,7 +321,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <CalendarIcon className="size-4" />
-                            <span>End Date</span>
+                            <span>{t('document.form.endDate')}</span>
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -356,7 +356,9 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                             }}
                           />
                         </FormControl>
-                        <FormLabel className="text-sm font-normal leading-none cursor-pointer">I currently work here</FormLabel>
+                        <FormLabel className="text-sm font-normal leading-none cursor-pointer">
+                          {t('document.form.currentlyEmployed')}
+                        </FormLabel>
                       </FormItem>
                     )}
                   />
@@ -369,18 +371,17 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Briefcase className="size-4" />
-                        <span>Work Summary</span>
+                        <span>{t('document.form.workSummary')}</span>
                       </FormLabel>
                       <FormControl>
                         <Editor
-                          // When the experience order changes, ensure the editor is re-rendered
                           key={`experience-${index}-${exp?.id}`}
                           value={field.value || ''}
                           onChange={(value: string) => {
                             field.onChange(value)
                             handleFieldChange(index, 'workSummary', value)
                           }}
-                          placeholder="Describe your main responsibilities, achievements, and work content..."
+                          placeholder={t('document.form.placeholders.experience')}
                           className="[&_.ql-editor]:min-h-[120px]"
                         />
                       </FormControl>
@@ -400,7 +401,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
               className="gap-2"
             >
               <Plus className="size-4" />
-              Add Experience
+              {t('document.actions.addExperience')}
             </Button>
 
             <Button
@@ -413,7 +414,7 @@ export default function ExperienceForm({ document, className }: ExperienceFormPr
                 "hover:shadow-primary/25"
               )}
             >
-              Save
+              {t('common.save')}
             </Button>
           </div>
         </Card>

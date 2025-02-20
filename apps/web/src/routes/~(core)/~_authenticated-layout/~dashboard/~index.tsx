@@ -14,6 +14,7 @@ import { DocumentFilters } from "@/web/routes/~(core)/~_authenticated-layout/~da
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { infiniteDocumentsQueryOptionsFn } from "@/web/services/documents/queries";
+import { useTranslation } from 'react-i18next';
 
 export const Route = createFileRoute('/(core)/_authenticated-layout/dashboard/')({
   validateSearch: (search: Record<string, unknown>) => {
@@ -30,6 +31,7 @@ export const Route = createFileRoute('/(core)/_authenticated-layout/dashboard/')
 });
 
 function DashboardPage() {
+  const { t } = useTranslation();
   const { status, search } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   
@@ -51,34 +53,34 @@ function DashboardPage() {
 
   const { mutate: deleteDocument } = useDeleteDocumentMutation({
     onSuccess: () => {
-      toast.success('Resume deleted')
+      toast.success(t('dashboard.toast.deleteSuccess'))
     },
     onError: () => {
-      toast.error("Failed to delete resume")
+      toast.error(t('dashboard.toast.deleteError'))
     }
   });
   const { mutate: createDocument, isPending: isCreatingDocument } = useCreateDocumentMutation();
   const { mutate: deleteAllDocuments, isPending: isDeletingAllDocuments } = useDeleteAllDocumentsMutation({
     onSuccess: async () => {
-      toast.success("All resumes deleted");
+      toast.success(t('dashboard.toast.deleteAllSuccess'));
     },
     onError: () => {
-      toast.error("Failed to delete all resumes. Please try again.")
+      toast.error(t('dashboard.toast.deleteAllError'))
     }
   });
 
   const [DeleteResumeConfirmDialog, confirmDeleteResume] = useConfirm({
-    title: "Delete Resume",
-    message: "Are you sure you want to delete this resume?",
+    title: t('dashboard.deleteConfirm.title'),
+    message: t('dashboard.deleteConfirm.message'),
   }) as [() => JSX.Element, () => Promise<boolean>];
 
   const [DeleteAllResumeConfirmDialog, confirmDeleteAllResume] = useConfirm({
-    title: "Delete All Resumes",
-    message: "Are you sure you want to delete all resumes?",
+    title: t('dashboard.deleteAllConfirm.title'),
+    message: t('dashboard.deleteAllConfirm.message'),
   }) as [() => JSX.Element, () => Promise<boolean>];
 
   const handleCreate = () => {
-    createDocument({ title: "Untitled Resume" });
+    createDocument({ title: t('dashboard.untitledResume') });
   };
 
   const handleDelete = async (id: string) => {
@@ -133,7 +135,7 @@ function DashboardPage() {
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                  <span>All Resumes</span>
+                  <span>{t('dashboard.title')}</span>
                   <AnimatedNumber
                     value={totalResumes}
                     className={cn(
@@ -154,7 +156,7 @@ function DashboardPage() {
                   )}
                 >
                   <Trash2 className="size-4 md:size-6" />
-                  <span>Delete All</span>
+                  <span>{t('dashboard.deleteAll')}</span>
                 </button>
               </div>
 

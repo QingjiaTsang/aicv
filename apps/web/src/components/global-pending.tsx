@@ -1,12 +1,15 @@
 import { motion } from "framer-motion";
 import { FileText, Sparkles } from "lucide-react";
 import { cn } from "@/web/lib/utils";
+import { useTranslation } from 'react-i18next';
 
 type GlobalPendingProps = {
   className?: string;
 };
 
 export function GlobalPending({ className }: GlobalPendingProps) {
+  const { t } = useTranslation();
+
   return (
     <div className={cn(
       "h-[calc(100dvh-97px)] w-full flex items-center justify-center",
@@ -58,7 +61,7 @@ export function GlobalPending({ className }: GlobalPendingProps) {
           }}
           className="text-violet-600 dark:text-violet-400 text-sm md:text-base"
         >
-          Loading...
+          {t('common.loading')}
         </motion.p>
       </motion.div>
     </div>

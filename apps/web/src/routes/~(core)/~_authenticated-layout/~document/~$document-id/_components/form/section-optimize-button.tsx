@@ -4,6 +4,7 @@ import { cn } from '@/web/lib/utils'
 import { OptimizeResumeChat } from '../page-header/actions/resume-optimizer-chatbox/optimize-resume-chat'
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type SectionOptimizeButtonProps = {
   document: SelectDocumentWithRelationsSchema
@@ -13,6 +14,7 @@ type SectionOptimizeButtonProps = {
 
 export function SectionOptimizeButton({ document, section, className }: SectionOptimizeButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const { t } = useTranslation()
 
   return (
     <>
@@ -51,6 +53,8 @@ export function SectionOptimizeButton({ document, section, className }: SectionO
           
           className
         )}
+        aria-label={t('section.optimize.button.label')}
+        title={t('section.optimize.button.tooltip')}
       >
         <Sparkles className={cn(
           "size-4",
@@ -58,7 +62,7 @@ export function SectionOptimizeButton({ document, section, className }: SectionO
           "text-white/90"
         )} />
         <span className="relative">
-          Ask AI
+          {t('optimize.button.askAi')}
           {/* Add shine effect */}
           <span className={cn(
             "absolute inset-0",

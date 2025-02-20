@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/web/lib/utils"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { toast } from "sonner"
+import { useTranslation } from 'react-i18next'
 
 type PersonalInfoFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -18,6 +19,7 @@ type PersonalInfoFormProps = {
 }
 
 export default function PersonalInfoForm({ document, className }: PersonalInfoFormProps) {
+  const { t } = useTranslation();
   const form = useForm<UpdatePersonalInfoSchema>({
     resolver: zodResolver(updatePersonalInfoSchema),
     defaultValues: {
@@ -27,7 +29,7 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
 
   const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
     onSuccess: () => {
-      toast.success("Personal info section updated")
+      toast.success(t('document.personalInfo.toast.updateSuccess'))
     }
   })
 
@@ -66,9 +68,9 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
           <CardHeader className="p-0 mb-6">
-            <CardTitle>Personal Info</CardTitle>
+            <CardTitle>{t('document.personalInfo.title')}</CardTitle>
             <CardDescription>
-              Get Started with the personal information
+              {t('document.personalInfo.description')}
             </CardDescription>
           </CardHeader>
 
@@ -81,12 +83,12 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <User className="size-4" />
-                      <span>First Name</span>
+                      <span>{t('document.personalInfo.firstName')}</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Enter your first name"
+                        placeholder={t('document.personalInfo.placeholders.firstName')}
                         value={field.value || ''}
                         onChange={e => {
                           field.onChange(e.target.value)
@@ -106,12 +108,12 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <User className="size-4" />
-                      <span>Last Name</span>
+                      <span>{t('document.personalInfo.lastName')}</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Enter your last name"
+                        placeholder={t('document.personalInfo.placeholders.lastName')}
                         value={field.value || ''}
                         onChange={e => {
                           field.onChange(e.target.value)
@@ -132,12 +134,12 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
                     <Briefcase className="size-4" />
-                    <span>Job Title</span>
+                    <span>{t('document.personalInfo.jobTitle')}</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g. Senior Frontend Engineer"
+                      placeholder={t('document.personalInfo.placeholders.jobTitle')}
                       value={field.value || ''}
                       onChange={e => {
                         field.onChange(e.target.value)
@@ -158,12 +160,12 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <MapPin className="size-4" />
-                      <span>State/Province</span>
+                      <span>{t('document.personalInfo.state')}</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g. California"
+                        placeholder={t('document.personalInfo.placeholders.state')}
                         value={field.value || ''}
                         onChange={e => {
                           field.onChange(e.target.value)
@@ -183,12 +185,12 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <MapPin className="size-4" />
-                      <span>City</span>
+                      <span>{t('document.personalInfo.city')}</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g. San Francisco"
+                        placeholder={t('document.personalInfo.placeholders.city')}
                         value={field.value || ''}
                         onChange={e => {
                           field.onChange(e.target.value)
@@ -210,12 +212,12 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <Phone className="size-4" />
-                      <span>Phone</span>
+                      <span>{t('document.personalInfo.phone')}</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Enter your phone number"
+                        placeholder={t('document.personalInfo.placeholders.phone')}
                         value={field.value || ''}
                         onChange={e => {
                           field.onChange(e.target.value)
@@ -235,12 +237,12 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <Mail className="size-4" />
-                      <span>Email</span>
+                      <span>{t('document.personalInfo.email')}</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Enter your email address"
+                        placeholder={t('document.personalInfo.placeholders.email')}
                         value={field.value || ''}
                         onChange={e => {
                           field.onChange(e.target.value)
@@ -266,7 +268,7 @@ export default function PersonalInfoForm({ document, className }: PersonalInfoFo
                 "transition-all duration-300"
               )}
             >
-              <span>Save</span>
+              <span>{t('common.save')}</span>
             </Button>
           </div>
         </Card>

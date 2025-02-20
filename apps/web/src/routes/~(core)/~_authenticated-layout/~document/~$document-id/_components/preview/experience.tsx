@@ -2,8 +2,8 @@ import { useMemo } from "react"
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { DraggableSection } from '@/web/components/draggable-section'
-import { format } from "date-fns"
 import { useSortableItems } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items'
+import { useTranslation } from 'react-i18next'
 
 type ExperienceProps = {
   document: SelectDocumentWithRelationsSchema
@@ -12,6 +12,7 @@ type ExperienceProps = {
 
 export default function Experience({ document, isDraggable = false }: ExperienceProps) {
   const { handleMove } = useSortableItems(document.id, 'experience')
+  const { t } = useTranslation()
 
   const sortedExperience = useMemo(() => {
     return document.experience.sort((a, b) => (a?.displayOrder || 0) - (b?.displayOrder || 0))
@@ -20,7 +21,7 @@ export default function Experience({ document, isDraggable = false }: Experience
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
-        Professional Experience
+        {t('resume.editor.sections.experience')}
       </div>
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
@@ -56,18 +57,20 @@ export function ExperienceItem({ experience, themeColor }: {
   experience: SelectDocumentWithRelationsSchema['experience'][0],
   themeColor: string
 }) {
+  const { t } = useTranslation()
+
   return (
     <div className="w-full flex flex-col gap-2">
       <div className="flex flex-col gap-1">
         <div className="flex justify-between">
           <div className="max-w-[368px] text-base font-bold" style={{ color: themeColor }}>
-            {experience?.title || "Position Title"}
+            {experience?.title || t('document.form.placeholders.experience')}
           </div>
 
           <div className="text-sm">
-            {experience?.startDate ?? "Start Date"}
+            {experience?.startDate ?? t('document.form.startDate')}
             {" - "}
-            {experience?.isCurrentlyEmployed ? "Present" : experience?.endDate ?? "End Date"}
+            {experience?.isCurrentlyEmployed ? t('document.experience.present') : experience?.endDate ?? t('document.form.endDate')}
           </div>
         </div>
 

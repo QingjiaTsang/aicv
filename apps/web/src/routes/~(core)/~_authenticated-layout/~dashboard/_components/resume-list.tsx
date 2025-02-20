@@ -13,10 +13,12 @@ import { Skeleton } from "@/web/components/shadcn-ui/skeleton";
 import { SelectDocumentSchema } from "@aicv-app/api/schema";
 
 import { format } from "date-fns"
+import { zhCN } from 'date-fns/locale';
 import { useRouter, Link } from '@tanstack/react-router';
 import { getStatusIcon } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/utils/getStatusIcon";
 import { useState } from "react";
 import { ResumePreviewTooltip } from "@/web/routes/~(core)/~_authenticated-layout/~dashboard/_components/resume-preview-tooltip";
+import { useTranslation } from "react-i18next";
 
 type ResumeListProps = {
   resumes: SelectDocumentSchema[];
@@ -39,7 +41,7 @@ export function ResumeList({ resumes, isLoading, onDelete }: ResumeListProps) {
           key={resume.id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
+          transition={{ delay: index * 0.05 }}
         >
           <ResumeCard
             resume={resume}
@@ -56,6 +58,8 @@ type ResumeCardProps = {
   onDelete: () => void;
 };
 function ResumeCard({ resume, onDelete }: ResumeCardProps) {
+  const { t, i18n } = useTranslation();
+  
   const router = useRouter();
 
   const [isHovered, setIsHovered] = useState(false)
@@ -66,6 +70,13 @@ function ResumeCard({ resume, onDelete }: ResumeCardProps) {
       to: "/document/$document-id/edit",
       params: { "document-id": resume.id }
     });
+  };
+
+  const formatDate = (date: Date) => {
+    if (i18n.language === 'zh') {
+      return format(date, "yyyy年MM月dd日 HH:mm", { locale: zhCN });
+    }
+    return format(date, "MMM dd, yyyy HH:mm");
   };
 
   return (
@@ -95,7 +106,7 @@ function ResumeCard({ resume, onDelete }: ResumeCardProps) {
               <div>
                 <h3 className="truncate max-w-[195px] font-medium text-lg text-gray-900 dark:text-gray-50">{resume.title}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                  Updated {format(resume.updatedAt, "MMM dd, yyyy HH:mm")}
+                  {t('common.updatedAt', { date: formatDate(new Date(resume.updatedAt)) })}
                 </p>
               </div>
             </div>
@@ -118,13 +129,13 @@ function ResumeCard({ resume, onDelete }: ResumeCardProps) {
                     className="w-full flex items-center gap-2"
                   >
                     <Pencil className="size-4" />
-                    <span>Edit</span>
+                    <span>{t('common.edit')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onDelete} className="text-red-600 dark:text-red-400">
                   <div className="w-full flex items-center gap-2 cursor-pointer">
                     <Trash2 className="size-4" />
-                    <span>Delete</span>
+                    <span>{t('common.delete')}</span>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -135,7 +146,7 @@ function ResumeCard({ resume, onDelete }: ResumeCardProps) {
             <div className="text-xs px-2 py-1 rounded-full bg-violet-100/80 dark:bg-violet-900/80 text-violet-700 dark:text-violet-300 ring-1 ring-violet-200/50 dark:ring-violet-700/50">
               <div className="flex items-center gap-1">
                 {getStatusIcon(resume.status)}
-                {resume.status}
+                {t(`dashboard.filters.${resume.status.toLowerCase()}`)}
               </div>
             </div>
           </div>
@@ -146,6 +157,8 @@ function ResumeCard({ resume, onDelete }: ResumeCardProps) {
 }
 
 function EmptyResumeList() {
+  const { t } = useTranslation();
+
   return (
     <Card className="p-12 text-center shadow-sm">
       <div className="flex flex-col items-center gap-4">
@@ -153,8 +166,8 @@ function EmptyResumeList() {
           <FileText className="size-8 text-violet-600 dark:text-violet-400" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-medium">No resumes yet</h3>
-          <p className="text-muted-foreground">Create your first resume to get started</p>
+          <h3 className="text-xl font-medium">{t('dashboard.noResumes')}</h3>
+          <p className="text-muted-foreground">{t('dashboard.createResume')}</p>
         </div>
       </div>
     </Card>

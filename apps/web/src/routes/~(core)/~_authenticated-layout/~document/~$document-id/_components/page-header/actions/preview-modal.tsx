@@ -11,7 +11,7 @@ import {
 } from "@/web/components/shadcn-ui/credenza"
 import { TooltipButton } from '@/web/components/tooltip-button'
 import ResumePreview from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/preview/resume-preview'
-
+import { useTranslation } from 'react-i18next';
 type PreviewModalProps = {
   document: SelectDocumentWithRelationsSchema
   children: React.ReactNode
@@ -20,13 +20,15 @@ type PreviewModalProps = {
 }
 
 export function PreviewModal({ document, children, isModalOpen, onModalChange }: PreviewModalProps) {
+  const { t } = useTranslation();
+
   const isArchived = document.status === 'archived'
 
   return (
     <Credenza open={isModalOpen} onOpenChange={onModalChange}>
       <CredenzaTrigger asChild>
         <TooltipButton
-          tooltip="Preview"
+          tooltip={t('document.tooltips.preview')}
           onClick={() => onModalChange(true)}
           disabled={isArchived}
           className={cn(

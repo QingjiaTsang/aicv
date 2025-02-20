@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { FileText, Sparkles } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export function LoadingOverlay() {
+  const { t } = useTranslation();
+
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center gap-4">
       <motion.div
@@ -21,7 +24,7 @@ export function LoadingOverlay() {
       </motion.div>
 
       <p className="text-violet-600 dark:text-violet-400 animate-pulse">
-        Creating your resume...
+        {t('loading.creatingResume')}
       </p>
     </div>
   );

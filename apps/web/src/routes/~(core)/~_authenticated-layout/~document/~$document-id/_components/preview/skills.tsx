@@ -3,26 +3,15 @@ import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { useMemo } from "react"
 import { DraggableSection } from "@/web/components/draggable-section"
 import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
+import { useTranslation } from 'react-i18next'
 
 type SkillsProps = {
   document: SelectDocumentWithRelationsSchema
   isDraggable?: boolean
 }
 
-const PROFICIENCY_LABELS = {
-  0: 'Foundational',
-  1: 'Working',
-  2: 'Competent',
-  3: 'Proficient',
-  4: 'Strong',
-  5: 'Expert',
-} as const
-
-const getProficiencyLabel = (rating: number) => {
-  return PROFICIENCY_LABELS[rating as keyof typeof PROFICIENCY_LABELS] ?? PROFICIENCY_LABELS[0]
-}
-
 export default function Skills({ document, isDraggable = false }: SkillsProps) {
+  const { t } = useTranslation()
   const { handleMove } = useSortableItems(document.id, 'skills')
 
   const sortedSkills = useMemo(() => {
@@ -32,7 +21,7 @@ export default function Skills({ document, isDraggable = false }: SkillsProps) {
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
-        Skills
+        {t('resume.editor.sections.skills')}
       </div>
 
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
@@ -47,7 +36,6 @@ export default function Skills({ document, isDraggable = false }: SkillsProps) {
                 index={index}
                 onMove={handleMove}
               >
-
                 <SkillItem
                   key={skill?.id}
                   skill={skill}
@@ -64,7 +52,7 @@ export default function Skills({ document, isDraggable = false }: SkillsProps) {
           </div>
         ))}
       </div>
-    </div >
+    </div>
   )
 }
 
@@ -72,11 +60,17 @@ function SkillItem({ skill, themeColor }: {
   skill: SelectDocumentWithRelationsSchema['skills'][0],
   themeColor: string
 }) {
+  const { t } = useTranslation()
+  
+  const getProficiencyLabel = (rating: number) => {
+    return t(`document.skills.proficiencyLevels.${rating}`)
+  }
+
   return (
     <div className="w-full group">
       <div className="flex justify-between items-center mb-1.5">
         <span className="text-sm font-medium truncate max-w-[70%]">
-          {skill?.name || "Skill Name"}
+          {skill?.name || t('document.skills.form.placeholders.skillName')}
         </span>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">

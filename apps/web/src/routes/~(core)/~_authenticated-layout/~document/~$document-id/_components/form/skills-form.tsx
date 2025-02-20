@@ -15,6 +15,7 @@ import { cn } from "@/web/lib/utils"
 import { toast } from "sonner"
 import { useUpdateDocumentByTypeMutation } from "@/web/services/documents/mutations"
 import { useSortableItems } from "@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items"
+import { useTranslation } from 'react-i18next'
 
 type SkillsFormProps = {
   document: SelectDocumentWithRelationsSchema
@@ -26,6 +27,7 @@ type FormValues = {
 }
 
 export default function SkillsForm({ document, className }: SkillsFormProps) {
+  const { t } = useTranslation()
   const { didSortFlag } = useSortableItems(document.id, 'skills')
 
   const form = useForm<FormValues>({
@@ -40,13 +42,13 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
   })
 
   const [ConfirmDialog, confirm] = useConfirm({
-    title: "Delete Skill",
-    message: "Are you sure you want to delete this skill?"
+    title: t('document.skills.deleteConfirm.title'),
+    message: t('document.skills.deleteConfirm.message')
   }) as [() => JSX.Element, () => Promise<boolean>]
 
   const { mutate: updateDocumentByTypeMutation, isPending: isUpdatingDocumentByType } = useUpdateDocumentByTypeMutation({
     onSuccess: () => {
-      toast.success("Skills section updated")
+      toast.success(t('document.skills.toast.updateSuccess'))
     }
   })
 
@@ -137,9 +139,9 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
       >
         <Card className="p-6 border-0 shadow-none bg-transparent">
           <CardHeader className="p-0 mb-6">
-            <CardTitle>Skills & Expertise</CardTitle>
+            <CardTitle>{t('document.skills.title')}</CardTitle>
             <CardDescription>
-              Add your professional skills and proficiency levels
+              {t('document.skills.description')}
             </CardDescription>
           </CardHeader>
 
@@ -172,13 +174,13 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <Star className="size-4" />
-                          <span>Skill Name</span>
+                          <span>{t('document.skills.form.skillName')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             key={skill.id}
-                            placeholder="e.g. React"
+                            placeholder={t('document.skills.form.placeholders.skillName')}
                             value={field.value || ''}
                             onChange={e => {
                               field.onChange(e.target.value)
@@ -198,7 +200,7 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <Star className="size-4" />
-                          <span>Proficiency (1-5)</span>
+                          <span>{t('document.skills.form.proficiency')}</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -207,7 +209,7 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
                             type="number"
                             min={0}
                             max={5}
-                            placeholder="Rate 1-5"
+                            placeholder={t('document.skills.form.placeholders.proficiency')}
                             value={field.value || ''}
                             onChange={e => {
                               const value = Math.min(5, Math.max(0, parseInt(e.target.value) || 0))
@@ -233,7 +235,7 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
               className="gap-2"
             >
               <Plus className="size-4" />
-              Add Skill
+              {t('document.skills.actions.addSkill')}
             </Button>
 
             <Button
@@ -246,7 +248,7 @@ export default function SkillsForm({ document, className }: SkillsFormProps) {
                 "transition-all duration-300"
               )}
             >
-              Save
+              {t('document.skills.actions.save')}
             </Button>
           </div>
         </Card>

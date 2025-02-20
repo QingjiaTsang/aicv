@@ -1,15 +1,23 @@
 import { generateThumbnail } from '@/web/lib/generateThumbnail'
 import { useUploadFileMutation } from '@/web/services/file/mutations'
 import { useUpdateDocumentByTypeMutation } from '@/web/services/documents/mutations'
-import { useBlocker } from '@tanstack/react-router'
+import { useBlocker, useNavigate } from '@tanstack/react-router';
 import { currentFormPositionAtom } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/_components/form/resume-form'
 import { useAtom } from 'jotai'
 
 export function useLeavePageActions(documentId: string) {
+  const navigate = useNavigate()
+
   const [currentFormPosition] = useAtom(currentFormPositionAtom)
 
   const { mutateAsync: uploadFile } = useUploadFileMutation()
-  const { mutateAsync: updateDocumentByType } = useUpdateDocumentByTypeMutation()
+  const { mutate: updateDocumentByType } = useUpdateDocumentByTypeMutation({
+    onError: () => {
+      // If the document deleted, updateDocumentByType will throw an error
+      // So we need to navigate to the dashboard
+      navigate({ to: "/dashboard", search: { status: undefined, search: "" } })
+    }
+  })
 
   // Try to generate a snapshot to save as a thumbnail before leaving the page
   const getThumbnailUrl = async () => {
@@ -33,7 +41,7 @@ export function useLeavePageActions(documentId: string) {
   const handleLeavePageActions = async () => {
     const thumbnailUrl = await getThumbnailUrl()
 
-    await updateDocumentByType({
+    updateDocumentByType({
       id: documentId,
       document: {
         data: {

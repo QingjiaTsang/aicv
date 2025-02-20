@@ -3,6 +3,7 @@ import { Upload } from 'lucide-react'
 import { cn } from "@/web/lib/utils"
 import { toast } from "sonner"
 import { extractFileText } from '@/web/lib/extract-file-text'
+import { useTranslation } from 'react-i18next'
 
 type UploadResumeButtonProps = {
   onUploadSuccess: (fileTextContent: string) => Promise<void>
@@ -10,6 +11,8 @@ type UploadResumeButtonProps = {
 }
 
 export function UploadResumeButton({ onUploadSuccess, disabled }: UploadResumeButtonProps) {
+  const { t } = useTranslation()
+  
   const dropzone = useDropzone({
     validation: {
       accept: {
@@ -27,7 +30,7 @@ export function UploadResumeButton({ onUploadSuccess, disabled }: UploadResumeBu
       } catch (error) {
         return { 
           status: 'error', 
-          error: error instanceof Error ? error.message : 'File read failed' 
+          error: error instanceof Error ? error.message : t('resume.optimization.error.uploadFailed')
         }
       }
     },
@@ -36,9 +39,9 @@ export function UploadResumeButton({ onUploadSuccess, disabled }: UploadResumeBu
     },
     onFileUploadError(error) {
       console.error(error)
-      toast.error('File upload failed')
+      toast.error(t('resume.optimization.error.uploadFailed'))
     },
-    shapeUploadError: (error) => `File upload failed: ${error}`,
+    shapeUploadError: (error) => t('resume.optimization.error.uploadFailed') + `: ${error}`,
   })
 
   return (
@@ -54,7 +57,7 @@ export function UploadResumeButton({ onUploadSuccess, disabled }: UploadResumeBu
         )}
       >
         <Upload className="size-4" />
-        <span>Upload Resume</span>
+        <span>{t('document.actions.uploadResume')}</span>
       </DropzoneTrigger>
       <DropzoneMessage />
     </Dropzone>

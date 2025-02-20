@@ -6,6 +6,7 @@ import { Search, X } from "lucide-react";
 import { cn } from "@/web/lib/utils";
 import { useDebounce } from 'use-debounce';
 import { DocumentStatus } from "@aicv-app/api/schema";
+import { useTranslation } from 'react-i18next';
 
 type DocumentFiltersProps = {
   onStatusChange: (status: DocumentStatus | undefined) => void;
@@ -22,6 +23,7 @@ export function DocumentFilters({
 }: DocumentFiltersProps) {
   const [localSearch, setLocalSearch] = useState(searchValue || "");
   const [debouncedSearch] = useDebounce(localSearch, 500);
+  const { t } = useTranslation();
 
   useEffect(() => {
     onSearchChange(debouncedSearch);
@@ -36,7 +38,7 @@ export function DocumentFilters({
       <div className="relative flex-1">
         <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
         <Input
-          placeholder="Search resumes..."
+          placeholder={t('common.search')}
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
           className="pl-8 pr-8"
@@ -58,13 +60,13 @@ export function DocumentFilters({
         onValueChange={(value) => onStatusChange(value === "ALL" ? undefined : value as DocumentStatus)}
       >
         <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="Filter by status" />
+          <SelectValue placeholder={t('dashboard.filters.all')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">All</SelectItem>
-          <SelectItem value={DOCUMENT_STATUS.PUBLIC}>Public</SelectItem>
-          <SelectItem value={DOCUMENT_STATUS.PRIVATE}>Private</SelectItem>
-          <SelectItem value={DOCUMENT_STATUS.ARCHIVED}>Archived</SelectItem>
+          <SelectItem value="ALL">{t('dashboard.filters.all')}</SelectItem>
+          <SelectItem value={DOCUMENT_STATUS.PUBLIC}>{t('dashboard.filters.public')}</SelectItem>
+          <SelectItem value={DOCUMENT_STATUS.PRIVATE}>{t('dashboard.filters.private')}</SelectItem>
+          <SelectItem value={DOCUMENT_STATUS.ARCHIVED}>{t('dashboard.filters.archived')}</SelectItem>
         </SelectContent>
       </Select>
     </div>

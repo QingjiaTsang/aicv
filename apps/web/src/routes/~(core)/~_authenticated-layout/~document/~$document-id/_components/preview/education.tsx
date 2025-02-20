@@ -2,8 +2,8 @@ import { useMemo } from "react"
 import { Skeleton } from "@/web/components/shadcn-ui/skeleton"
 import { SelectDocumentWithRelationsSchema } from "@aicv-app/api/schema"
 import { DraggableSection } from '@/web/components/draggable-section'
-import { format } from "date-fns"
 import { useSortableItems } from '@/web/routes/~(core)/~_authenticated-layout/~document/~$document-id/hooks/use-sortable-items'
+import { useTranslation } from 'react-i18next'
 
 type EducationProps = {
   document: SelectDocumentWithRelationsSchema
@@ -12,6 +12,7 @@ type EducationProps = {
 
 export default function Education({ document, isDraggable = false }: EducationProps) {
   const { handleMove } = useSortableItems(document.id, 'education')
+  const { t } = useTranslation()
 
   const sortedEducation = useMemo(() => {
     return document.education.sort((a, b) => (a?.displayOrder || 0) - (b?.displayOrder || 0))
@@ -20,7 +21,7 @@ export default function Education({ document, isDraggable = false }: EducationPr
   return (
     <div className="flex flex-col items-center my-8">
       <div className="text-lg font-bold" style={{ color: document.themeColor }}>
-        Education
+        {t('resume.editor.sections.education')}
       </div>
       <div className="w-full my-2 border-b-[3px]" style={{ borderColor: document.themeColor }} />
 
@@ -56,24 +57,25 @@ function EducationItem({ education, themeColor }: {
   education: SelectDocumentWithRelationsSchema['education'][0],
   themeColor: string
 }) {
-  return (
+  const { t } = useTranslation()
 
+  return (
     <div className="w-full flex flex-col gap-2">
       <div className="flex flex-col gap-1">
         <div className="flex justify-between">
           <div className="max-w-[368px] text-sm font-bold" style={{ color: themeColor }}>
-            {education?.universityName || "University Name"}
+            {education?.universityName || t('document.education.placeholders.universityName')}
           </div>
 
           <div className="text-sm">
-            {education?.startDate ?? "Start Date"}
+            {education?.startDate ?? t('document.form.startDate')}
             {" - "}
-            {education?.endDate ?? "End Date"}
+            {education?.endDate ?? t('document.form.endDate')}
           </div>
         </div>
 
         <div className="text-sm">
-          {education?.degree || "Degree"}
+          {education?.degree || t('document.education.placeholders.degree')}
         </div>
       </div>
 

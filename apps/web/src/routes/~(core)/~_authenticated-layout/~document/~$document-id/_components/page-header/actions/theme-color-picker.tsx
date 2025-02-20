@@ -20,6 +20,7 @@ import CustomColorPicker from '@/web/routes/~(core)/~_authenticated-layout/~docu
 import queryClient from '@/web/lib/query-client'
 import { SelectDocumentWithRelationsSchema } from '@aicv-app/api/schema'
 import { documentKeys } from '@/web/services/documents/queries'
+import { useTranslation } from 'react-i18next'
 
 type ThemeColorPickerProps = {
   documentId: string
@@ -38,6 +39,8 @@ export function ThemeColorPicker({
   isModalOpen,
   onModalChange,
 }: ThemeColorPickerProps) {
+  const { t } = useTranslation();
+  
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   const handleCustomColorChange = (color: string) => {
@@ -79,18 +82,25 @@ export function ThemeColorPicker({
     return (
       <Popover open={isModalOpen} onOpenChange={onModalChange}>
         <PopoverTrigger asChild>
-          <TooltipButton tooltip="Change Theme Color" disabled={isLoading}>
+          <TooltipButton 
+            tooltip={t('document.tooltips.changeTheme')} 
+            disabled={isLoading}
+          >
             <Palette className="size-4 sm:size-5" />
           </TooltipButton>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-medium">Select Theme Color</h3>
+            <h3 className="text-sm font-medium">
+              {t('document.colorPicker.title')}
+            </h3>
           </div>
           <ColorGrid />
 
           <div className="flex items-center justify-between border-t mt-3 pt-3">
-            <span className="text-sm font-medium">Custom Color</span>
+            <span className="text-sm font-medium">
+              {t('document.colorPicker.customColor')}
+            </span>
             <CustomColorPicker
               color={selectedColor}
               onChange={handleCustomColorChange}
@@ -105,21 +115,26 @@ export function ThemeColorPicker({
   return (
     <Credenza open={isModalOpen} onOpenChange={onModalChange}>
       <CredenzaTrigger asChild>
-        <TooltipButton tooltip="Change Theme Color" disabled={isLoading}>
+        <TooltipButton 
+          tooltip={t('document.tooltips.changeTheme')} 
+          disabled={isLoading}
+        >
           <Palette className="size-4 sm:size-5" />
         </TooltipButton>
       </CredenzaTrigger>
       <CredenzaContent>
         <div className="p-6 mt-6">
           <CredenzaHeader>
-            <CredenzaTitle>Select Theme Color</CredenzaTitle>
+            <CredenzaTitle>{t('document.colorPicker.title')}</CredenzaTitle>
           </CredenzaHeader>
           <CredenzaBody className="py-4">
             <div className='ml-7'>
               <ColorGrid />
             </div>
             <div className="flex items-center justify-between border-t mt-4 pt-3">
-              <span className="text-sm font-medium">Custom Color</span>
+              <span className="text-sm font-medium">
+                {t('document.colorPicker.customColor')}
+              </span>
               <CustomColorPicker
                 color={selectedColor}
                 onChange={handleCustomColorChange}

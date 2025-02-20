@@ -20,6 +20,7 @@ import { Input } from "@/web/components/shadcn-ui/input"
 import { Copy } from "lucide-react"
 import { cn } from "@/web/lib/utils"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 type ShareLinkPopoverProps = {
   documentId: string
@@ -32,12 +33,14 @@ type ShareLinkPopoverProps = {
 
 export default function ShareLinkPopover({ documentId, documentStatus, onDocumentStatusChange, isLoading, isModalOpen, onModalChange }: ShareLinkPopoverProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)")
-
+  
+  const { t } = useTranslation();
+  
   const shareLink = window.location.origin + "/preview/" + documentId
 
   const handleCopyLink = async () => {
     await navigator.clipboard.writeText(shareLink)
-    toast.success("Link copied to clipboard")
+    toast.success(t('document.toast.linkCopied'))
   }
 
   const handleDocumentStatusToggle = () => {
@@ -54,10 +57,10 @@ export default function ShareLinkPopover({ documentId, documentStatus, onDocumen
           </div>
           <div className="space-y-2">
             <h3 className="text-base font-medium text-primary dark:text-violet-100">
-              Set to Public
+              {t('document.share.setPublic')}
             </h3>
             <p className="text-sm text-muted-foreground">
-              To share it with others, you need to make it public.
+              {t('document.share.makePublic')}
             </p>
           </div>
           <Button
@@ -66,7 +69,7 @@ export default function ShareLinkPopover({ documentId, documentStatus, onDocumen
             disabled={isLoading}
             className="w-full"
           >
-            Public
+            {t('document.share.setPublic')}
           </Button>
         </div>
       )
@@ -75,7 +78,7 @@ export default function ShareLinkPopover({ documentId, documentStatus, onDocumen
     return (
       <div className="space-y-4">
         <h3 className="text-sm font-normal text-primary dark:text-violet-100">
-          Resume is ready to share, copy the link!
+          {t('document.share.description')}
         </h3>
 
         <div className="flex items-center gap-2">
@@ -110,7 +113,7 @@ export default function ShareLinkPopover({ documentId, documentStatus, onDocumen
             documentStatus === DOCUMENT_STATUS.PUBLIC && "bg-violet-50 dark:bg-violet-900/70"
           )}
         >
-          {documentStatus === DOCUMENT_STATUS.PUBLIC ? "Private" : "Public"}
+          {documentStatus === DOCUMENT_STATUS.PUBLIC ? t('document.share.setPrivate') : t('document.share.setPublic')}
         </Button>
       </div>
     )
@@ -121,7 +124,7 @@ export default function ShareLinkPopover({ documentId, documentStatus, onDocumen
       <Popover open={isModalOpen} onOpenChange={onModalChange}>
         <PopoverTrigger asChild>
           <TooltipButton
-            tooltip="Share Link"
+            tooltip={t('document.tooltips.share')}
             className="hover:text-violet-500 dark:hover:text-violet-400"
           >
             <Share2 className="size-4 sm:size-5" />
@@ -138,7 +141,7 @@ export default function ShareLinkPopover({ documentId, documentStatus, onDocumen
     <Credenza open={isModalOpen} onOpenChange={onModalChange}>
       <CredenzaTrigger asChild>
         <TooltipButton
-          tooltip="Share Link"
+          tooltip={t('document.tooltips.share')}
           className="hover:text-violet-500 dark:hover:text-violet-400"
         >
           <Share2 className="size-4 sm:size-5" />
@@ -147,7 +150,7 @@ export default function ShareLinkPopover({ documentId, documentStatus, onDocumen
       <CredenzaContent className="h-[40dvh]">
         <div className="p-6 mt-6">
           <CredenzaHeader>
-            <CredenzaTitle>Share Link</CredenzaTitle>
+            <CredenzaTitle>{t('document.share.title')}</CredenzaTitle>
           </CredenzaHeader>
           <CredenzaBody className="space-y-4">
             {renderShareContent()}

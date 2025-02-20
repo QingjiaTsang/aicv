@@ -7,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/web/components/shadcn-ui/
 import { MarkdownRenderer } from '@/web/components/markdown-renderer'
 import { useSession } from '@hono/auth-js/react'
 import { UploadResumeButton } from './resume-upload-button'
+import { useTranslation } from 'react-i18next'
 
 
 type ChatContentProps = {
@@ -34,6 +35,7 @@ export function ChatContent({
   onStopStreaming,
   handleUploadedResume
 }: ChatContentProps) {
+  const { t } = useTranslation();
   const session = useSession();
   const userAvatar = session.data?.user?.image || '/images/user-avatar.png'
 
@@ -81,7 +83,7 @@ export function ChatContent({
   }, [messages, isStreaming, userScrolled, scrollToBottom])
 
   return (
-    <>
+    <div className="flex h-[600px] flex-col">
       <div 
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 sm:gap-4"
@@ -98,10 +100,10 @@ export function ChatContent({
             <Avatar className="size-6 md:size-8 shrink-0">
               <AvatarImage 
                 src={message.role === 'assistant' ? '/images/ai-avatar.png' : userAvatar} 
-                alt={message.role === 'assistant' ? 'AI' : 'Me'} 
+                alt={message.role === 'assistant' ? t('chat.message.assistant') : t('chat.message.user')} 
               />
               <AvatarFallback>
-                {message.role === 'assistant' ? 'AI' : 'Me'}
+                {message.role === 'assistant' ? t('chat.message.assistant') : t('chat.message.user')}
               </AvatarFallback>
             </Avatar>
             <div
@@ -129,9 +131,12 @@ export function ChatContent({
                 disabled={isStreaming}
               >
                 <Sparkles className="size-4" />
-                {section === 'all' ? 'Analyze Resume' 
-                : section === 'summary' ? 'Optimize Summary'
-                : 'Optimize Experience'}
+                {section === 'all' 
+                  ? t('optimize.analyzeResume')
+                  : section === 'summary' 
+                    ? t('optimize.optimizeSummary')
+                    : t('optimize.optimizeExperience')
+                }
               </Button>
               
               {section === 'all' && (
@@ -153,7 +158,7 @@ export function ChatContent({
               )}
             >
               <Plus className="mr-2 size-4" />
-              New Chat
+              {t('optimize.newChat')}
             </Button>
           )}
           
@@ -162,18 +167,16 @@ export function ChatContent({
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message..."
+              placeholder={t('chat.input.placeholder')}
               rows={1}
               className={cn(
                 "flex-1 resize-none rounded-md border border-input bg-background px-3 py-2",
                 "focus:outline-none focus:ring-2 focus:ring-violet-500/40",
                 "placeholder:text-muted-foreground",
                 "min-h-[45px] max-h-[200px]",
-                "transition-shadow duration-200"
+                "transition-shadow duration-200",
+                "overflow-y-auto"
               )}
-              style={{
-                overflowY: 'auto'
-              }}
             />
             <Button 
               type="button"
@@ -192,18 +195,18 @@ export function ChatContent({
               {isStreaming ? (
                 <>
                   <CircleStop className="size-6" />
-                  <span className="sr-only">Stop streaming</span>
+                  <span className="sr-only">{t('chat.input.stop')}</span>
                 </>
               ) : (
                 <>
                   <Send className="size-5" />
-                  <span className="sr-only">Send message</span>
+                  <span className="sr-only">{t('chat.input.send')}</span>
                 </>
               )}
             </Button>
           </form>
         </div>
       </div>
-    </>
+    </div>
   )
 } 

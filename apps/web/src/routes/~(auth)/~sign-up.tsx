@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 import { Button } from "@/web/components/shadcn-ui/button";
 import {
@@ -29,6 +30,7 @@ import { useSignupMutation } from "@/web/services/auth";
 import { CheckCircle2, Mail } from "lucide-react";
 import { getSession } from "@hono/auth-js/react";
 import { AuthBackground } from "@/web/components/auth-background";
+import { t } from "i18next";
 
 export const Route = createFileRoute("/(auth)/sign-up")({
   component: SignUpPage,
@@ -44,10 +46,10 @@ export const Route = createFileRoute("/(auth)/sign-up")({
 
 const signupSchema = createUserSchema
   .extend({
-    confirmPassword: z.string().min(6, "Please confirm your password"),
+    confirmPassword: z.string().min(6, t('auth.signUp.form.confirmPassword')),
   })
   .refine(data => data.password === data.confirmPassword, {
-    message: "The two passwords you entered do not match",
+    message: t('auth.signUp.errors.passwordMismatch'),
     path: ["confirmPassword"],
   });
 
@@ -55,6 +57,7 @@ type SignupSchema = z.infer<typeof signupSchema>;
 
 function SignUpPage() {
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const { t } = useTranslation();
 
   const form = useForm<SignupSchema>({
     resolver: zodResolver(signupSchema),
@@ -104,11 +107,11 @@ function SignUpPage() {
               >
                 <CheckCircle2 className="size-5 text-green-500" />
                 <CardTitle className="text-2xl text-foreground">
-                  Verification Email Sent
+                  {t('auth.signUp.emailSent.title')}
                 </CardTitle>
               </motion.div>
               <CardDescription className="text-muted-foreground">
-                Please check your email and click the verification link to complete the process.
+                {t('auth.signUp.emailSent.description')}
               </CardDescription>
             </div>
           </div>
@@ -117,15 +120,18 @@ function SignUpPage() {
     );
   }
 
-  const errorMessage
-    = signupError?.message === HttpStatusPhrases.CONFLICT ? "Email already exists" : signupError?.message;
+  const errorMessage = signupError?.message === HttpStatusPhrases.CONFLICT 
+    ? t('auth.signUp.errors.emailExists') 
+    : signupError?.message;
 
   return (
-    <div className="flex h-full w-full px-4 items-center justify-center relative">
+    <div className="flex h-[calc(100dvh-64px)] w-full -mb-8 px-4 items-center justify-center relative">
       <AuthBackground />
       <Card className="w-full max-w-sm border dark:border-gray-800 dark:bg-gray-950/80 shadow-2xl backdrop-blur-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-center text-2xl dark:text-gray-200">Create Account</CardTitle>
+          <CardTitle className="text-center text-2xl dark:text-gray-200">
+            {t('auth.signUp.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {signupError && (
@@ -141,7 +147,7 @@ function SignUpPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Name" {...field} />
+                      <Input placeholder={t('auth.signUp.form.name')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -154,7 +160,7 @@ function SignUpPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="email" placeholder="Email" {...field} />
+                      <Input type="email" placeholder={t('auth.signUp.form.email')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -167,7 +173,7 @@ function SignUpPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="password" placeholder="Password" {...field} />
+                      <Input type="password" placeholder={t('auth.signUp.form.password')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -180,7 +186,7 @@ function SignUpPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="password" placeholder="Confirm Password" {...field} />
+                      <Input type="password" placeholder={t('auth.signUp.form.confirmPassword')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -198,10 +204,10 @@ function SignUpPage() {
                 >
                   <span className="relative z-10 flex items-center justify-center">
                     {isSigningUp ? (
-                      "Creating Your AI Space..."
+                      t('auth.signUp.form.button.creating')
                     ) : (
                       <>
-                        <span className="mr-2">Start Your AI Journey</span>
+                        <span className="mr-2">{t('auth.signUp.form.button.create')}</span>
                         <span className="group-hover:rotate-180 transition-transform duration-300">
                           ✨
                         </span>
@@ -214,12 +220,12 @@ function SignUpPage() {
           </Form>
 
           <p className="text-muted-foreground dark:text-gray-400 mt-6 text-center text-sm">
-            Already have an account?{" "}
+            {t('auth.signUp.haveAccount')}{" "}
             <Link
               to="/sign-in"
               className="text-primary dark:text-blue-400 underline-offset-4 hover:underline"
             >
-              Sign in now
+              {t('auth.signUp.signInLink')}
             </Link>
           </p>
         </CardContent>

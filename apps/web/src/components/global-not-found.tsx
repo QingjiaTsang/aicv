@@ -3,12 +3,15 @@ import { Search } from "lucide-react";
 import { Button } from "@/web/components/shadcn-ui/button";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/web/lib/utils";
+import { useTranslation } from 'react-i18next';
 
 type GlobalNotFoundProps = {
   className?: string;
 };
 
 export function GlobalNotFound({ className }: GlobalNotFoundProps) {
+  const { t } = useTranslation();
+  
   return (
     <div className={cn(
       "h-[calc(100dvh-97px)] w-full flex items-center justify-center",
@@ -33,11 +36,11 @@ export function GlobalNotFound({ className }: GlobalNotFoundProps) {
         </motion.div>
 
         <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
-          Page Not Found
+          {t('errors.pageNotFound')}
         </h1>
 
         <p className="text-muted-foreground text-sm md:text-base">
-          Sorry, the page you are looking for does not exist
+          {t('errors.pageNotFoundDesc')}
         </p>
 
         <div className="pt-4">
@@ -46,8 +49,8 @@ export function GlobalNotFound({ className }: GlobalNotFoundProps) {
             asChild
             className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
           >
-            <Link to="/dashboard">
-              Back to Home
+            <Link to="/dashboard" search={{ status: undefined, search: '' }}>
+              {t('errors.goHome')}
             </Link>
           </Button>
         </div>
