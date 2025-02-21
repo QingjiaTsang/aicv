@@ -13,14 +13,14 @@ export async function sendVerificationEmail(
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "AICV <onboarding@resend.dev>",
+      from: "AICV <no-reply@qingjiatsang.top>",
       to: email,
       subject: "Verify your email",
       html: `
       <h1>Verify your email</h1>
       <p>Please click the link below to verify your email:</p>
       <a href="${confirmLink}">${confirmLink}</a>
-      <p>This link will expire in 24 hours</p>
+      <p>This link will expire in 30 minutes</p>
     `,
     });
     if (error) {

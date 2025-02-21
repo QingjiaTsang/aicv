@@ -9,14 +9,14 @@
   },
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --keep-vars --minify",
+    "deploy": "wrangler deploy --minify",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "npm run lint --fix",
     "test": "cross-env NODE_ENV=test vitest",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate:local": "wrangler d1 migrations apply aicv-app-prod --local",
+    "db:migrate:local": "wrangler d1 migrations apply aicv-app-dev --local",
     "db:migrate:remote": "wrangler d1 migrations apply aicv-app-prod --remote"
   },
   "dependencies": {

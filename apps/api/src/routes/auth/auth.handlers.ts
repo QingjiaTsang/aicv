@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { addDays, addHours } from "date-fns";
+import { addDays, addMinutes } from "date-fns";
 import { eq } from "drizzle-orm";
 import { setCookie } from "hono/cookie";
 import * as HttpStatusCodes from "stoker/http-status-codes";
@@ -56,7 +56,7 @@ export const signup: AppRouteHandler<SignupRoute> = async (c) => {
 
   const hashedPassword = await hashPassword(body.password!);
   const verificationToken = createId();
-  const expires = addHours(now, 1);
+  const expires = addMinutes(now, 30);
 
   if (existingUser) {
     await db.batch([
