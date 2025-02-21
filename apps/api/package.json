@@ -16,7 +16,7 @@
     "test": "cross-env NODE_ENV=test vitest",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate:local": "wrangler d1 migrations apply aicv-app-dev --local",
+    "db:migrate:local": "wrangler d1 migrations apply aicv-app-prod --local",
     "db:migrate:remote": "wrangler d1 migrations apply aicv-app-prod --remote"
   },
   "dependencies": {

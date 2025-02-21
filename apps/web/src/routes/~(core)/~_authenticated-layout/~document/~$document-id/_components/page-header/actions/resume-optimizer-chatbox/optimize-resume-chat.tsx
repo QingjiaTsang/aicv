@@ -92,7 +92,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
     id: `resume-optimization-${document.id}-${section}`,
     body: { resumeContext: resumeContextRef.current },
     onError: (_error) => {
-      toast.error(t('prompts.error.streaming'))
+      toast.error(t('document.actions.aiOptimization.error.streaming'))
     }
   })
   const isStreaming = status === 'streaming'
@@ -121,7 +121,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
         content: promptMap[section],
       })
     } catch (error) {
-      toast.error(t('prompts.error.analysis'))
+      toast.error(t('document.actions.aiOptimization.error.analysis'))
     }
   }, [append, isStreaming])
 
@@ -156,10 +156,10 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
 
       await append({
         role: 'user',
-        content: t('upload.prompt'),
+        content: t('optimize.uploadError'),
       });
     } catch (error) {
-      toast.error(t('upload.error'))
+      toast.error(t('optimize.uploadError'))
     }
   }, [append, isStreaming])
 
