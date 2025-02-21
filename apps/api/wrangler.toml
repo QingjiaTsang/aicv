@@ -1,6 +1,6 @@
-name = "aicv-app"
+name = "aicv"
 main = "src/app.ts"
-compatibility_date = "2025-01-05"
+compatibility_date = "2025-02-21"
 compatibility_flags = [ "nodejs_compat" ]
 
 [assets]
@@ -9,23 +9,29 @@ binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "aicv-app"
-database_id = "c82d56ac-6281-4c4d-95ec-c34f1e265469"
+database_name = "aicv-app-prod"
+database_id = "77bf466e-1c18-4e25-b406-15afe6dc35a8"
 migrations_dir = "src/db/migrations"
 
 [[r2_buckets]]
-bucket_name = "resume-thumbnail"
+bucket_name = "resume-thumbnail-prod"
 binding = "RESUME_THUMBNAIL_BUCKET"
 
 [vars]
-LOG_LEVEL = "debug"
+LOG_LEVEL = "info"
 ENV = "production"
-AUTH_URL = "http://your-site/api/auth"
-GITHUB_CLIENT_ID = "your-github-client-id"
+AUTH_URL = "https://aicv.johnlocke12321.workers.dev/api/auth"
+GITHUB_CLIENT_ID = "Ov23liP9ac70mVpBsz8F"
 GITHUB_CLIENT_SECRET = "your-github-client-secret"
 AUTH_SECRET = "your-auth-secret"
-AUTH_GOOGLE_ID="your-google-client-id"
+AUTH_GOOGLE_ID="880313991415-kqf3qhoqlu30oikc6iq953nk8jaov4fu.apps.googleusercontent.com"
 AUTH_GOOGLE_SECRET="your-google-client-secret" 
 RESEND_API_KEY = "re_xxxxxx..."
-APP_URL = "http://localhost:5173"
+APP_URL = "https://aicv.johnlocke12321.workers.dev"
 DEEPSEEK_API_KEY = ""
+
+[observability.logs]
+enabled = true
+
+
+

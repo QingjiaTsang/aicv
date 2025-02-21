@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from "react"
-import Quill, { Delta } from "quill"
+import Quill from "quill"
 import { cn } from "@/web/lib/utils"
 
 import "quill/dist/quill.snow.css"

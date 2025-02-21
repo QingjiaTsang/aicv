@@ -91,7 +91,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
     api: '/api/ai/optimize/streamText',
     id: `resume-optimization-${document.id}-${section}`,
     body: { resumeContext: resumeContextRef.current },
-    onError: (error) => {
+    onError: (_error) => {
       toast.error(t('prompts.error.streaming'))
     }
   })

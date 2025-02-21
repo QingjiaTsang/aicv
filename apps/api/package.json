@@ -9,15 +9,15 @@
   },
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
+    "deploy": "wrangler deploy --keep-vars --minify",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "npm run lint --fix",
     "test": "cross-env NODE_ENV=test vitest",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate:local": "wrangler d1 migrations apply aicv-app --local",
-    "db:migrate:remote": "wrangler d1 migrations apply aicv-app --remote"
+    "db:migrate:local": "wrangler d1 migrations apply aicv-app-dev --local",
+    "db:migrate:remote": "wrangler d1 migrations apply aicv-app-prod --remote"
   },
   "dependencies": {
     "@aicv-app/ai-core": "workspace:^",
@@ -49,7 +49,6 @@
     "@cloudflare/workers-types": "^4.20241205.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.10.2",
-    "cross-env": "^7.0.3",
     "drizzle-kit": "^0.30.1",
     "eslint": "^9.17.0",
     "eslint-plugin-drizzle": "^0.2.3",

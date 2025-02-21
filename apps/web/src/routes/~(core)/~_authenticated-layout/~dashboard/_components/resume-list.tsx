@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, MoreVertical, Pencil, Star, Trash2, Eye, LockOpen, Lock, Archive } from "lucide-react";
+import { FileText, MoreVertical, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/web/components/shadcn-ui/button";
 import { Card } from "@/web/components/shadcn-ui/card";

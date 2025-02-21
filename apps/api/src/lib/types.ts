@@ -1,3 +1,4 @@
+import type { AuthConfig, AuthUser } from "@hono/auth-js";
 import type { OpenAPIHono, RouteConfig, RouteHandler } from "@hono/zod-openapi";
 
 import type { BASE_PATH } from "./constants";
@@ -17,6 +18,10 @@ export type AppEnv = {
     ASSETS: Fetcher;
     DB: D1Database;
     RESUME_THUMBNAIL_BUCKET: R2Bucket;
+  };
+  Variables: {
+    authUser: AuthUser;
+    authConfig: AuthConfig;
   };
 };
 

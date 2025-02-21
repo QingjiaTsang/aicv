@@ -1,7 +1,7 @@
 import queryClient from '@/web/lib/query-client'
 import { useUpdateDocumentByTypeMutation } from '@/web/services/documents/mutations'
 import { documentKeys } from '@/web/services/documents/queries'
-import { SelectDocumentWithRelationsSchema, UpdateEducationSchema, UpdateExperienceSchema } from '@aicv-app/api/schema'
+import { SelectDocumentWithRelationsSchema } from '@aicv-app/api/schema'
 import { atom, useAtom } from 'jotai'
 
 type Field = 'experience' | 'education' | 'skills'

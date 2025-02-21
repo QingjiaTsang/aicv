@@ -2,14 +2,13 @@ import { ThemeModeToggle } from "@/web/components/shadcn-ui/theme-mode-toggle";
 import type { User } from "@auth/core/types";
 import { signOut, useSession } from "@hono/auth-js/react";
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, LogOut, Settings, User as UserIcon } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/web/components/shadcn-ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,

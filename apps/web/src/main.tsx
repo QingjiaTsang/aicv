@@ -3,7 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/web/components/providers/theme-provider";
 import { Toaster } from "@/web/components/shadcn-ui/sonner"
 import { StrictMode } from "react";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { createRoot } from "react-dom/client";
 

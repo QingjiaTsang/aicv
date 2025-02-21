@@ -1,6 +1,6 @@
 import { getSession } from "@hono/auth-js/react";
 import { createRootRouteWithContext, Outlet, useMatchRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+// import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 import AppNavbar from "@/web/components/app-navbar";
 import { ReactLenis } from "lenis/react";

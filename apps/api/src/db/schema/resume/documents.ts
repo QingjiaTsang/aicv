@@ -4,11 +4,11 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { ulid } from "ulid";
 import { z } from "zod";
 
-import { users } from "@/api/db/schema/auth/auth";
-import { education } from "@/api/db/schema/resume/education";
-import { experience } from "@/api/db/schema/resume/experience";
-import { personalInfo } from "@/api/db/schema/resume/personal-info";
-import { skills } from "@/api/db/schema/resume/skills";
+import { users } from "../auth";
+import { education } from "./education";
+import { experience } from "./experience";
+import { personalInfo } from "./personal-info";
+import { skills } from "./skills";
 
 export const DOCUMENT_STATUS = {
   PRIVATE: "private",

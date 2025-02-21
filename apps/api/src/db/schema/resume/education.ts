@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-import { documents } from "@/api/db/schema/resume/documents";
-import { baseFields } from "@/api/db/schema/utils/base-schema-fields";
+import { baseFields } from "../utils/base-schema-fields";
+import { documents } from "./documents";
 
 export const education = sqliteTable("education", {
   ...baseFields,

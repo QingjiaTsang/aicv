@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/web/components/shadcn-ui/button';
-import { Languages, Globe } from 'lucide-react';
+import { Languages } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -100,7 +100,7 @@ export const createUserSchema = createInsertSchema(users)
       .min(8, "Password must be at least 8 characters")
       .max(18, "Password cannot exceed 18 characters")
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,18}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[\w!@#$%^&*()+=\-.,?":{}|<>[\]/]{8,18}$/,
         "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
       )
       .refine(
@@ -123,9 +123,6 @@ export const credentialsSigninSchema = createUserSchema.omit({
     .min(1, "Email cannot be empty")
     .email("Please enter a valid email address")
     .transform(value => value.toLowerCase()),
-  password: z.string()
-    .min(6, "Password must be at least 6 characters")
-    .max(100, "Password cannot exceed 100 characters"),
 });
 export type CredentialsSigninSchema = z.infer<typeof credentialsSigninSchema>;
 

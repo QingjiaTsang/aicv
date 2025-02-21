@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { index, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-import { documents } from "@/api/db/schema/resume/documents";
-import { baseFields } from "@/api/db/schema/utils/base-schema-fields";
+import { baseFields } from "../utils/base-schema-fields";
+import { documents } from "./documents";
 
 export const personalInfo = sqliteTable("personal_info", {
   ...baseFields,
