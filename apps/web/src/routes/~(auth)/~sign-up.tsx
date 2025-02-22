@@ -84,7 +84,7 @@ function SignUpPage() {
 
   if (isEmailSent) {
     return (
-      <div className="flex h-full px-4 items-center justify-center relative">
+      <div className="flex h-[calc(100dvh-64px)] w-full px-4 items-center justify-center relative">
         <AuthBackground />
         <Card className="p-0 w-full max-w-sm border dark:border-gray-800 dark:bg-gray-950/80 shadow-2xl backdrop-blur-sm overflow-hidden">
           <div className="flex flex-col items-center justify-center p-8 space-y-6">

@@ -8,9 +8,9 @@ import { drizzle } from "drizzle-orm/d1";
 import type { AppEnv } from "@/api/lib/types";
 
 // import { AuthError, CredentialsSignin } from "@auth/core/errors";
+// import { createId } from "@paralleldrive/cuid2";
 // import { encode } from "@auth/core/jwt";
 // import Credentials from "@auth/core/providers/credentials";
-// import { createId } from "@paralleldrive/cuid2";
 // import { getUserFromDb } from "./auth-utils";
 
 // Note: it doesn't support custom error handling when it comes to credentials in auth.js.
@@ -30,6 +30,25 @@ export default function createAuthConfig(env: AppEnv["Bindings"]): AuthConfig {
   return {
     adapter,
     secret: env.AUTH_SECRET,
+    // Important note:
+    // Since we customize the credentials signin logic in the credentialsSignin route where we set the cookie by ourselves,
+    // we need to set the cookie options here to be the same as the ones in the credentialsSignin route
+    // to tell auth.js to use this exact cookie opting out of the built-in dynamic policy, instead of using the default one.
+    // (otherwise, it'll surprisingly cause some weird issues in production but in dev it's fine)
+    cookies: {
+      sessionToken: {
+        name: "authjs.session-token",
+        options: {
+          httpOnly: true,
+          sameSite: "lax",
+          path: "/",
+          secure: env.ENV === "production",
+          domain: env.ENV === "production"
+            ? env.COOKIE_DOMAIN
+            : undefined,
+        },
+      },
+    },
     providers: [
       GitHub({
         clientId: env.GITHUB_CLIENT_ID,

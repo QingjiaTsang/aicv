@@ -105,7 +105,7 @@ export const verifyEmail: AppRouteHandler<VerifyEmailRoute> = async (c) => {
 
   if (!verificationToken) {
     return c.json({
-      message: "Invalid verification link",
+      message: "Verification link is invalid or already verified",
     }, HttpStatusCodes.BAD_REQUEST);
   }
 
@@ -152,6 +152,10 @@ export const credentialsSignin: AppRouteHandler<CredentialsSigninRoute> = async 
     httpOnly: true,
     secure: c.env.ENV === "production",
     path: "/",
+    sameSite: "Lax",
+    domain: c.env.ENV === "production"
+      ? c.env.COOKIE_DOMAIN
+      : undefined,
   });
 
   return c.json(result.user, HttpStatusCodes.OK);

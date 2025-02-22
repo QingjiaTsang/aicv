@@ -29,6 +29,7 @@ AUTH_GOOGLE_SECRET = "your-google-client-secret"
 RESEND_API_KEY = "your-resend-api-key"
 APP_URL = "https://aicv.johnlocke12321.workers.dev"
 DEEPSEEK_API_KEY = "your-deepseek-api-key"
+COOKIE_DOMAIN=".your-domain"
 
 [observability.logs]
 enabled = true

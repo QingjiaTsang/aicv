@@ -14,6 +14,7 @@ export type AppEnv = {
     RESEND_API_KEY: string;
     APP_URL: string;
     DEEPSEEK_API_KEY: string;
+    COOKIE_DOMAIN: string;
 
     ASSETS: Fetcher;
     DB: D1Database;
