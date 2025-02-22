@@ -40,7 +40,7 @@ Tour:
 
 > All pnpm commands are run from the root of the repo.
 
-## Local Setup
+## Local **Setup**
 
 ### Install dependencies
 
@@ -60,6 +60,47 @@ Update `database_name` and `database_id` in [apps/api/wrangler.toml](./apps/api/
 
 ```sh
 pnpm run -r db:migrate:local
+```
+
+### Configure Environment Variables
+
+For local development and production, copy the example configuration file:
+
+```sh
+cp apps/api/wrangler.toml.example apps/api/wrangler.toml
+```
+
+Update the following variables in `apps/api/wrangler.toml`:
+
+- `database_name`: Your database name
+- `database_id`: Your database ID
+- `AUTH_URL`: Authentication URL
+- `GITHUB_CLIENT_ID`: GitHub client ID
+- `GITHUB_CLIENT_SECRET`: GitHub client secret
+- `AUTH_SECRET`: Authentication secret
+- `AUTH_GOOGLE_ID`: Google client ID
+- `AUTH_GOOGLE_SECRET`: Google client secret
+- `RESEND_API_KEY`: Resend API key
+- `APP_URL`: Your application URL
+- `COOKIE_DOMAIN`: Cookie domain
+- `DEEPSEEK_API_KEY`: DeepSeek API key
+
+For development, create a `.dev.vars` file in the `apps/api` directory with the following content:
+
+```env
+LOG_LEVEL=debug
+ENV=development
+
+AUTH_URL=http://localhost:5173/api/auth
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+AUTH_SECRET=your-auth-secret
+AUTH_GOOGLE_ID=your-google-client-id.apps.googleusercontent.com
+AUTH_GOOGLE_SECRET=your-google-client-secret
+RESEND_API_KEY=your-resend-api-key
+APP_URL=http://localhost:5173
+DEEPSEEK_API_KEY=your-deepseek-api-key
+COOKIE_DOMAIN=localhost
 ```
 
 ### Start Apps

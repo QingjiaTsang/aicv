@@ -7,22 +7,6 @@ import { drizzle } from "drizzle-orm/d1";
 
 import type { AppEnv } from "@/api/lib/types";
 
-// import { AuthError, CredentialsSignin } from "@auth/core/errors";
-// import { createId } from "@paralleldrive/cuid2";
-// import { encode } from "@auth/core/jwt";
-// import Credentials from "@auth/core/providers/credentials";
-// import { getUserFromDb } from "./auth-utils";
-
-// Note: it doesn't support custom error handling when it comes to credentials in auth.js.
-// The solution from docs is also not working for stacks with Vite, React and Honojs.
-// Related issue: https://github.com/nextauthjs/next-auth/issues/12479
-// So I handle it manually by building my endpoint compatible with auth.js.
-
-// Docs' solution: https://authjs.dev/getting-started/providers/credentials
-// class InvalidLoginError extends CredentialsSignin {
-//   code = "custom_error";
-// }
-
 export default function createAuthConfig(env: AppEnv["Bindings"]): AuthConfig {
   const adapter = DrizzleAdapter(drizzle(env.DB));
   // const db = drizzle(env.DB);
