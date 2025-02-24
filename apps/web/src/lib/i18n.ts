@@ -666,7 +666,7 @@ const resources = {
       },
       aiShowcase: {
         title: 'AI 简历增强',
-        description: '我们的高级 AI 分析你的简历，提供智能建议，让你的经验在雇主和 ATS 系统面前脱颖而出。',
+        description: '我们的高级 AI 分析你的简历，提供智能建议，让你的经验在雇主和 ATS 机筛系统面前脱颖而出。',
         features: {
           recommendations: '智能内容推荐',
           keywords: '行业关键词优化',

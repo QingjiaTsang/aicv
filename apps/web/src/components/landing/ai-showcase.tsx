@@ -73,7 +73,7 @@ export function AIShowcaseSection() {
             className="lg:pl-8 flex justify-center items-center"
           >
             <div className="relative">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/20 to-purple-600/20 blur-md sm:blur-3xl" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/20 to-purple-600/20 blur-md sm:blur-3xl transform-gpu" />
                 <div className="relative">
                   <img
                     src="/images/mobile-screenshot.png"

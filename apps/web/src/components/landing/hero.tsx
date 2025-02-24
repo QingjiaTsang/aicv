@@ -95,7 +95,7 @@ export function HeroSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="relative mt-8 mx-auto max-w-4xl"
         >
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500/20 to-blue-500/20 dark:from-violet-500/10 dark:to-purple-500/10 blur-3xl" />
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500/20 to-blue-500/20 dark:from-violet-500/10 dark:to-purple-500/10 blur-3xl transform-gpu" />
           <div className="relative">
             <img
               src="/images/macbook-screenshot.png"
