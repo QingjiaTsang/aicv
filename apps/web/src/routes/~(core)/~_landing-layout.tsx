@@ -7,7 +7,6 @@ export const Route = createFileRoute('/(core)/_landing-layout')({
 function RouteComponent() {
   return (
     <div>
-      <h1>Hello "/(landing)/_landing-layout"!</h1>
       <Outlet />
     </div>
   )

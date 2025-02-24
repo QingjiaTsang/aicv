@@ -27,7 +27,7 @@ type OptimizeResumeChatProps = {
 export function OptimizeResumeChat({ document, section, isOpen, onClose }: OptimizeResumeChatProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [isMinimized, setIsMinimized] = useState(false)
-  const [size, setSize] = useState({ width: 400, height: 600 })
+  const [size, setSize] = useState({ width: 400, height: 650 })
   const [position, setPosition] = useState({ x: window.innerWidth - 420, y: window.innerHeight - 620 })
   const [isDragging, setIsDragging] = useState(false)
   const dragStartPos = useRef({ x: 0, y: 0 })
@@ -111,9 +111,9 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
       }
 
       const promptMap = {
-        summary: t('prompts.analyze.summary'),
-        experience: t('prompts.analyze.experience'),
-        all: t('prompts.analyze.all')
+        summary: t('optimize.optimizeSummary'),
+        experience: t('optimize.optimizeExperience'),
+        all: t('optimize.analyzeResume')
       }
 
       await append({
@@ -156,17 +156,29 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
 
       await append({
         role: 'user',
-        content: t('optimize.uploadError'),
+        content: t('upload.prompt'),
       });
     } catch (error) {
-      toast.error(t('optimize.uploadError'))
+      toast.error(t('upload.error'))
     }
   }, [append, isStreaming])
 
   const handleResize = (_e: React.SyntheticEvent, { size: newSize }: { size: { width: number; height: number } }) => {
-    const maxWidth = window.innerWidth - position.x - 20
-    const maxHeight = window.innerHeight - position.y - 20
-    
+    // Calculate the new position and size
+    const widthChange = newSize.width - size.width
+    const heightChange = newSize.height - size.height
+
+    // When dragging the chatbox to the left top, update the position and size
+    const newPosition = {
+      x: Math.max(20, position.x - widthChange),
+      y: Math.max(20, position.y - heightChange)
+    }
+
+    // Make sure the chatbox is not out of the screen
+    const maxWidth = window.innerWidth - newPosition.x - 20
+    const maxHeight = window.innerHeight - newPosition.y - 20
+
+    setPosition(newPosition)
     setSize({
       width: Math.min(newSize.width, maxWidth),
       height: Math.min(newSize.height, maxHeight)
@@ -255,7 +267,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
             </Button>
           </DrawerHeader>
           
-          <div data-lenis-stop className="flex flex-col h-[calc(100%-4rem)]">
+          <div data-lenis-stop className="flex flex-col min-h-[calc(100%-4rem)]">
             <ChatContent 
               messages={messages}
               input={input}
@@ -280,22 +292,23 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
       width={size.width}
       height={size.height}
       onResize={handleResize}
-      minConstraints={[300, 400]}
+      minConstraints={[400, 700]}
       maxConstraints={[
-        window.innerWidth - position.x - 20,
-        window.innerHeight - position.y - 20
+        window.innerWidth - 40,
+        window.innerHeight - 40
       ]}
       handle={
         <div className={cn(
-          "absolute right-0 bottom-0 w-4 h-4 cursor-se-resize",
-          "after:content-[''] after:absolute after:right-1 after:bottom-1",
-          "after:w-2 after:h-2 after:border-r-2 after:border-b-2",
+          "absolute left-0 top-0 w-4 h-4 cursor-nw-resize",
+          "after:content-[''] after:absolute after:left-1 after:top-1",
+          "after:w-2 after:h-2 after:border-l-2 after:border-t-2",
           "after:border-violet-500/50",
           isMinimized && "hidden"
         )} />
       }
+      resizeHandles={['nw']}
     >
-      <div 
+      <div
         role="dialog"
         aria-labelledby="optimize-chat-title"
         aria-modal="true"
@@ -326,7 +339,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
           <div className="flex items-center gap-2">
             <Sparkles className="size-4 text-violet-500" />
             <h2 id="optimize-chat-title" className="text-sm font-medium">
-              {section === 'all' 
+              {section === 'all'
                 ? t('section.optimize.title')
                 : section === 'summary'
                   ? t('section.optimize.summary')
@@ -340,7 +353,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
               variant="ghost"
               size="icon"
               onClick={() => setIsMinimized(!isMinimized)}
-              className="h-8 w-8 hover:text-violet-500"
+              className="size-8 hover:text-violet-500"
               aria-label={isMinimized ? t('drawer.expand') : t('drawer.minimize')}
             >
               <Minus className="size-4" />
@@ -350,7 +363,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8 hover:text-violet-500"
+              className="size-8 hover:text-violet-500"
               aria-label={t('drawer.close')}
             >
               <X className="size-4" />

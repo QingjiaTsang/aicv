@@ -38,11 +38,11 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
 
   const { mutateAsync: deleteDocument } = useDeleteDocumentMutation({
     onSuccess: async () => {
-      await navigate({ 
-        to: "/dashboard", 
-        search: { 
-          status: undefined, 
-          search: "" 
+      await navigate({
+        to: "/dashboard",
+        search: {
+          status: undefined,
+          search: ""
         },
         replace: true
       })
@@ -83,7 +83,7 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
     if (!confirmed) {
       return;
     }
-    
+
     try {
       await deleteDocument(document.id)
     } catch (error) {
@@ -171,8 +171,8 @@ export function DocumentHeaderActions({ document, }: DocumentActionsProps) {
       <DeleteResumeConfirmDialog />
 
       <div className="hidden sm:flex items-center gap-2">
-        <OptimizeResumeAction 
-          document={document} 
+        <OptimizeResumeAction
+          document={document}
           isOpen={isOptimizeOpen}
           onOpenChange={setIsOptimizeOpen}
         />

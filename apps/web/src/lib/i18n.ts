@@ -42,7 +42,7 @@ const resources = {
           }
         },
         signUp: {
-          title: 'Create Account',
+          title: 'Sign Up',
           emailSent: {
             title: 'Verification Email Sent',
             description: 'Please check your email and click the verification link to complete the process.',
@@ -108,6 +108,14 @@ const resources = {
           deleteAllError: 'Failed to delete all resumes',
           error: 'Operation failed, please try again',
         },
+        hero: {
+          title: 'Create Professional Resumes with AI',
+          description: 'Use our AI-powered tools to easily create professional resumes',
+          features: {
+            aiSuggestions: 'AI-powered content optimization suggestions',
+            createNew: 'Create New Resume'
+          }
+        },
       },
       resume: {
         optimization: {
@@ -154,13 +162,73 @@ const resources = {
         dark: 'Dark',
         system: 'System'
       },
-         hero: {
+      hero: {
         title: 'AI Resume Builder',
-        description: 'Create a professional resume, let AI help you showcase your best career image',
-        features: {
-          aiSuggestions: 'AI-powered suggestions to optimize your content',
-          createNew: 'Create New Resume'
+        description: 'Create professional resumes with the power of AI. Stand out from the crowd and land your dream job.',
+        poweredBy: 'Powered by DeepSeek',
+        buttons: {
+          getStarted: 'Get Started',
+          viewSource: 'View Source'
         }
+      },
+      features: {
+        title: 'Powerful Features for the Perfect Resume',
+        description: 'Everything you need to create a professional, ATS-friendly resume that helps you land your dream job.',
+        items: {
+          aiSuggestions: {
+            title: 'AI-Powered Suggestions',
+            description: 'Get intelligent recommendations for improving your resume content and structure.'
+          },
+          atsTemplates: {
+            title: 'ATS-Friendly Templates',
+            description: 'Choose from a variety of templates designed to pass Applicant Tracking Systems.'
+          },
+          smartFormatting: {
+            title: 'Smart Formatting',
+            description: 'Automatically format your resume with professional layouts and typography.'
+          },
+          keywordOptimization: {
+            title: 'Keyword Optimization',
+            description: 'Optimize your resume with industry-specific keywords to increase visibility.'
+          },
+          realTimePreview: {
+            title: 'Real-Time Preview',
+            description: 'See changes instantly as you edit your resume with live preview.'
+          },
+          oneStyling: {
+            title: 'One-Click Styling',
+            description: 'Apply professional styling and formatting with a single click.'
+          }
+        }
+      },
+      howItWorks: {
+        title: 'How It Works',
+        description: 'Create your perfect resume in three simple steps with our intuitive process and AI-powered assistance.',
+        steps: {
+          upload: {
+            title: 'Upload Your Information',
+            description: 'Start by uploading your existing resume or entering your information manually.'
+          },
+          customize: {
+            title: 'Customize and Optimize',
+            description: 'Our AI assistant helps you optimize content and choose the perfect template.'
+          },
+          download: {
+            title: 'Download Your Resume',
+            description: 'Get your professionally formatted resume in multiple formats, ready to send.'
+          }
+        }
+      },
+      aiShowcase: {
+        title: 'AI-Powered Resume Enhancement',
+        description: 'Our advanced AI analyzes your resume and provides intelligent suggestions to make your experience stand out to employers and ATS systems.',
+        features: {
+          recommendations: 'Smart content recommendations',
+          keywords: 'Industry-specific keyword optimization',
+          tone: 'Professional tone adjustment',
+          skills: 'Skills gap analysis'
+        },
+        button: 'Try AI Enhancement'
       },
       document: {
         actions: {
@@ -418,7 +486,7 @@ const resources = {
           }
         },
         signUp: {
-          title: '创建账号',
+          title: '注册',
           emailSent: {
             title: '验证邮件已发送',
             description: '请检查您的邮箱并点击验证链接完成注册。',
@@ -485,6 +553,14 @@ const resources = {
           deleteAllError: '删除所有简历失败',
           error: '操作失败，请重试',
         },
+        hero: {
+          title: '创建专业简历，让 AI 帮助你展现最佳职业形象',
+          description: '使用我们的 AI 驱动工具，轻松创建专业的简历',
+          features: {
+            aiSuggestions: 'AI 驱动的内容优化建议',
+            createNew: '创建简历'
+          }
+        },
       },
       resume: {
         optimization: {
@@ -533,11 +609,71 @@ const resources = {
       },
       hero: {
         title: 'AI 简历生成器',
-        description: '创建专业简历，让 AI 帮助你展现最佳职业形象',
-        features: {
-          aiSuggestions: 'AI 驱动的内容优化建议',
-          createNew: '创建新简历'
+        description: '借助 AI 创建专业简历，从人群中脱颖而出，获得理想工作。',
+        poweredBy: '由 DeepSeek 提供支持',
+        buttons: {
+          getStarted: '立即开始',
+          viewSource: '查看源码'
         }
+      },
+      features: {
+        title: '打造完美简历的强大功能',
+        description: '我们提供一切你需要的工具，帮助你创建专业的、ATS友好的简历，助你获得理想工作。',
+        items: {
+          aiSuggestions: {
+            title: 'AI 智能建议',
+            description: '获得智能建议，改进简历内容和结构。'
+          },
+          atsTemplates: {
+            title: 'ATS 友好模板',
+            description: '选择多种专为通过申请人跟踪系统设计的模板。'
+          },
+          smartFormatting: {
+            title: '智能排版',
+            description: '自动应用专业的布局和排版。'
+          },
+          keywordOptimization: {
+            title: '关键词优化',
+            description: '使用行业特定关键词优化简历，提高可见度。'
+          },
+          realTimePreview: {
+            title: '实时预览',
+            description: '编辑时即时查看简历效果。'
+          },
+          oneStyling: {
+            title: '一键美化',
+            description: '一键应用专业的样式和格式。'
+          }
+        }
+      },
+      howItWorks: {
+        title: '使用方法',
+        description: '通过我们直观的流程和 AI 助手，三个简单步骤创建完美简历。',
+        steps: {
+          upload: {
+            title: '上传信息',
+            description: '上传现有简历或手动输入信息开始。'
+          },
+          customize: {
+            title: '定制和优化',
+            description: '我们的 AI 助手帮助你优化内容并选择完美模板。'
+          },
+          download: {
+            title: '下载简历',
+            description: '获取多种格式的专业简历，随时可以发送。'
+          }
+        }
+      },
+      aiShowcase: {
+        title: 'AI 简历增强',
+        description: '我们的高级 AI 分析你的简历，提供智能建议，让你的经验在雇主和 ATS 系统面前脱颖而出。',
+        features: {
+          recommendations: '智能内容推荐',
+          keywords: '行业关键词优化',
+          tone: '专业语气调整',
+          skills: '技能差距分析'
+        },
+        button: '体验 AI 增强'
       },
       document: {
         actions: {

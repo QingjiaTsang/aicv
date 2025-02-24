@@ -32,14 +32,14 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
                 className="space-y-3"
               >
                 <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-600 via-fuchsia-600 to-purple-600 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent">
-                  {t('hero.title')}
+                  {t('dashboard.hero.title')}
                 </h1>
                 <p className="text-lg text-muted-foreground">
-                  {t('hero.description')}
+                  {t('dashboard.hero.description')}
                 </p>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Sparkles className="size-4 text-primary" />
-                  <span>{t('hero.features.aiSuggestions')}</span>
+                  <span>{t('dashboard.hero.features.aiSuggestions')}</span>
                 </div>
               </motion.div>
 
@@ -56,7 +56,7 @@ export function DashboardHero({ onCreate, isPending }: DashboardHeroProps) {
                   className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 dark:from-primary dark:to-purple-500 text-white shadow-lg hover:shadow-primary/25 transition-all duration-300"
                 >
                   <FileText className="mr-2 size-5" />
-                  {t('hero.features.createNew')}
+                  {t('dashboard.hero.features.createNew')}
                 </Button>
               </motion.div>
             </div>

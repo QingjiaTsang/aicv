@@ -83,7 +83,7 @@ export function ChatContent({
   }, [messages, isStreaming, userScrolled, scrollToBottom])
 
   return (
-    <div className="flex h-[600px] flex-col">
+    <div className="flex h-[600px] flex-col flex-1">
       <div 
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 sm:gap-4"
@@ -124,7 +124,7 @@ export function ChatContent({
       <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="p-4 space-y-4">
           {messages.length === 0 && (
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-center gap-2">
               <Button
                 className="w-full bg-violet-600 hover:bg-violet-700 text-white"
                 onClick={handleAnalyzeResume}

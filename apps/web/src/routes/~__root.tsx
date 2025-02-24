@@ -30,7 +30,7 @@ function RootLayout() {
   return (
     <>
       <ScrollRestoration getKey={(location) => location.pathname} />
-      <ReactLenis 
+      <ReactLenis
         root
         options={{
           // Note: add `data-lenis-stop` to the elements that should not be applied with lenis especially for modal, drawer, etc.

@@ -7,29 +7,43 @@ compatibility_flags = [ "nodejs_compat" ]
 directory = "public"
 binding = "ASSETS"
 
+# Production environment (default)
 [[d1_databases]]
 binding = "DB"
-database_name = "your-db-name"
-database_id = "77bf466e-1c18-4e25-b406-15afe6dc35a8"
+database_name = "your-db-name-prod"
+database_id = "your-database-id-prod"
 migrations_dir = "src/db/migrations"
 
+# Development environment override
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "your-db-name-dev"
+database_id = "your-database-id-dev"
+migrations_dir = "src/db/migrations"
+
+# Production R2 bucket (default)
 [[r2_buckets]]
-bucket_name = "resume-thumbnail-prod"
+bucket_name = "your-bucket-name-prod"
+binding = "RESUME_THUMBNAIL_BUCKET"
+
+# Development R2 bucket
+[[env.development.r2_buckets]]
+bucket_name = "your-bucket-name-dev"
 binding = "RESUME_THUMBNAIL_BUCKET"
 
 [vars]
 LOG_LEVEL = "info"
 ENV = "production"
-AUTH_URL = "https://aicv.johnlocke12321.workers.dev/api/auth"
+AUTH_URL = "https://your-domain.com/api/auth"
 GITHUB_CLIENT_ID = "your-github-client-id"
 GITHUB_CLIENT_SECRET = "your-github-client-secret"
-AUTH_SECRET = "your-auth-secret"
+AUTH_SECRET = "your-base64-32byte-secret" # Generate with: openssl rand -base64 32
 AUTH_GOOGLE_ID = "your-google-client-id"
-AUTH_GOOGLE_SECRET = "your-google-client-secret" 
+AUTH_GOOGLE_SECRET = "your-google-client-secret"
 RESEND_API_KEY = "your-resend-api-key"
-APP_URL = "https://aicv.johnlocke12321.workers.dev"
+APP_URL = "https://your-domain.com"
+COOKIE_DOMAIN = ".your-domain.com"
 DEEPSEEK_API_KEY = "your-deepseek-api-key"
-COOKIE_DOMAIN=".your-domain"
 
 [observability.logs]
 enabled = true

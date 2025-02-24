@@ -31,7 +31,7 @@ export function OptimizeResumeAction({ document, isOpen, onOpenChange }: Optimiz
     <>
       <TooltipButton
         tooltip={t('optimize.button.tooltip')}
-        onClick={() => onOpenChange(true)}
+        onClick={() => onOpenChange(!isOpen)}
         className={cn(
           "hover:text-violet-500 dark:hover:text-violet-400",
           "transition-colors duration-200"
@@ -48,4 +48,4 @@ export function OptimizeResumeAction({ document, isOpen, onOpenChange }: Optimiz
       />
     </>
   )
-} 
+}

@@ -4,6 +4,8 @@ import { signOut, useSession } from "@hono/auth-js/react";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, LogOut } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { motion } from "framer-motion";
+import { Button } from "@/web/components/shadcn-ui/button";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/web/components/shadcn-ui/avatar";
 import {
@@ -15,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/web/components/shadcn-ui/dropdown-menu";
 import { LanguageSwitcher } from "@/web/components/language-switcher";
+import { cn } from "@/web/lib/utils";
 
 const getInitials = (name: string | null | undefined) => {
   if (!name) {
@@ -29,7 +32,10 @@ function UserProfile({ user }: { user: User }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center gap-1 cursor-pointer">
+        <motion.div 
+          whileHover={{ scale: 1.05 }}
+          className="flex items-center gap-1 cursor-pointer"
+        >
           <Avatar className="size-9 cursor-pointer ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
             <AvatarImage src={user.image ?? ''} alt={user.name ?? 'User avatar'} />
             <AvatarFallback className="bg-gradient-to-r from-primary to-fuchsia-500 text-white">
@@ -37,7 +43,7 @@ function UserProfile({ user }: { user: User }) {
             </AvatarFallback>
           </Avatar>
           <ChevronDown className="size-4" />
-        </div>
+        </motion.div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuLabel className="font-normal">
@@ -61,6 +67,37 @@ function UserProfile({ user }: { user: User }) {
   );
 }
 
+function AuthButtons() {
+  const { t } = useTranslation();
+  
+  return (
+    <div className="flex items-center gap-2">
+      <Link to="/sign-in">
+        <Button 
+          variant="ghost"
+          className="text-muted-foreground hover:text-foreground text-sm md:text-base px-2 md:px-4 h-8 md:h-10"
+        >
+          {t('auth.signIn.title')}
+        </Button>
+      </Link>
+      <Link to="/sign-up">
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button className={cn(
+            "bg-gradient-to-r from-violet-500 via-fuchsia-500 to-purple-500",
+            "hover:from-violet-600 hover:via-fuchsia-600 hover:to-purple-600",
+            "dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400",
+            "dark:hover:from-violet-500 dark:hover:via-fuchsia-500 dark:hover:to-purple-600",
+            "text-white shadow-lg hover:shadow-primary/25 transition-all duration-300",
+            "text-sm md:text-base px-3 md:px-4 h-8 md:h-10"
+          )}>
+            {t('auth.signUp.title')}
+          </Button>
+        </motion.div>
+      </Link>
+    </div>
+  );
+}
+
 export default function AppNavbar() {
   const session = useSession();
 
@@ -69,8 +106,10 @@ export default function AppNavbar() {
       <div className="container max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0">
-            <Link to="/dashboard" search={{ status: undefined, search: '' }}>
-              <strong className="text-2xl md:text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-primary via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent hover:scale-110 transition-transform duration-200 cursor-pointer">
+            <Link to="/">
+              <strong 
+                className="text-2xl md:text-3xl font-normal font-['Righteous'] bg-gradient-to-r from-primary via-fuchsia-500 to-purple-500 dark:from-violet-400 dark:via-fuchsia-400 dark:to-purple-400 bg-clip-text text-transparent cursor-pointer"
+              >
                 AICV
               </strong>
             </Link>
@@ -79,10 +118,14 @@ export default function AppNavbar() {
           <div className="flex items-center gap-3 md:gap-4">
             <ThemeModeToggle />
             <LanguageSwitcher />
-            {session.data?.user && <UserProfile user={session.data.user} />}
+            {session.data?.user ? (
+              <UserProfile user={session.data.user} />
+            ) : (
+              <AuthButtons />
+            )}
           </div>
         </div>
       </div>
     </nav>
   );
-} 
+}
