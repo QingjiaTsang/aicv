@@ -93,7 +93,7 @@ const AICard = ({ text }: { text: string }) => (
   <motion.li
     className="flex items-center gap-4 rounded-xl border border-border/50 p-6 backdrop-blur-lg transition-all hover:border-primary/30"
   >
-    <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 transition-all group-hover:bg-primary/20">
+    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 transition-all group-hover:bg-primary/20">
       <Check className="size-6 text-primary transition-transform group-hover:scale-110" />
     </div>
     <span className="text-lg font-medium text-foreground/90">{text}</span>

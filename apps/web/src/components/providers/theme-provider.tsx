@@ -31,8 +31,11 @@ export function ThemeProvider({
   )
 
   const handleThemeChange = useCallback((newTheme: Theme) => {
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
     // Check if browser supports View Transitions API
-    if (document.startViewTransition) {
+    const didBrowserSupportViewTransition = !!document.startViewTransition
+
+    if (didBrowserSupportViewTransition && !isMobile) {
       document.documentElement.classList.add('theme-changing')
 
       const transition = document.startViewTransition(() => {
