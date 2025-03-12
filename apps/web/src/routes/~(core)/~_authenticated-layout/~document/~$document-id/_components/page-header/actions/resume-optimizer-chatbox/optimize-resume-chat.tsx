@@ -28,7 +28,7 @@ export function OptimizeResumeChat({ document, section, isOpen, onClose }: Optim
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [isMinimized, setIsMinimized] = useState(false)
   const [size, setSize] = useState({ width: 400, height: 650 })
-  const [position, setPosition] = useState({ x: window.innerWidth - 420, y: window.innerHeight - 620 })
+  const [position, setPosition] = useState({ x: window.innerWidth - 420, y: window.innerHeight - 665 })
   const [isDragging, setIsDragging] = useState(false)
   const dragStartPos = useRef({ x: 0, y: 0 })
   const { t } = useTranslation()

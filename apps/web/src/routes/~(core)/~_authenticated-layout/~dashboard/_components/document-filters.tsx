@@ -43,11 +43,11 @@ export function DocumentFilters({
           onChange={(e) => setLocalSearch(e.target.value)}
           className="pl-8 pr-8"
         />
-        {localSearch && (
+        {!!localSearch && (
           <button
             onClick={handleClearSearch}
             className={cn(
-              "absolute right-2 top-2.5",
+              "absolute right-2 top-3",
               "hover:text-muted-foreground/80"
             )}
           >

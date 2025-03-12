@@ -79,7 +79,7 @@ export function ExperienceItem({ experience, themeColor }: {
         </div>
       </div>
 
-      {experience?.workSummary && (
+      {!!experience?.workSummary && (
         <div
           dangerouslySetInnerHTML={{ __html: experience.workSummary }}
           className="ql-content"

@@ -79,7 +79,7 @@ function EducationItem({ education, themeColor }: {
         </div>
       </div>
 
-      {education?.description && (
+      {!!education?.description && (
         <div
           dangerouslySetInnerHTML={{ __html: education.description }}
           className="ql-content"
